@@ -3,17 +3,12 @@ const img = document.getElementById("storyImage");
 const dotsWrap = document.getElementById("dots");
 const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll(".dot")) : [];
 
-let currentIndex = 0;
-
 function setActive(index) {
-  if (index === currentIndex && img.src.includes(steps[index]?.dataset?.image)) return;
-  currentIndex = index;
-
   steps.forEach((s, i) => s.classList.toggle("is-active", i === index));
   dots.forEach((d, i) => d.classList.toggle("is-active", i === index));
 
   const nextSrc = steps[index]?.dataset?.image;
-  if (nextSrc) {
+  if (nextSrc && img && img.src !== nextSrc) {
     img.style.opacity = "0";
     setTimeout(() => {
       img.src = nextSrc;
@@ -24,14 +19,14 @@ function setActive(index) {
 
 const storyObserver = new IntersectionObserver(
   (entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const idx = steps.indexOf(entry.target);
-        if (idx !== currentIndex) setActive(idx);
-      }
-    });
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    const idx = steps.indexOf(visible.target);
+    if (idx >= 0) setActive(idx);
   },
-  { root: null, rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+  { root: null, threshold: [0.4, 0.6] }
 );
 
 steps.forEach(step => storyObserver.observe(step));
