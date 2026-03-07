@@ -1,10 +1,19 @@
 import DnaHelix from './DnaHelix';
+import FloatingBackground from './ui/floating-paths';
 
 export default function Hero() {
   return (
     <header className="hero" id="top">
       <div className="noise" />
       <div className="hero-glow" />
+      <FloatingBackground />
+
+      <div className="hero-corner tl" /><div className="hero-corner tr" />
+      <div className="hero-corner bl" /><div className="hero-corner br" />
+
+      <div className="hero-dna-left"><DnaHelix size={1.4} /></div>
+      <div className="hero-dna-right"><DnaHelix size={1.4} /></div>
+
       <div className="hero-inner">
         <div className="eyebrow">AI-Powered Peptide Tracking</div>
         <h1>
@@ -34,10 +43,6 @@ export default function Hero() {
             Coming Soon
           </span>
         </div>
-      </div>
-
-      <div className="hero-dna">
-        <DnaHelix />
       </div>
 
       <a className="scroll-cue" href="#features">

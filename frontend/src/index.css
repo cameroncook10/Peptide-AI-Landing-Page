@@ -177,7 +177,7 @@ body {
   border-radius: 44px;
   background: var(--layer-2);
   border: 1px solid rgba(255,255,255,0.07);
-  box-shadow: var(--shadow-high), var(--glow-accent), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: var(--shadow-high), 0 0 30px rgba(0,229,160,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
   overflow: hidden; aspect-ratio: 9/16;
   transition: box-shadow 0.5s;
   will-change: box-shadow;
@@ -288,7 +288,7 @@ body {
   outline: none; transition: border-color 0.2s, box-shadow 0.2s;
 }
 .waitlist-input::placeholder { color: var(--text-disabled); }
-.waitlist-input:focus { border-color: var(--border-accent); box-shadow: 0 0 0 4px rgba(0,229,160,0.07); }
+.waitlist-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,229,160,0.12), 0 0 24px rgba(0,229,160,0.07); }
 .waitlist-btn {
   width: 100%; height: 52px;
   background: var(--accent); color: var(--layer-0);
@@ -317,7 +317,7 @@ body {
 .final {
   position: relative; overflow: hidden; text-align: center;
   padding: 120px 24px 100px; background: var(--layer-0);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(0,229,160,0.1);
 }
 .final-glow {
   position: absolute; bottom: -180px; left: 50%; transform: translateX(-50%);
@@ -354,11 +354,41 @@ body {
 .backtop:hover { color: var(--text-muted); }
 
 
-/* ── DNA Helix (Hero decoration) ─────── */
-.hero-dna {
-  position: absolute; right: 6%; top: 50%; transform: translateY(-50%);
-  opacity: 0.75; pointer-events: none; z-index: 1;
-  animation: fadeUp 1s 0.5s both;
+/* ── DNA Helices + Hero extras ───────── */
+@keyframes dna-pulse { 0%,100%{opacity:0.75} 50%{opacity:1} }
+
+.hero-dna-left, .hero-dna-right {
+  display: none; position: absolute; top: 50%; transform: translateY(-50%);
+  pointer-events: none; z-index: 1;
+  animation: fadeUp 1.2s 0.5s both, dna-pulse 5s ease-in-out infinite 1.7s;
+}
+.hero-dna-left  { left: 3%; }
+.hero-dna-right { right: 3%; }
+
+/* Dot grid overlay */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(0,229,160,0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none; z-index: 0;
+}
+
+/* HUD corner brackets */
+.hero-corner {
+  position: absolute; width: 26px; height: 26px;
+  border-color: rgba(0,229,160,0.28); border-style: solid;
+  z-index: 2; pointer-events: none;
+  animation: fadeUp 0.9s 0.15s both;
+}
+.hero-corner.tl { top: 78px;  left: 22px;  border-width: 1.5px 0 0 1.5px; }
+.hero-corner.tr { top: 78px;  right: 22px; border-width: 1.5px 1.5px 0 0; }
+.hero-corner.bl { bottom: 46px; left: 22px;  border-width: 0 0 1.5px 1.5px; }
+.hero-corner.br { bottom: 46px; right: 22px; border-width: 0 1.5px 1.5px 0; }
+
+/* Show helices on wide screens */
+@media (min-width: 1220px) {
+  .hero-dna-left, .hero-dna-right { display: block; }
 }
 
 /* ── App Showcase ────────────────────── */
@@ -402,7 +432,7 @@ body {
   .brand-name { font-size: 16px; }
   .hero { padding: 110px 20px 72px; }
   .features { grid-template-columns: 1fr; padding: 48px 20px 72px; gap: 0; }
-    .hero-dna { display: none; }
+    .hero-corner { display: none; }
   .features-sticky { position: relative; top: auto; height: auto; margin-bottom: 32px; }
   .story-sections { padding: 0; }
   .step { min-height: auto; padding: 28px 24px; margin-bottom: 12px; }
