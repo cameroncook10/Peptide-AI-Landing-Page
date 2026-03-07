@@ -214,18 +214,16 @@ export default function CinematicPage() {
           </h2>
           <div className="proof-grid">
             <div className="proof-card">
-              <Counter end={10} suffix="k+" />
-              <span className="proof-label">On the waitlist</span>
+              <span className="proof-value">AI Protocol</span>
+              <span className="proof-label">Trained on <strong>1,000+</strong> clinical trials</span>
             </div>
             <div className="proof-card">
               <Counter end={50} suffix="+" />
               <span className="proof-label">Peptides tracked</span>
             </div>
             <div className="proof-card">
-              <Counter end={4.9} suffix="" decimal />
-              <span className="proof-label">
-                App Store rating <span className="star">★</span>
-              </span>
+              <span className="proof-value proof-value-sm">Reliable</span>
+              <span className="proof-label">AI body scanner</span>
             </div>
           </div>
         </div>

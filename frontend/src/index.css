@@ -324,7 +324,7 @@ body {
 }
 .phone-frame {
   position: relative;
-  width: 260px;
+  width: 300px;
   aspect-ratio: 9/19.5;
   border-radius: 44px;
   background: var(--layer-2);
@@ -440,10 +440,16 @@ body {
   display: block; line-height: 1;
   margin-bottom: 12px;
 }
+.proof-value-sm {
+  font-size: clamp(28px, 3.5vw, 42px);
+}
 .proof-label {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--text-muted);
+}
+.proof-label strong {
+  color: var(--accent); font-weight: 700;
 }
 .star { color: #FFD700; margin-left: 2px; }
 
@@ -973,7 +979,7 @@ body {
     );
   }
   .phone-frame {
-    width: 180px;
+    width: 200px;
     margin: 0 auto;
   }
   .feat-copy { padding: 0; }
@@ -1003,7 +1009,7 @@ body {
     width: 100%;
   }
   .hero-actions .btn { width: 100%; justify-content: center; }
-  .phone-frame { width: 160px; }
+  .phone-frame { width: 180px; }
   .btn { height: 48px; padding: 0 22px; font-size: 14px; }
 
   .proof-card { padding: 36px 20px 32px; }
