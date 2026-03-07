@@ -53,10 +53,9 @@ float fbm(vec2 p){
 }
 
 // Brand palette
-#define ACCENT   vec3(0.,0.898,0.627)   // #00E5A0
-#define ACCENT2  vec3(0.,0.702,0.784)   // #00B3C8 muted teal
-#define BG_TINT  vec3(0.024,0.031,0.063)// #060810 layer-0
-#define DIM_ACCENT vec3(0.,0.45,0.32)   // darker accent for subtle elements
+#define ACCENT   vec3(0.,0.898,0.627)    // #00E5A0
+#define ACCENT2  vec3(0.,0.702,0.784)    // #00B3C8 muted teal
+#define BG_TINT  vec3(0.003,0.004,0.014) // near-black base
 
 void main(){
   vec2 uv=(FC-.5*R)/MN;
@@ -65,38 +64,29 @@ void main(){
   float ra=PI/5.5;
   float cs=cos(ra),sn=sin(ra);
   vec2 dnaUv=mat2(cs,-sn,sn,cs)*uv;
-  dnaUv.y+=scroll*3.5;
+  dnaUv.y+=scroll*1.5;
 
-  // Dark base matching --layer-0
+  // Near-black base
   vec3 col=BG_TINT;
 
-  // Atmospheric nebula — brand-tinted
-  float nb=fbm(uv*1.2+T*.018);
-  col+=vec3(0.,0.02,0.035)*nb*nb*2.0;
-  col+=vec3(0.,0.012,0.025)*fbm(uv*2.4-T*.012)*.25;
+  // Very faint atmospheric tint
+  float nb=fbm(uv*1.2+T*.015);
+  col+=vec3(0.,0.010,0.018)*nb*nb*0.6;
 
-  // Star field — tinted accent
-  vec2 starGrid=uv+vec2(0.,scroll*0.3);
-  vec2 gridId=floor(starGrid*30.);
-  vec2 gridUv=fract(starGrid*30.)-.5;
+  // Sparse dim stars
+  vec2 gridId=floor(uv*32.);
+  vec2 gridUv=fract(uv*32.)-.5;
   float rnd=h2(gridId);
-  if(rnd>.86){
-    float twinkle=.5+.5*sin(T*1.4+rnd*12.);
-    float starD=length(gridUv);
-    float brightness=.00025*twinkle*smoothstep(.05,.0,starD);
-    vec3 starCol=mix(ACCENT,ACCENT2,h2(gridId+1.));
-    col+=starCol*brightness;
+  if(rnd>.90){
+    float twinkle=.5+.5*sin(T*1.2+rnd*12.);
+    float brightness=.00006*twinkle*smoothstep(.04,.0,length(gridUv));
+    col+=mix(ACCENT,ACCENT2,h2(gridId+1.))*brightness;
   }
 
-  // Faint molecular dot grid
-  vec2 molUv=fract(dnaUv*5.+vec2(T*.005,-T*.004))-.5;
-  float molDot=smoothstep(.06,.02,length(molUv));
-  col+=DIM_ACCENT*molDot*.006*fbm(dnaUv*2.5+T*.006);
-
-  // DNA Double Helix — diagonal, brand colors
-  float freq=5.5;
-  float amp=0.2;
-  float scrollAnim=T*0.18+scroll*5.0;
+  // DNA Double Helix -- tight scientific geometry
+  float freq=7.5;
+  float amp=0.15;
+  float scrollAnim=T*0.09+scroll*1.5;
   float phase=dnaUv.y*freq+scrollAnim;
   float xs1=amp*sin(phase);
   float xs2=-xs1;
@@ -105,61 +95,42 @@ void main(){
   float dp1=abs(dnaUv.x-xs1)*invLen;
   float dp2=abs(dnaUv.x-xs2)*invLen;
 
-  // Strands — accent green + muted teal
-  col+=ACCENT*0.0025/(dp1+0.009);
-  col+=ACCENT2*0.0025/(dp2+0.009);
+  // Strands -- dim glowing lines
+  col+=ACCENT*0.00065/(dp1+0.011);
+  col+=ACCENT2*0.00065/(dp2+0.011);
 
-  // Soft axial glow — dark accent tint
-  col+=vec3(0.,0.04,0.06)*0.0015/(dnaUv.x*dnaUv.x+0.12);
-
-  // Atom nodes — accent palette
-  float nodeT=fract(phase*(3./PI));
-  float nodeMask=smoothstep(.4,.0,abs(nodeT-.5));
+  // Base-pair nodes -- uniformly spaced like real DNA
+  float nodeSpacing=PI/3.5;
+  float nodeIdx=round(phase/nodeSpacing);
+  float nodeDist=abs(phase-nodeIdx*nodeSpacing);
+  float nodeMask=smoothstep(.32,.0,nodeDist);
   float dn1=length(dnaUv-vec2(xs1,dnaUv.y));
   float dn2=length(dnaUv-vec2(xs2,dnaUv.y));
-  col+=ACCENT*nodeMask*.005/(dn1*dn1+.001);
-  col+=ACCENT2*nodeMask*.005/(dn2*dn2+.001);
+  col+=ACCENT*nodeMask*.0014/(dn1*dn1+.0018);
+  col+=ACCENT2*nodeMask*.0014/(dn2*dn2+.0018);
 
-  // Cross-bridges — muted teal
+  // Cross-bridges -- evenly spaced parallel base pairs
   float bGlow=0.;
-  for(float period=-3.;period<=3.;period++){
-    for(float k=0.;k<6.;k++){
-      float angle=k*(PI/3.);
-      float bY=(angle+2.*PI*period-scrollAnim)/freq;
-      if(abs(bY-dnaUv.y)<.44){
-        float bx1=amp*sin(angle);
-        float bx2=-bx1;
-        float lo=min(bx1,bx2),hi=max(bx1,bx2);
-        float cx=clamp(dnaUv.x,lo,hi);
-        float bd=length(dnaUv-vec2(cx,bY));
-        bGlow+=.5/(bd*bd*900.+1.);
-      }
+  for(float n=-5.;n<=5.;n++){
+    float bY=(n*PI-scrollAnim)/freq;
+    if(abs(bY-dnaUv.y)<.30){
+      float bAngle=n*PI;
+      float bx1=amp*sin(bAngle);
+      float bx2=-bx1;
+      float cx=clamp(dnaUv.x,min(bx1,bx2),max(bx1,bx2));
+      float bd=length(dnaUv-vec2(cx,bY));
+      bGlow+=.2/(bd*bd*1400.+1.);
     }
   }
-  col+=ACCENT2*bGlow*.0012;
+  col+=ACCENT2*bGlow*.00045;
 
-  // Floating beads — brand colors only
-  for(float i=0.;i<6.;i++){
-    vec2 pos=vec2(h2(vec2(i*17.3,1.)),h2(vec2(i*6.1,3.)))-.5;
-    pos*=2.6;
-    pos.x+=sin(T*.1+i*2.1)*.12;
-    pos.y+=cos(T*.08+i*1.85)*.12;
-    pos.y+=scroll*1.2;
-    float d=length(uv-pos);
-    vec3 beadCol=i<3. ? ACCENT : ACCENT2;
-    float pulse=.5+.5*sin(T*1.+i*2.7);
-    float r=.01+.004*pulse;
-    col+=beadCol*.001/(d*d+.0015);
-    col+=beadCol*.1*smoothstep(r,r*.4,d);
-  }
+  // Vignette
+  col*=1.-smoothstep(0.85,1.9,length(uv));
 
-  // Very gentle vignette
-  col*=1.-smoothstep(1.0,2.2,length(uv));
-
-  // Tone map + gamma — pulled back so content dominates
-  col*=0.7;
-  col=col/(1.+col*.7);
-  col=pow(max(col,0.),vec3(.45));
+  // Stealth tone-map -- very dark, content dominates
+  col*=0.32;
+  col=col/(1.+col*.4);
+  col=pow(max(col,0.),vec3(.40));
 
   O=vec4(col,1.);
 }`;
