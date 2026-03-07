@@ -95,7 +95,7 @@ function createScene(canvas) {
   const bbMat = new THREE.MeshPhysicalMaterial({
     color: 0x00b37a,
     emissive: 0x00b37a,
-    emissiveIntensity: 0.3,
+    emissiveIntensity: 0.45,
     metalness: 0.25,
     roughness: 0.18,
     clearcoat: 1.0,
@@ -231,9 +231,9 @@ function createScene(canvas) {
   composer.addPass(new RenderPass(scene, camera));
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(innerWidth, innerHeight),
-    0.3,   // strength — subtle
+    0.4,   // strength — subtle neon glow
     0.5,   // radius
-    0.4,   // threshold — only brightest emissives bloom
+    0.35,  // threshold — catch more emissives
   );
   composer.addPass(bloomPass);
 
