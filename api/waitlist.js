@@ -1,24 +1,12 @@
-const { list, put } = require('@vercel/blob');
+const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 
-async function getWaitlist() {
-  try {
-    const { blobs } = await list({ prefix: 'waitlist.json' });
-    if (blobs.length === 0) return [];
-    const res = await fetch(blobs[0].url + '?t=' + Date.now());
-    return await res.json();
-  } catch {
-    return [];
-  }
-}
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
 
-async function saveWaitlist(data) {
-  await put('waitlist.json', JSON.stringify(data, null, 2), {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: 'application/json',
-  });
-}
+const SOURCE = 'waitlist-site';
 
 module.exports = async function handler(req, res) {
   const origin = process.env.FRONTEND_URL || '*';
@@ -33,14 +21,25 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Valid email required.' });
   }
 
-  const waitlist = await getWaitlist();
-  if (waitlist.some(e => e.email.toLowerCase() === email.toLowerCase())) {
-    return res.status(409).json({ error: "You're already on the waitlist!" });
+  const { data, error } = await supabase
+    .from('waitlist')
+    .insert({ email, phone: phone || null, source: SOURCE })
+    .select('id')
+    .single();
+
+  if (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: "You're already on the waitlist!" });
+    }
+    console.error('Supabase insert error:', error);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 
-  waitlist.push({ email, phone: phone || null, joinedAt: new Date().toISOString() });
-  await saveWaitlist(waitlist);
+  const { count } = await supabase
+    .from('waitlist')
+    .select('*', { count: 'exact', head: true });
 
+  // Send emails
   if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     try {
       const transporter = nodemailer.createTransport({
@@ -53,7 +52,7 @@ module.exports = async function handler(req, res) {
         from: `"Peptide AI" <${process.env.SMTP_USER}>`,
         to: process.env.OWNER_EMAIL,
         subject: 'New Waitlist Signup',
-        text: `New signup:\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nTotal: ${waitlist.length}`,
+        text: `New signup:\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nSource: ${SOURCE}\nTotal: ${count}`,
       });
       await transporter.sendMail({
         from: `"Peptide AI" <${process.env.SMTP_USER}>`,

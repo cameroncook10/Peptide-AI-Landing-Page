@@ -9,7 +9,7 @@
     "build": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
-    "@vercel/blob": "^0.23.4",
+    "@supabase/supabase-js": "^2.49.1",
     "nodemailer": "^6.9.9"
   },
   "devDependencies": {
