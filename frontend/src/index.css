@@ -1090,7 +1090,6 @@ body {
   .zone-features {
     display: block;
     padding: 0 16px;
-    overflow: hidden;
   }
   .feat-gallery {
     position: sticky;
