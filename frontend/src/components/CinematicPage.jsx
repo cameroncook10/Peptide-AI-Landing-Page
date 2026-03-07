@@ -52,23 +52,31 @@ float fbm(vec2 p){
   return v;
 }
 
+// Brand palette
+#define ACCENT   vec3(0.,0.898,0.627)   // #00E5A0
+#define ACCENT2  vec3(0.,0.702,0.784)   // #00B3C8 muted teal
+#define BG_TINT  vec3(0.024,0.031,0.063)// #060810 layer-0
+#define DIM_ACCENT vec3(0.,0.45,0.32)   // darker accent for subtle elements
+
 void main(){
   vec2 uv=(FC-.5*R)/MN;
 
-  // DNA parallax — shifts with scroll so helix flows through the page
-  vec2 dnaUv = uv;
-  dnaUv.y += scroll * 3.5;
+  // Rotate UV ~30deg for diagonal DNA
+  float ra=PI/5.5;
+  float cs=cos(ra),sn=sin(ra);
+  vec2 dnaUv=mat2(cs,-sn,sn,cs)*uv;
+  dnaUv.y+=scroll*3.5;
 
-  // Near-black deep space base
-  vec3 col=vec3(0.004,0.005,0.018);
+  // Dark base matching --layer-0
+  vec3 col=BG_TINT;
 
-  // Atmospheric nebula — very faint
+  // Atmospheric nebula — brand-tinted
   float nb=fbm(uv*1.2+T*.018);
-  col+=vec3(0.,0.012,0.04)*nb*nb*2.0;
-  col+=vec3(0.003,0.,0.02)*fbm(uv*2.4-T*.012)*.25;
+  col+=vec3(0.,0.02,0.035)*nb*nb*2.0;
+  col+=vec3(0.,0.012,0.025)*fbm(uv*2.4-T*.012)*.25;
 
-  // Star field — dimmer, fewer
-  vec2 starGrid = uv + vec2(0., scroll*0.3);
+  // Star field — tinted accent
+  vec2 starGrid=uv+vec2(0.,scroll*0.3);
   vec2 gridId=floor(starGrid*30.);
   vec2 gridUv=fract(starGrid*30.)-.5;
   float rnd=h2(gridId);
@@ -76,16 +84,16 @@ void main(){
     float twinkle=.5+.5*sin(T*1.4+rnd*12.);
     float starD=length(gridUv);
     float brightness=.00025*twinkle*smoothstep(.05,.0,starD);
-    vec3 starCol=mix(vec3(0.5,0.9,1.),vec3(0.7,1.,0.85),h2(gridId+1.));
+    vec3 starCol=mix(ACCENT,ACCENT2,h2(gridId+1.));
     col+=starCol*brightness;
   }
 
-  // Faint molecular dot grid — shifts with scroll
+  // Faint molecular dot grid
   vec2 molUv=fract(dnaUv*5.+vec2(T*.005,-T*.004))-.5;
   float molDot=smoothstep(.06,.02,length(molUv));
-  col+=vec3(0.,0.898,0.627)*molDot*.005*fbm(dnaUv*2.5+T*.006);
+  col+=DIM_ACCENT*molDot*.006*fbm(dnaUv*2.5+T*.006);
 
-  // DNA Double Helix — subtle, flowing
+  // DNA Double Helix — diagonal, brand colors
   float freq=5.5;
   float amp=0.2;
   float scrollAnim=T*0.18+scroll*5.0;
@@ -97,22 +105,22 @@ void main(){
   float dp1=abs(dnaUv.x-xs1)*invLen;
   float dp2=abs(dnaUv.x-xs2)*invLen;
 
-  // Strands — soft glow
-  col+=vec3(0.,0.898,0.627)*0.0025/(dp1+0.009);
-  col+=vec3(0.,0.702,1.0  )*0.0025/(dp2+0.009);
+  // Strands — accent green + muted teal
+  col+=ACCENT*0.0025/(dp1+0.009);
+  col+=ACCENT2*0.0025/(dp2+0.009);
 
-  // Soft axial glow
-  col+=vec3(0.,0.06,0.1)*0.0015/(dnaUv.x*dnaUv.x+0.12);
+  // Soft axial glow — dark accent tint
+  col+=vec3(0.,0.04,0.06)*0.0015/(dnaUv.x*dnaUv.x+0.12);
 
-  // Atom nodes — gentle
+  // Atom nodes — accent palette
   float nodeT=fract(phase*(3./PI));
   float nodeMask=smoothstep(.4,.0,abs(nodeT-.5));
   float dn1=length(dnaUv-vec2(xs1,dnaUv.y));
   float dn2=length(dnaUv-vec2(xs2,dnaUv.y));
-  col+=vec3(0.35,1.,0.82)*nodeMask*.005/(dn1*dn1+.001);
-  col+=vec3(0.25,0.78,1.)*nodeMask*.005/(dn2*dn2+.001);
+  col+=ACCENT*nodeMask*.005/(dn1*dn1+.001);
+  col+=ACCENT2*nodeMask*.005/(dn2*dn2+.001);
 
-  // Cross-bridges — faint
+  // Cross-bridges — muted teal
   float bGlow=0.;
   for(float period=-3.;period<=3.;period++){
     for(float k=0.;k<6.;k++){
@@ -128,9 +136,9 @@ void main(){
       }
     }
   }
-  col+=vec3(0.482,0.38,1.)*bGlow*.001;
+  col+=ACCENT2*bGlow*.0012;
 
-  // Floating amino-acid beads — fewer, dimmer
+  // Floating beads — brand colors only
   for(float i=0.;i<6.;i++){
     vec2 pos=vec2(h2(vec2(i*17.3,1.)),h2(vec2(i*6.1,3.)))-.5;
     pos*=2.6;
@@ -138,7 +146,7 @@ void main(){
     pos.y+=cos(T*.08+i*1.85)*.12;
     pos.y+=scroll*1.2;
     float d=length(uv-pos);
-    vec3 beadCol=i<2. ? vec3(0.,0.898,0.627) : i<4. ? vec3(0.,0.702,1.) : vec3(0.482,0.38,1.);
+    vec3 beadCol=i<3. ? ACCENT : ACCENT2;
     float pulse=.5+.5*sin(T*1.+i*2.7);
     float r=.01+.004*pulse;
     col+=beadCol*.001/(d*d+.0015);
