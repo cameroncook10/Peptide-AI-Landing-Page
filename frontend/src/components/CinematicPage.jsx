@@ -128,9 +128,9 @@ void main(){
   col*=1.-smoothstep(0.85,1.9,length(uv));
 
   // Stealth tone-map -- very dark, content dominates
-  col*=0.32;
-  col=col/(1.+col*.4);
-  col=pow(max(col,0.),vec3(.40));
+  col*=0.20;
+  col=col/(1.+col*.35);
+  col=pow(max(col,0.),vec3(.38));
 
   O=vec4(col,1.);
 }`;
