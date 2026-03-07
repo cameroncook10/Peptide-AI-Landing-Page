@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import AnimatedShaderHero from './ui/animated-shader-hero';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -25,6 +24,236 @@ const FEATURES = [
   },
 ];
 
+/* ───────────────────────────────────────────────────
+   Subtle full-page DNA shader (scroll-aware)
+   ─────────────────────────────────────────────────── */
+const dnaShaderSource = `#version 300 es
+precision highp float;
+out vec4 O;
+uniform vec2 resolution;
+uniform float time;
+uniform float scroll;
+#define FC gl_FragCoord.xy
+#define T time
+#define R resolution
+#define MN min(R.x,R.y)
+#define PI 3.14159265359
+
+float h2(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  f*=f*(3.-2.*f);
+  return mix(mix(h2(i),h2(i+vec2(1,0)),f.x),
+             mix(h2(i+vec2(0,1)),h2(i+1.),f.x),f.y);
+}
+float fbm(vec2 p){
+  float v=0.,a=.5;
+  for(int i=0;i<4;i++){v+=a*noise(p);p=p*2.+vec2(3.7,1.9);a*=.5;}
+  return v;
+}
+
+void main(){
+  vec2 uv=(FC-.5*R)/MN;
+
+  // DNA parallax — shifts with scroll so helix flows through the page
+  vec2 dnaUv = uv;
+  dnaUv.y += scroll * 3.5;
+
+  // Near-black deep space base
+  vec3 col=vec3(0.004,0.005,0.018);
+
+  // Atmospheric nebula — very faint
+  float nb=fbm(uv*1.2+T*.018);
+  col+=vec3(0.,0.012,0.04)*nb*nb*2.0;
+  col+=vec3(0.003,0.,0.02)*fbm(uv*2.4-T*.012)*.25;
+
+  // Star field — dimmer, fewer
+  vec2 starGrid = uv + vec2(0., scroll*0.3);
+  vec2 gridId=floor(starGrid*30.);
+  vec2 gridUv=fract(starGrid*30.)-.5;
+  float rnd=h2(gridId);
+  if(rnd>.86){
+    float twinkle=.5+.5*sin(T*1.4+rnd*12.);
+    float starD=length(gridUv);
+    float brightness=.00025*twinkle*smoothstep(.05,.0,starD);
+    vec3 starCol=mix(vec3(0.5,0.9,1.),vec3(0.7,1.,0.85),h2(gridId+1.));
+    col+=starCol*brightness;
+  }
+
+  // Faint molecular dot grid — shifts with scroll
+  vec2 molUv=fract(dnaUv*5.+vec2(T*.005,-T*.004))-.5;
+  float molDot=smoothstep(.06,.02,length(molUv));
+  col+=vec3(0.,0.898,0.627)*molDot*.005*fbm(dnaUv*2.5+T*.006);
+
+  // DNA Double Helix — subtle, flowing
+  float freq=5.5;
+  float amp=0.2;
+  float scrollAnim=T*0.18+scroll*5.0;
+  float phase=dnaUv.y*freq+scrollAnim;
+  float xs1=amp*sin(phase);
+  float xs2=-xs1;
+  float slope=amp*freq*cos(phase);
+  float invLen=inversesqrt(1.+slope*slope);
+  float dp1=abs(dnaUv.x-xs1)*invLen;
+  float dp2=abs(dnaUv.x-xs2)*invLen;
+
+  // Strands — soft glow
+  col+=vec3(0.,0.898,0.627)*0.0025/(dp1+0.009);
+  col+=vec3(0.,0.702,1.0  )*0.0025/(dp2+0.009);
+
+  // Soft axial glow
+  col+=vec3(0.,0.06,0.1)*0.0015/(dnaUv.x*dnaUv.x+0.12);
+
+  // Atom nodes — gentle
+  float nodeT=fract(phase*(3./PI));
+  float nodeMask=smoothstep(.4,.0,abs(nodeT-.5));
+  float dn1=length(dnaUv-vec2(xs1,dnaUv.y));
+  float dn2=length(dnaUv-vec2(xs2,dnaUv.y));
+  col+=vec3(0.35,1.,0.82)*nodeMask*.005/(dn1*dn1+.001);
+  col+=vec3(0.25,0.78,1.)*nodeMask*.005/(dn2*dn2+.001);
+
+  // Cross-bridges — faint
+  float bGlow=0.;
+  for(float period=-3.;period<=3.;period++){
+    for(float k=0.;k<6.;k++){
+      float angle=k*(PI/3.);
+      float bY=(angle+2.*PI*period-scrollAnim)/freq;
+      if(abs(bY-dnaUv.y)<.44){
+        float bx1=amp*sin(angle);
+        float bx2=-bx1;
+        float lo=min(bx1,bx2),hi=max(bx1,bx2);
+        float cx=clamp(dnaUv.x,lo,hi);
+        float bd=length(dnaUv-vec2(cx,bY));
+        bGlow+=.5/(bd*bd*900.+1.);
+      }
+    }
+  }
+  col+=vec3(0.482,0.38,1.)*bGlow*.001;
+
+  // Floating amino-acid beads — fewer, dimmer
+  for(float i=0.;i<6.;i++){
+    vec2 pos=vec2(h2(vec2(i*17.3,1.)),h2(vec2(i*6.1,3.)))-.5;
+    pos*=2.6;
+    pos.x+=sin(T*.1+i*2.1)*.12;
+    pos.y+=cos(T*.08+i*1.85)*.12;
+    pos.y+=scroll*1.2;
+    float d=length(uv-pos);
+    vec3 beadCol=i<2. ? vec3(0.,0.898,0.627) : i<4. ? vec3(0.,0.702,1.) : vec3(0.482,0.38,1.);
+    float pulse=.5+.5*sin(T*1.+i*2.7);
+    float r=.01+.004*pulse;
+    col+=beadCol*.001/(d*d+.0015);
+    col+=beadCol*.1*smoothstep(r,r*.4,d);
+  }
+
+  // Very gentle vignette
+  col*=1.-smoothstep(1.0,2.2,length(uv));
+
+  // Tone map + gamma
+  col=col/(1.+col*.7);
+  col=pow(max(col,0.),vec3(.45));
+
+  O=vec4(col,1.);
+}`;
+
+/* ───────────────────────────────────────────────────
+   Full-page WebGL background hook
+   ─────────────────────────────────────────────────── */
+function useFullPageShader() {
+  const canvasRef = useRef(null);
+  const animFrameRef = useRef(null);
+  const scrollRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const gl = canvas.getContext('webgl2');
+    if (!gl) return;
+
+    const dpr = Math.max(1, 0.5 * window.devicePixelRatio);
+
+    function resize() {
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    resize();
+
+    function compile(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+        console.error('Shader error:', gl.getShaderInfoLog(s));
+      }
+      return s;
+    }
+
+    const vs = compile(
+      gl.VERTEX_SHADER,
+      `#version 300 es\nprecision highp float;\nin vec4 position;\nvoid main(){gl_Position=position;}`
+    );
+    const fs = compile(gl.FRAGMENT_SHADER, dnaShaderSource);
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]),
+      gl.STATIC_DRAW
+    );
+
+    const pos = gl.getAttribLocation(prog, 'position');
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+    const uRes = gl.getUniformLocation(prog, 'resolution');
+    const uTime = gl.getUniformLocation(prog, 'time');
+    const uScroll = gl.getUniformLocation(prog, 'scroll');
+
+    function onScroll() {
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+      scrollRef.current = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    function loop(now) {
+      gl.clearColor(0, 0, 0, 1);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(prog);
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uTime, now * 1e-3);
+      gl.uniform1f(uScroll, scrollRef.current);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      animFrameRef.current = requestAnimationFrame(loop);
+    }
+    animFrameRef.current = requestAnimationFrame(loop);
+
+    window.addEventListener('resize', resize);
+    return () => {
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(animFrameRef.current);
+      gl.deleteProgram(prog);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(buf);
+    };
+  }, []);
+
+  return canvasRef;
+}
+
+/* ───────────────────────────────────────────────────
+   Counter component
+   ─────────────────────────────────────────────────── */
 function Counter({ end, suffix = '', decimal = false }) {
   const [val, setVal] = useState(0);
   const ref = useRef(null);
@@ -53,12 +282,17 @@ function Counter({ end, suffix = '', decimal = false }) {
 
   return (
     <span ref={ref} className="proof-value">
-      {decimal ? val.toFixed(1) : Math.round(val)}{suffix}
+      {decimal ? val.toFixed(1) : Math.round(val)}
+      {suffix}
     </span>
   );
 }
 
+/* ───────────────────────────────────────────────────
+   Main page
+   ─────────────────────────────────────────────────── */
 export default function CinematicPage() {
+  const canvasRef = useFullPageShader();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [status, setStatus] = useState(null);
@@ -70,7 +304,8 @@ export default function CinematicPage() {
     fetch(`${API_BASE}/api/waitlist/count`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.count !== null && d.count !== undefined) setWaitlistCount(d.count);
+        if (d.count !== null && d.count !== undefined)
+          setWaitlistCount(d.count);
       })
       .catch(() => {});
   }, [joinCount]);
@@ -104,39 +339,72 @@ export default function CinematicPage() {
 
   return (
     <main className="world">
-      {/* ── Persistent atmosphere ── */}
+      {/* ── Fixed shader background ── */}
       <div className="atmos">
-        <div className="atmos-grad" />
+        <canvas ref={canvasRef} className="atmos-shader" />
         <div className="atmos-noise" />
       </div>
 
       {/* ══════════════════════════════════
-          HERO ZONE — Animated Shader
+          HERO ZONE
           ══════════════════════════════════ */}
-      <AnimatedShaderHero
-        id="top"
-        trustBadge={{ text: 'AI-Powered Peptide Tracking' }}
-        headline={{ line1: 'Optimize Your', line2: 'Peptide Stack.' }}
-        subtitle="Build protocols, track doses, and let AI surface the insights that show exactly how your stack is performing."
-        buttons={{
-          primary:   { text: 'Join the Waitlist', href: '#waitlist' },
-          secondary: { text: 'See the App',       href: '#features' },
-        }}
-        tags={[
-          {
-            icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" /></svg>,
-            text: 'App Store',
-          },
-          {
-            icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.24.99.2l12.19-12.2L12.88 8l-9.7 15.76zM20.7 10.06l-3.13-1.8-3.59 3.59 3.59 3.59 3.16-1.82c.9-.52.9-1.56-.03-2.07M3.14.32C2.8.6 2.6 1.04 2.6 1.6v20.84l9.6-9.6L3.14.32zM16.36 3.74L4.17.04c-.35-.1-.69-.06-.97.12l9.64 9.65 3.52-6.07z" /></svg>,
-            text: 'Google Play',
-          },
-          {
-            icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>,
-            text: 'Coming Soon',
-          },
-        ]}
-      />
+      <section className="zone-hero-content" id="top">
+        <div className="hero-fade-in-down" style={{ marginBottom: '2rem' }}>
+          <div className="hero-trust-badge">
+            <span className="hero-pulse-dot" />
+            <span>AI-Powered Peptide Tracking</span>
+          </div>
+        </div>
+
+        <div style={{ textAlign: 'center', maxWidth: '64rem', margin: '0 auto' }}>
+          <h1 className="hero-fade-in-up hero-delay-200 hero-headline">
+            Optimize Your
+          </h1>
+          <h1 className="hero-fade-in-up hero-delay-400 hero-headline hero-headline-alt">
+            Peptide Stack.
+          </h1>
+
+          <p className="hero-fade-in-up hero-delay-600 hero-subtitle">
+            Build protocols, track doses, and let AI surface the insights that
+            show exactly how your stack is performing.
+          </p>
+
+          <div className="hero-fade-in-up hero-delay-800 hero-buttons">
+            <a className="btn btn-primary" href="#waitlist" style={{ minWidth: '180px' }}>
+              <span>Join the Waitlist</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+            <a className="btn btn-ghost" href="#features" style={{ minWidth: '160px' }}>
+              See the App
+            </a>
+          </div>
+
+          <div className="hero-fade-in-up hero-delay-800 hero-tags">
+            <span className="tag-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" /></svg>
+              App Store
+            </span>
+            <span className="tag-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.24.99.2l12.19-12.2L12.88 8l-9.7 15.76zM20.7 10.06l-3.13-1.8-3.59 3.59 3.59 3.59 3.16-1.82c.9-.52.9-1.56-.03-2.07M3.14.32C2.8.6 2.6 1.04 2.6 1.6v20.84l9.6-9.6L3.14.32zM16.36 3.74L4.17.04c-.35-.1-.69-.06-.97.12l9.64 9.65 3.52-6.07z" /></svg>
+              Google Play
+            </span>
+            <span className="tag-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+              Coming Soon
+            </span>
+          </div>
+        </div>
+
+        <a href="#features" className="hero-fade-in-up hero-delay-800 hero-scroll-cue">
+          <span>Scroll to explore</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </section>
 
       {/* ══════════════════════════════════
           FEATURES ZONE

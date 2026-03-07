@@ -120,10 +120,12 @@ body {
   z-index: -1;
   pointer-events: none;
 }
-.atmos-grad {
+.atmos-shader {
   position: absolute;
   inset: 0;
-  background: var(--layer-0);
+  width: 100%;
+  height: 100%;
+  touch-action: none;
 }
 .atmos-noise {
   position: absolute;
@@ -216,85 +218,96 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
-   HERO ZONE
+   HERO ZONE — inline content over shader bg
    ═══════════════════════════════════════════════════ */
-.zone-hero {
+.zone-hero-content {
   position: relative;
-  height: 200vh;
-}
-.hero-pin {
-  position: sticky;
-  top: 0;
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 100px 24px 60px;
   text-align: center;
-  overflow: hidden;
+  padding: 0 1.5rem;
+  color: #fff;
+  z-index: 1;
 }
-.hero-glow {
-  position: absolute;
-  top: -160px; left: 50%; transform: translateX(-50%);
-  width: 1000px; height: 800px;
-  background: radial-gradient(ellipse at center, rgba(0,229,160,0.1) 0%, rgba(0,180,200,0.04) 40%, transparent 68%);
-  pointer-events: none; z-index: 0;
+.hero-trust-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 18px;
+  background: rgba(0,229,160,0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,229,160,0.22);
+  border-radius: 9999px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: #00E5A0;
 }
-.hero-dots {
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(0,229,160,0.04) 1px, transparent 1px);
-  background-size: 44px 44px;
-  pointer-events: none; z-index: 0;
+.hero-pulse-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #00E5A0; box-shadow: 0 0 8px #00E5A0;
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
 }
-.hero-content {
-  position: relative; z-index: 1;
-  max-width: 800px; width: 100%;
+.hero-headline {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 700; line-height: 1.1;
+  background: linear-gradient(90deg, #00E5A0, #00B3FF, #00E5A0);
+  background-size: 200% 200%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
 }
-.hero-h1 {
-  font-family: var(--font-display); font-weight: 400;
-  font-size: clamp(48px, 7.5vw, 88px);
-  line-height: 1.05; letter-spacing: -1.5px;
-  margin-bottom: 24px;
+.hero-headline-alt {
+  background: linear-gradient(90deg, #00B3FF, #00E5A0, #7B61FF);
+  background-size: 200% 200%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0;
 }
-.clip-reveal {
-  display: block;
+.hero-subtitle {
+  margin-top: 1.5rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: rgba(192,203,223,0.9);
+  font-weight: 300; line-height: 1.7;
+  max-width: 48rem; margin-left: auto; margin-right: auto;
 }
-.hero-sub {
-  font-size: 16px; line-height: 1.75;
-  color: var(--text-muted);
-  max-width: 480px; margin: 0 auto 36px;
-}
-.hero-actions {
-  display: flex; flex-wrap: wrap; gap: 12px;
-  justify-content: center; margin-bottom: 28px;
+.hero-buttons {
+  display: flex; gap: 1rem; justify-content: center;
+  flex-wrap: wrap; margin-top: 2.5rem;
 }
 .hero-tags {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  justify-content: center;
+  display: flex; gap: 8px; justify-content: center;
+  flex-wrap: wrap; margin-top: 1.75rem;
 }
-.scroll-cue {
-  position: absolute; bottom: 32px; left: 50%;
-  transform: translateX(-50%);
+.hero-scroll-cue {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 6px;
-  color: var(--text-disabled); text-decoration: none;
-  font-size: 10px; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  transition: color 0.2s; z-index: 1;
+  color: rgba(192,203,223,0.5); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
+  z-index: 11;
 }
-.scroll-cue:hover { color: var(--text-muted); }
-.scroll-cue svg { animation: bounce 2.5s ease-in-out infinite; }
+.hero-scroll-cue svg { animation: bounce 2.5s ease-in-out infinite; }
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(6px); }
 }
 
-/* Sentinel that drives hero dissolve */
-.hero-trigger {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 100vh;
-  pointer-events: none;
+/* Hero entrance animations */
+@keyframes hero-fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes hero-fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-fade-in-down   { animation: hero-fade-in-down 0.8s ease-out forwards; }
+.hero-fade-in-up     { animation: hero-fade-in-up 0.8s ease-out forwards; opacity: 0; }
+.hero-delay-200      { animation-delay: 0.2s; }
+.hero-delay-400      { animation-delay: 0.4s; }
+.hero-delay-600      { animation-delay: 0.6s; }
+.hero-delay-800      { animation-delay: 0.8s; }
 
 /* ═══════════════════════════════════════════════════
    FEATURES ZONE
@@ -759,27 +772,14 @@ body {
   }
 
   /* ── Timeline scope declarations ── */
-  .zone-hero {
-    timeline-scope: --hero-exit;
-  }
   .zone-features {
     timeline-scope: --feat-1, --feat-2, --feat-3;
   }
 
   /* ── Timeline sources ── */
-  .hero-trigger {
-    view-timeline-name: --hero-exit;
-    view-timeline-axis: block;
-  }
   .fi-1 { view-timeline-name: --feat-1; view-timeline-axis: block; }
   .fi-2 { view-timeline-name: --feat-2; view-timeline-axis: block; }
   .fi-3 { view-timeline-name: --feat-3; view-timeline-axis: block; }
-
-  /* ── Background gradient shift (root scroll) ── */
-  .atmos-grad {
-    animation: bg-morph linear;
-    animation-timeline: scroll(root block);
-  }
 
   /* ── Noise texture drift ── */
   .atmos-noise {
@@ -788,28 +788,12 @@ body {
   }
 
 
-  /* ── Hero dissolve ── */
-  .hero-glow {
+  /* ── Hero content fades as you scroll past ── */
+  .zone-hero-content {
     animation: hero-dissolve linear both;
-    animation-timeline: --hero-exit;
-    animation-range: entry 15% entry 55%;
-    will-change: opacity, filter;
-  }
-  .hero-dots {
-    animation: hero-dissolve linear both;
-    animation-timeline: --hero-exit;
-    animation-range: entry 15% entry 55%;
-  }
-  .hero-content {
-    animation: hero-dissolve linear both;
-    animation-timeline: --hero-exit;
-    animation-range: entry 25% entry 70%;
+    animation-timeline: view();
+    animation-range: exit 0% exit 40%;
     will-change: opacity, transform, filter;
-  }
-  .scroll-cue {
-    animation: hero-dissolve linear both;
-    animation-timeline: --hero-exit;
-    animation-range: entry 5% entry 30%;
   }
 
   /* ── 3D Gallery card shuffle ── */
@@ -935,15 +919,6 @@ body {
   to   { transform: scaleX(1); }
 }
 
-/* Background color morph */
-@keyframes bg-morph {
-  0%   { background: #060810; }
-  20%  { background: #050a0e; }
-  45%  { background: #070608; }
-  70%  { background: #080706; }
-  100% { background: #060810; }
-}
-
 /* Noise texture drift */
 @keyframes noise-drift {
   from { transform: translate3d(0, 0, 0); }
@@ -951,10 +926,10 @@ body {
 }
 
 
-/* Hero dissolve — opacity + blur + scale */
+/* Hero dissolve — fade out as user scrolls past */
 @keyframes hero-dissolve {
-  from { opacity: 1; filter: blur(0px); transform: scale(1); }
-  to   { opacity: 0; filter: blur(20px); transform: scale(0.88); }
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-40px); }
 }
 
 /* Text clip-path reveal (left → right) */
@@ -1076,13 +1051,8 @@ body {
   .brand-icon { width: 30px; height: 30px; }
   .topbar-actions .pill:not(.primary) { display: none; }
 
-  .zone-hero { height: 200vh; }
-  .hero-pin { padding: 80px 20px 60px; }
-  .hero-h1 {
-    font-size: clamp(36px, 10vw, 60px);
-    letter-spacing: -1px;
-  }
-  .hero-sub { font-size: 14px; margin-bottom: 28px; }
+  .zone-hero-content { padding: 0 1rem; }
+  .hero-headline { font-size: clamp(2rem, 10vw, 3.5rem); }
   .hero-tags { gap: 8px; }
   .tag-pill { font-size: 11px; padding: 5px 12px; }
 
@@ -1098,8 +1068,8 @@ body {
     z-index: 3;
     padding: 24px 0 44px;
     background: linear-gradient(to bottom,
-      var(--layer-0) 0%,
-      rgba(6,8,16,0.97) 65%,
+      rgba(6,8,16,0.85) 0%,
+      rgba(6,8,16,0.7) 65%,
       rgba(6,8,16,0) 100%
     );
     overflow: visible;
@@ -1168,10 +1138,7 @@ body {
   .wl-btn-bg::after,
   .spinner { animation: none !important; }
 
-  .hero-content,
-  .scroll-cue,
-  .hero-glow,
-  .hero-dots,
+  .zone-hero-content,
   .gallery-card,
   .gallery-dot,
   .feat-title,
