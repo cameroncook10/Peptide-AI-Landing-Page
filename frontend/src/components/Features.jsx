@@ -22,39 +22,38 @@ const STEPS = [
   },
 ];
 
-const textReveal = {
-  hidden: { opacity: 0, x: -20, filter: 'blur(6px)' },
-  active: { opacity: 1, x: 0, filter: 'blur(0px)', transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-  inactive: { opacity: 0.2, x: 0, filter: 'blur(0px)', transition: { duration: 0.4 } },
-};
-
 export default function Features() {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
 
-  // Track overall scroll progress through the features section
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end end'],
   });
 
-  // Map scroll progress to active step index
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     const idx = Math.min(Math.floor(v * STEPS.length), STEPS.length - 1);
     if (idx !== activeIndex) setActiveIndex(idx);
   });
 
-  // Phone frame parallax — subtle float tied to scroll
   const phoneY = useTransform(scrollYProgress, [0, 1], [20, -20]);
   const phoneRotate = useTransform(scrollYProgress, [0, 0.5, 1], [2, 0, -2]);
+  const phoneGlow = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0.15, 0.3, 0.3, 0.15]);
 
   return (
     <section className="features" id="features" ref={containerRef}>
+      {/* Subtle background orbs for the features section */}
+      <div className="features-bg-orb features-bg-orb-1" />
+      <div className="features-bg-orb features-bg-orb-2" />
+
       <div className="features-sticky">
         <motion.div
           className="phone-frame"
           style={{ y: phoneY, rotateZ: phoneRotate }}
         >
+          {/* Glow ring behind phone */}
+          <motion.div className="phone-glow-ring" style={{ opacity: phoneGlow }} />
+
           <div className="phone-screen">
             <AnimatePresence mode="wait">
               <motion.img
@@ -62,10 +61,10 @@ export default function Features() {
                 src={STEPS[activeIndex].image}
                 alt="App screenshot"
                 className="phone-img"
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                initial={{ opacity: 0, scale: 1.06, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -8 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               />
             </AnimatePresence>
             <div className="phone-overlay" />
@@ -88,9 +87,12 @@ export default function Features() {
           <motion.div
             key={i}
             className={i === activeIndex ? 'step is-active' : 'step'}
-            variants={textReveal}
-            initial="hidden"
-            animate={i === activeIndex ? 'active' : 'inactive'}
+            animate={{
+              opacity: i === activeIndex ? 1 : 0.15,
+              x: i === activeIndex ? 0 : -16,
+              filter: i === activeIndex ? 'blur(0px)' : 'blur(2px)',
+            }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <motion.div
               className="step-number"
@@ -102,7 +104,6 @@ export default function Features() {
             <h2>{step.title}</h2>
             <p>{step.desc}</p>
 
-            {/* Progress bar for active step */}
             {i === activeIndex && (
               <motion.div
                 className="step-progress"
