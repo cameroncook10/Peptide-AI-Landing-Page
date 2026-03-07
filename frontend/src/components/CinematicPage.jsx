@@ -213,9 +213,9 @@ const ACCENTS = new Set(['AI Insights', 'Stack Optimizer', 'Custom Protocols', '
    Stats
    ═══════════════════════════════════════════════════ */
 const STATS = [
-  { end: 10, suffix: 'k+', label: 'Users on waitlist' },
-  { end: 50, suffix: '+', label: 'Peptides tracked' },
-  { end: 4.9, suffix: '', label: 'App Store rating', decimal: true, star: true },
+  { end: 1000, suffix: '+', label: 'Clinical studies referenced' },
+  { end: 50, suffix: '+', label: 'Peptides cataloged' },
+  { end: 12, suffix: '+', label: 'Biomarkers tracked' },
 ];
 
 function AnimatedNum({ end, suffix, decimal, star, trigger }) {
@@ -543,7 +543,7 @@ export default function CinematicPage() {
         <section className="cine-stats" ref={statsRef}>
           <div className="cine-section-header">
             <div className="cine-eyebrow">By The Numbers</div>
-            <h2>Trusted by the <span className="accent">community.</span></h2>
+            <h2>Grounded in <span className="accent">real research.</span></h2>
           </div>
           <div className="cine-stats-grid">
             {STATS.map((s, i) => (
