@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import './CinematicPage.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -49,11 +52,14 @@ function createScene(canvas) {
   const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 200);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const dpr = Math.min(devicePixelRatio, 2);
+  renderer.setPixelRatio(dpr);
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x020308);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.2;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   // ── Nebula sky-dome ──
   const nebulaMat = new THREE.ShaderMaterial({
@@ -85,18 +91,21 @@ function createScene(canvas) {
   const c1 = new THREE.CatmullRomCurve3(pts1);
   const c2 = new THREE.CatmullRomCurve3(pts2);
 
-  // Backbone tubes (smooth, thick)
-  const bbMat = new THREE.MeshStandardMaterial({
+  // Backbone tubes (glossy physical material with clearcoat)
+  const bbMat = new THREE.MeshPhysicalMaterial({
     color: 0x00e5a0,
     emissive: 0x00e5a0,
-    emissiveIntensity: 0.6,
-    metalness: 0.3,
-    roughness: 0.2,
+    emissiveIntensity: 0.5,
+    metalness: 0.2,
+    roughness: 0.15,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.1,
   });
-  dnaGroup.add(
-    new THREE.Mesh(new THREE.TubeGeometry(c1, SEGMENTS, 0.12, 16, false), bbMat),
-    new THREE.Mesh(new THREE.TubeGeometry(c2, SEGMENTS, 0.12, 16, false), bbMat),
-  );
+  const bb1 = new THREE.Mesh(new THREE.TubeGeometry(c1, SEGMENTS, 0.12, 16, false), bbMat);
+  const bb2 = new THREE.Mesh(new THREE.TubeGeometry(c2, SEGMENTS, 0.12, 16, false), bbMat);
+  bb1.castShadow = true; bb1.receiveShadow = true;
+  bb2.castShadow = true; bb2.receiveShadow = true;
+  dnaGroup.add(bb1, bb2);
 
   // Base-pair rungs + connection nodes
   const palette = [
@@ -125,14 +134,16 @@ function createScene(canvas) {
     );
     rung.position.copy(mid);
     rung.quaternion.setFromUnitVectors(up, dir);
+    rung.castShadow = true; rung.receiveShadow = true;
     dnaGroup.add(rung);
 
-    const nMat = new THREE.MeshStandardMaterial({
+    const nMat = new THREE.MeshPhysicalMaterial({
       color: pal.c, emissive: pal.e, emissiveIntensity: 0.9,
-      metalness: 0.1, roughness: 0.15,
+      metalness: 0.1, roughness: 0.12,
+      clearcoat: 0.6, clearcoatRoughness: 0.2,
     });
-    const n1 = new THREE.Mesh(nodeGeo, nMat); n1.position.copy(p1); dnaGroup.add(n1);
-    const n2 = new THREE.Mesh(nodeGeo, nMat); n2.position.copy(p2); dnaGroup.add(n2);
+    const n1 = new THREE.Mesh(nodeGeo, nMat); n1.position.copy(p1); n1.castShadow = true; dnaGroup.add(n1);
+    const n2 = new THREE.Mesh(nodeGeo, nMat); n2.position.copy(p2); n2.castShadow = true; dnaGroup.add(n2);
 
     // Glow halos (every 3rd rung)
     if (i % 3 === 0) {
@@ -185,6 +196,22 @@ function createScene(canvas) {
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
 
+  // Shadow-casting directional light
+  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  shadowLight.position.set(5, 10, 8);
+  shadowLight.castShadow = true;
+  shadowLight.shadow.mapSize.width = 1024;
+  shadowLight.shadow.mapSize.height = 1024;
+  shadowLight.shadow.camera.near = 0.1;
+  shadowLight.shadow.camera.far = 80;
+  shadowLight.shadow.camera.left = -10;
+  shadowLight.shadow.camera.right = 10;
+  shadowLight.shadow.camera.top = 30;
+  shadowLight.shadow.camera.bottom = -30;
+  shadowLight.shadow.bias = -0.002;
+  shadowLight.shadow.radius = 4;
+  scene.add(shadowLight);
+
   // ── Camera path (smoother, more keyframes) ──
   const mob = innerWidth < 780;
   const cameraPath = new THREE.CatmullRomCurve3([
@@ -199,7 +226,18 @@ function createScene(canvas) {
     new THREE.Vector3(0, -15, mob ? 1 : 0.5),
   ]);
 
-  return { scene, camera, renderer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat };
+  // ── Bloom post-processing ──
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(innerWidth, innerHeight),
+    0.4,   // strength — subtle but visible
+    0.6,   // radius
+    0.3,   // threshold — only bright emissives bloom
+  );
+  composer.addPass(bloomPass);
+
+  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat };
 }
 
 /* ═══════════════════════════════════════════════════
@@ -337,7 +375,7 @@ export default function CinematicPage() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const { scene, camera, renderer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat } =
+    const { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat } =
       createScene(canvas);
 
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -378,6 +416,7 @@ export default function CinematicPage() {
       camera.aspect = innerWidth / innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(innerWidth, innerHeight);
+      composer.setSize(innerWidth, innerHeight);
     }
     addEventListener('resize', onResize);
 
@@ -403,6 +442,15 @@ export default function CinematicPage() {
       fillLight.intensity = 2 + Math.sin(now * 0.3 + 1) * 0.3;
       rimLight.intensity = 1.5 + Math.sin(now * 0.7 + 2) * 0.2;
 
+      // Shadow light follows camera loosely
+      shadowLight.position.set(
+        camera.position.x + 5,
+        camera.position.y + 6,
+        camera.position.z + 4,
+      );
+      shadowLight.target.position.set(0, camera.position.y - 2, 0);
+      shadowLight.target.updateMatrixWorld();
+
       // DNA subtle rotation
       dnaGroup.rotation.y = now * 0.015;
 
@@ -412,7 +460,7 @@ export default function CinematicPage() {
       updatePanels(t);
       updateHero(t);
 
-      renderer.render(scene, camera);
+      composer.render();
     }
     animate();
 
