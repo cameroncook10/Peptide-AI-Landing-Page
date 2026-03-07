@@ -8,7 +8,7 @@ export default function Nav() {
       <div className="topbar-actions">
         <a className="pill" href="#features">Features</a>
         <a className="pill" href="#waitlist">Waitlist</a>
-        <a className="pill primary" href="https://peptideai.co" target="_blank" rel="noopener">Download</a>
+
       </div>
     </nav>
   );
