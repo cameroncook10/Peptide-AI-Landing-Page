@@ -13,6 +13,8 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+const SOURCE = 'waitlist-site';
+
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
 app.use(express.json());
@@ -70,7 +72,7 @@ app.post('/api/waitlist', async (req, res) => {
 
   const { data, error } = await supabase
     .from('waitlist')
-    .insert({ email, phone: phone || null })
+    .insert({ email, phone: phone || null, source: SOURCE })
     .select('id')
     .single();
 
@@ -114,8 +116,8 @@ app.get('/api/waitlist', async (req, res) => {
 
   const { data, error } = await supabase
     .from('waitlist')
-    .select('id, email, phone, joined_at')
-    .order('joined_at', { ascending: false });
+    .select('id, email, phone, created_at, source')
+    .order('created_at', { ascending: false });
 
   if (error) {
     console.error('Supabase fetch error:', error);
