@@ -325,11 +325,11 @@ body {
 .phone-frame {
   position: relative;
   width: 300px;
-  aspect-ratio: 9/19.5;
-  border-radius: 44px;
+  aspect-ratio: 814/1345;
+  border-radius: 36px;
   background: var(--layer-2);
   border: 1px solid rgba(255,255,255,0.07);
-  padding: 6px;
+  padding: 4px;
   box-shadow:
     0 20px 60px rgba(0,0,0,0.5),
     0 0 calc(var(--pg) * 500px) rgba(0,229,160, var(--pg)),
@@ -340,7 +340,7 @@ body {
 .phone-inner {
   width: 100%;
   height: 100%;
-  border-radius: 38px;
+  border-radius: 32px;
   overflow: hidden;
   position: relative;
   background: var(--layer-0);
@@ -348,7 +348,7 @@ body {
 .phone-screen {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
   will-change: opacity, transform;
 }
@@ -357,7 +357,7 @@ body {
 .ps-1 { opacity: 1; }
 
 .phone-shine {
-  position: absolute; inset: 0; border-radius: 44px;
+  position: absolute; inset: 0; border-radius: 36px;
   background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
   pointer-events: none; z-index: 5;
 }
