@@ -359,11 +359,11 @@ body {
 
 .hero-dna-left, .hero-dna-right {
   display: none; position: absolute; top: 50%; transform: translateY(-50%);
-  pointer-events: none; z-index: 1;
+  pointer-events: none; z-index: 1; opacity: 0.65;
   animation: fadeUp 1.2s 0.5s both, dna-pulse 5s ease-in-out infinite 1.7s;
 }
-.hero-dna-left  { left: 3%; }
-.hero-dna-right { right: 3%; }
+.hero-dna-left  { left: 0; }
+.hero-dna-right { right: 0; }
 
 /* Dot grid overlay */
 .hero::before {
@@ -387,7 +387,7 @@ body {
 .hero-corner.br { bottom: 46px; right: 22px; border-width: 0 1.5px 1.5px 0; }
 
 /* Show helices on wide screens */
-@media (min-width: 1220px) {
+@media (min-width: 1080px) {
   .hero-dna-left, .hero-dna-right { display: block; }
 }
 
