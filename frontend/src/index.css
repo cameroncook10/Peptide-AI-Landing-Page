@@ -1,3 +1,5 @@
+@import "tailwindcss/utilities";
+
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -351,6 +353,42 @@ body {
 }
 .backtop:hover { color: var(--text-muted); }
 
+
+/* ── DNA Helix (Hero decoration) ─────── */
+.hero-dna {
+  position: absolute; right: 6%; top: 50%; transform: translateY(-50%);
+  opacity: 0.75; pointer-events: none; z-index: 1;
+  animation: fadeUp 1s 0.5s both;
+}
+
+/* ── App Showcase ────────────────────── */
+.showcase-section {
+  background: var(--layer-0);
+  text-align: center;
+}
+.showcase-title { padding: 0 24px 0; }
+.showcase-eyebrow {
+  display: inline-flex; align-items: center;
+  font-family: var(--font-body); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  border: 1px solid var(--border-accent); background: var(--accent-dim);
+  padding: 6px 16px; border-radius: var(--radius-pill); margin-bottom: 20px;
+}
+.showcase-h2 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(34px, 5vw, 60px);
+  line-height: 1.08; letter-spacing: -1px; margin-bottom: 0;
+  color: var(--text-primary);
+}
+.showcase-screens {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: 16px; height: 100%; padding: 24px 16px 0;
+  background: linear-gradient(180deg, #0d1218 0%, #060810 100%);
+}
+.showcase-screens img { border-radius: 20px; object-fit: contain; }
+.showcase-screens img.center { height: 95%; }
+.showcase-screens img.side   { height: 80%; opacity: 0.75; }
+
 /* ── Reveal / animations ──────────────── */
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -364,6 +402,7 @@ body {
   .brand-name { font-size: 16px; }
   .hero { padding: 110px 20px 72px; }
   .features { grid-template-columns: 1fr; padding: 48px 20px 72px; gap: 0; }
+    .hero-dna { display: none; }
   .features-sticky { position: relative; top: auto; height: auto; margin-bottom: 32px; }
   .story-sections { padding: 0; }
   .step { min-height: auto; padding: 28px 24px; margin-bottom: 12px; }

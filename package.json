@@ -6,7 +6,11 @@
     "dev:backend": "cd backend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "install:all": "npm install --prefix frontend && npm install --prefix backend",
-    "build": "cd frontend && npm run build"
+    "build": "cd frontend && npm install && npm run build"
+  },
+  "dependencies": {
+    "@vercel/blob": "^0.23.4",
+    "nodemailer": "^6.9.9"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

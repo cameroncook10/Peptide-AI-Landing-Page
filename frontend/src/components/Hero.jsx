@@ -1,3 +1,5 @@
+import DnaHelix from './DnaHelix';
+
 export default function Hero() {
   return (
     <header className="hero" id="top">
@@ -15,12 +17,8 @@ export default function Hero() {
           that show exactly how your stack is performing.
         </p>
         <div className="cta-row">
-          <a className="cta primary" href="#waitlist">
-            Join the Waitlist
-          </a>
-          <a className="cta secondary" href="#features">
-            See the App
-          </a>
+          <a className="cta primary" href="#waitlist">Join the Waitlist</a>
+          <a className="cta secondary" href="#features">See the App</a>
         </div>
         <div className="hero-badges">
           <span className="hero-badge">
@@ -37,6 +35,11 @@ export default function Hero() {
           </span>
         </div>
       </div>
+
+      <div className="hero-dna">
+        <DnaHelix />
+      </div>
+
       <a className="scroll-cue" href="#features">
         <span>See features</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
