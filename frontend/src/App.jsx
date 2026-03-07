@@ -1,5 +1,7 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
+import FeatureTicker from './components/FeatureTicker';
+import AppShowcase from './components/AppShowcase';
 import Features from './components/Features';
 import Stats from './components/Stats';
 import Waitlist from './components/Waitlist';
@@ -10,6 +12,8 @@ export default function App() {
     <>
       <Nav />
       <Hero />
+      <FeatureTicker />
+      <AppShowcase />
       <Features />
       <Stats />
       <Waitlist />
