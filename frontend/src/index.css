@@ -319,20 +319,22 @@ body {
   align-self: start;
   z-index: 2;
 }
+/* Floor-reflection glow beneath the cards */
 .gallery-glow {
   position: absolute;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%);
+  width: 500px;
+  height: 280px;
+  bottom: -40px;
+  background: radial-gradient(ellipse at center, rgba(0,229,160,0.12) 0%, rgba(0,180,216,0.04) 50%, transparent 75%);
   pointer-events: none;
-  filter: blur(60px);
+  filter: blur(70px);
 }
 .gallery-stage {
   position: relative;
   width: 280px;
   aspect-ratio: 814 / 1345;
-  perspective: 900px;
-  transform: rotateX(3deg);
+  perspective: 550px;
+  transform: rotateX(6deg);
   transform-style: preserve-3d;
 }
 .gallery-card {
@@ -342,13 +344,15 @@ body {
   overflow: hidden;
   background: var(--layer-1);
   will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 .gallery-card::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 24px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.15);
   pointer-events: none;
 }
 .gallery-card img {
@@ -359,30 +363,38 @@ body {
   display: block;
 }
 
-/* Default stacking: 3D sunset arc — right to left sweep */
+/* Default stacking: deep 3D sunset arc */
 .gc-1 {
   z-index: 3;
   opacity: 1;
-  transform: translateX(0) translateY(0) translateZ(40px) rotateY(0deg) rotateZ(0deg) scale(1);
+  transform: translateX(0) translateY(0) translateZ(70px) rotateY(0deg) rotateZ(0deg) scale(1);
   box-shadow:
-    0 30px 80px rgba(0,0,0,0.6),
-    0 0 80px rgba(0,229,160,0.08);
+    0 8px 20px rgba(0,0,0,0.3),
+    0 30px 60px rgba(0,0,0,0.4),
+    0 60px 120px rgba(0,0,0,0.25),
+    0 0 100px rgba(0,229,160,0.1),
+    0 0 40px rgba(0,229,160,0.06);
 }
-.gc-1::after { border-color: rgba(0,229,160,0.2); }
+.gc-1::after {
+  border-color: rgba(0,229,160,0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 0 60px rgba(0,229,160,0.04);
+}
 
 .gc-2 {
   z-index: 2;
-  opacity: 0.4;
-  transform: translateX(38%) translateY(-10%) translateZ(-40px) rotateY(-22deg) rotateZ(6deg) scale(0.88);
-  filter: blur(1px) brightness(0.7);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  opacity: 0.45;
+  transform: translateX(42%) translateY(-12%) translateZ(-80px) rotateY(-38deg) rotateZ(5deg) scale(0.85);
+  filter: blur(1.5px) brightness(0.6);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 .gc-3 {
   z-index: 1;
   opacity: 0.25;
-  transform: translateX(60%) translateY(-18%) translateZ(-100px) rotateY(-35deg) rotateZ(10deg) scale(0.8);
-  filter: blur(2px) brightness(0.5);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transform: translateX(68%) translateY(-22%) translateZ(-170px) rotateY(-55deg) rotateZ(8deg) scale(0.75);
+  filter: blur(3px) brightness(0.4);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
 }
 
 /* Dot indicators */
@@ -975,60 +987,60 @@ body {
   to   { transform: scaleX(1); opacity: 0.6; }
 }
 
-/* 3D sunset arc transitions — sweep right → center → left with depth */
+/* Deep 3D sunset arc — sweep right → center → left */
 @keyframes gc1-anim {
   0%, 75% {
     z-index: 3;
     opacity: 1;
-    transform: translateX(0) translateY(0) translateZ(40px) rotateY(0deg) rotateZ(0deg) scale(1);
+    transform: translateX(0) translateY(0) translateZ(70px) rotateY(0deg) rotateZ(0deg) scale(1);
     filter: blur(0px) brightness(1);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 80px rgba(0,229,160,0.08);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 30px 60px rgba(0,0,0,0.4), 0 60px 120px rgba(0,0,0,0.25), 0 0 100px rgba(0,229,160,0.1);
   }
   100% {
     z-index: 1;
     opacity: 0.35;
-    transform: translateX(-38%) translateY(10%) translateZ(-40px) rotateY(22deg) rotateZ(-6deg) scale(0.88);
-    filter: blur(1.5px) brightness(0.6);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transform: translateX(-42%) translateY(12%) translateZ(-80px) rotateY(38deg) rotateZ(-5deg) scale(0.85);
+    filter: blur(2px) brightness(0.55);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
   }
 }
 @keyframes gc2-anim {
   0%, 5% {
     z-index: 2;
-    opacity: 0.4;
-    transform: translateX(38%) translateY(-10%) translateZ(-40px) rotateY(-22deg) rotateZ(6deg) scale(0.88);
-    filter: blur(1px) brightness(0.7);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    opacity: 0.45;
+    transform: translateX(42%) translateY(-12%) translateZ(-80px) rotateY(-38deg) rotateZ(5deg) scale(0.85);
+    filter: blur(1.5px) brightness(0.6);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   }
   20%, 75% {
     z-index: 3;
     opacity: 1;
-    transform: translateX(0) translateY(0) translateZ(40px) rotateY(0deg) rotateZ(0deg) scale(1);
+    transform: translateX(0) translateY(0) translateZ(70px) rotateY(0deg) rotateZ(0deg) scale(1);
     filter: blur(0px) brightness(1);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 80px rgba(0,229,160,0.08);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 30px 60px rgba(0,0,0,0.4), 0 60px 120px rgba(0,0,0,0.25), 0 0 100px rgba(0,229,160,0.1);
   }
   100% {
     z-index: 1;
     opacity: 0.35;
-    transform: translateX(-38%) translateY(10%) translateZ(-40px) rotateY(22deg) rotateZ(-6deg) scale(0.88);
-    filter: blur(1.5px) brightness(0.6);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transform: translateX(-42%) translateY(12%) translateZ(-80px) rotateY(38deg) rotateZ(-5deg) scale(0.85);
+    filter: blur(2px) brightness(0.55);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
   }
 }
 @keyframes gc3-anim {
   0%, 5% {
     z-index: 1;
     opacity: 0.25;
-    transform: translateX(38%) translateY(-10%) translateZ(-40px) rotateY(-22deg) rotateZ(6deg) scale(0.88);
-    filter: blur(1.5px) brightness(0.6);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transform: translateX(42%) translateY(-12%) translateZ(-80px) rotateY(-38deg) rotateZ(5deg) scale(0.85);
+    filter: blur(2px) brightness(0.55);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
   }
   20%, 100% {
     z-index: 3;
     opacity: 1;
-    transform: translateX(0) translateY(0) translateZ(40px) rotateY(0deg) rotateZ(0deg) scale(1);
+    transform: translateX(0) translateY(0) translateZ(70px) rotateY(0deg) rotateZ(0deg) scale(1);
     filter: blur(0px) brightness(1);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 80px rgba(0,229,160,0.08);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3), 0 30px 60px rgba(0,0,0,0.4), 0 60px 120px rgba(0,0,0,0.25), 0 0 100px rgba(0,229,160,0.1);
   }
 }
 
@@ -1078,24 +1090,39 @@ body {
   .zone-features {
     display: block;
     padding: 0 16px;
+    overflow: hidden;
   }
   .feat-gallery {
     position: sticky;
     top: 56px;
     height: auto;
     z-index: 3;
-    padding: 20px 0 40px;
+    padding: 24px 0 44px;
     background: linear-gradient(to bottom,
       var(--layer-0) 0%,
       rgba(6,8,16,0.97) 65%,
       rgba(6,8,16,0) 100%
     );
+    overflow: visible;
   }
   .gallery-stage {
-    width: 200px;
+    width: 220px;
     margin: 0 auto;
+    perspective: 700px;
+    transform: rotateX(4deg);
   }
-  .gallery-glow { display: none; }
+  .gallery-glow {
+    width: 300px;
+    height: 160px;
+    bottom: -20px;
+    filter: blur(50px);
+  }
+  .gc-2 {
+    transform: translateX(35%) translateY(-10%) translateZ(-60px) rotateY(-30deg) rotateZ(4deg) scale(0.85);
+  }
+  .gc-3 {
+    transform: translateX(55%) translateY(-18%) translateZ(-120px) rotateY(-45deg) rotateZ(7deg) scale(0.75);
+  }
   .feat-copy { padding: 0; }
   .feat-item {
     min-height: 80vh;
@@ -1123,7 +1150,7 @@ body {
     width: 100%;
   }
   .hero-actions .btn { width: 100%; justify-content: center; }
-  .gallery-stage { width: 180px; }
+  .gallery-stage { width: 190px; }
   .btn { height: 48px; padding: 0 22px; font-size: 14px; }
 
   .proof-card { padding: 36px 20px 32px; }
