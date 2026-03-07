@@ -46,91 +46,99 @@ float noise(vec2 p){
   return mix(mix(h2(i),h2(i+vec2(1,0)),f.x),
              mix(h2(i+vec2(0,1)),h2(i+1.),f.x),f.y);
 }
-float fbm(vec2 p){
-  float v=0.,a=.5;
-  for(int i=0;i<4;i++){v+=a*noise(p);p=p*2.+vec2(3.7,1.9);a*=.5;}
-  return v;
-}
 
 // Brand palette
-#define ACCENT   vec3(0.,0.898,0.627)    // #00E5A0
-#define ACCENT2  vec3(0.,0.702,0.784)    // #00B3C8 muted teal
-#define BG_TINT  vec3(0.003,0.004,0.014) // near-black base
+#define ACCENT   vec3(0.,0.898,0.627)     // #00E5A0
+#define ACCENT2  vec3(0.,0.702,0.784)     // #00B3C8
 
 void main(){
   vec2 uv=(FC-.5*R)/MN;
 
-  // Rotate UV ~30deg for diagonal DNA
+  // Pitch-black base
+  vec3 col=vec3(0.001,0.001,0.005);
+
+  // ── PRIMARY DNA HELIX (diagonal, foreground) ──────────
   float ra=PI/5.5;
   float cs=cos(ra),sn=sin(ra);
-  vec2 dnaUv=mat2(cs,-sn,sn,cs)*uv;
-  dnaUv.y+=scroll*1.5;
+  vec2 d1=mat2(cs,-sn,sn,cs)*uv;
+  // Gentle lateral sway for life
+  d1.x+=sin(T*0.05+d1.y*0.4)*0.025;
+  d1.y+=scroll*1.5;
 
-  // Near-black base
-  vec3 col=BG_TINT;
-
-  // Very faint atmospheric tint
-  float nb=fbm(uv*1.2+T*.015);
-  col+=vec3(0.,0.010,0.018)*nb*nb*0.6;
-
-  // Sparse dim stars
-  vec2 gridId=floor(uv*32.);
-  vec2 gridUv=fract(uv*32.)-.5;
-  float rnd=h2(gridId);
-  if(rnd>.90){
-    float twinkle=.5+.5*sin(T*1.2+rnd*12.);
-    float brightness=.00006*twinkle*smoothstep(.04,.0,length(gridUv));
-    col+=mix(ACCENT,ACCENT2,h2(gridId+1.))*brightness;
-  }
-
-  // DNA Double Helix -- tight scientific geometry
-  float freq=7.5;
-  float amp=0.15;
-  float scrollAnim=T*0.09+scroll*1.5;
-  float phase=dnaUv.y*freq+scrollAnim;
-  float xs1=amp*sin(phase);
+  float freq=7.5, amp=0.15;
+  float anim=T*0.16+scroll*1.5;
+  float ph=d1.y*freq+anim;
+  float xs1=amp*sin(ph);
   float xs2=-xs1;
-  float slope=amp*freq*cos(phase);
+  float slope=amp*freq*cos(ph);
   float invLen=inversesqrt(1.+slope*slope);
-  float dp1=abs(dnaUv.x-xs1)*invLen;
-  float dp2=abs(dnaUv.x-xs2)*invLen;
 
-  // Strands -- dim glowing lines
-  col+=ACCENT*0.00065/(dp1+0.011);
-  col+=ACCENT2*0.00065/(dp2+0.011);
+  // Strands
+  col+=ACCENT *0.00075/(abs(d1.x-xs1)*invLen+0.011);
+  col+=ACCENT2*0.00075/(abs(d1.x-xs2)*invLen+0.011);
 
-  // Base-pair nodes -- uniformly spaced like real DNA
-  float nodeSpacing=PI/3.5;
-  float nodeIdx=round(phase/nodeSpacing);
-  float nodeDist=abs(phase-nodeIdx*nodeSpacing);
-  float nodeMask=smoothstep(.32,.0,nodeDist);
-  float dn1=length(dnaUv-vec2(xs1,dnaUv.y));
-  float dn2=length(dnaUv-vec2(xs2,dnaUv.y));
-  col+=ACCENT*nodeMask*.0014/(dn1*dn1+.0018);
-  col+=ACCENT2*nodeMask*.0014/(dn2*dn2+.0018);
+  // Base-pair nodes
+  float ns=PI/3.5;
+  float nm=smoothstep(.30,.0,abs(ph-round(ph/ns)*ns));
+  col+=ACCENT *nm*.0016/(dot(d1-vec2(xs1,d1.y),d1-vec2(xs1,d1.y))+.0018);
+  col+=ACCENT2*nm*.0016/(dot(d1-vec2(xs2,d1.y),d1-vec2(xs2,d1.y))+.0018);
 
-  // Cross-bridges -- evenly spaced parallel base pairs
-  float bGlow=0.;
-  for(float n=-5.;n<=5.;n++){
-    float bY=(n*PI-scrollAnim)/freq;
-    if(abs(bY-dnaUv.y)<.30){
-      float bAngle=n*PI;
-      float bx1=amp*sin(bAngle);
-      float bx2=-bx1;
-      float cx=clamp(dnaUv.x,min(bx1,bx2),max(bx1,bx2));
-      float bd=length(dnaUv-vec2(cx,bY));
-      bGlow+=.2/(bd*bd*1400.+1.);
+  // Cross-bridges
+  float bg=0.;
+  for(float n=-6.;n<=6.;n++){
+    float bY=(n*PI-anim)/freq;
+    if(abs(bY-d1.y)<.28){
+      float bx1=amp*sin(n*PI), bx2=-bx1;
+      float cx=clamp(d1.x,min(bx1,bx2),max(bx1,bx2));
+      float bd=length(d1-vec2(cx,bY));
+      bg+=.18/(bd*bd*1600.+1.);
     }
   }
-  col+=ACCENT2*bGlow*.00045;
+  col+=ACCENT2*bg*.0005;
+
+  // ── SECONDARY DNA HELIX (different angle, slower, bg depth) ──
+  float rb=PI/4.0;
+  float cs2=cos(rb),sn2=sin(rb);
+  vec2 d2=mat2(cs2,-sn2,sn2,cs2)*uv;
+  d2.x+=0.4; // shift right so they dont overlap
+  d2.x+=sin(T*0.03+d2.y*0.3)*0.02;
+  d2.y+=scroll*1.2;
+
+  float freq2=6.5, amp2=0.12;
+  float anim2=T*0.10+scroll*1.2;
+  float ph2=d2.y*freq2+anim2;
+  float xs3=amp2*sin(ph2);
+  float xs4=-xs3;
+  float slope2=amp2*freq2*cos(ph2);
+  float invLen2=inversesqrt(1.+slope2*slope2);
+
+  col+=ACCENT2*0.00035/(abs(d2.x-xs3)*invLen2+0.013);
+  col+=ACCENT *0.00035/(abs(d2.x-xs4)*invLen2+0.013);
+
+  float nm2=smoothstep(.28,.0,abs(ph2-round(ph2/ns)*ns));
+  col+=ACCENT2*nm2*.0008/(dot(d2-vec2(xs3,d2.y),d2-vec2(xs3,d2.y))+.0022);
+
+  // ── DRIFTING STARS ────────────────────────────────────
+  // Two layers at different speeds for parallax
+  for(float layer=0.;layer<2.;layer++){
+    float spd=0.012+layer*0.008;
+    vec2 sv=uv+vec2(T*spd, scroll*0.2+layer*0.1);
+    vec2 gid=floor(sv*28.+layer*13.7);
+    vec2 guv=fract(sv*28.+layer*13.7)-.5;
+    float r=h2(gid);
+    if(r>.89){
+      float tw=.5+.5*sin(T*(1.1+layer*.4)+r*14.);
+      col+=mix(ACCENT,ACCENT2,h2(gid+3.))*(.00005*tw*smoothstep(.04,.0,length(guv)));
+    }
+  }
 
   // Vignette
-  col*=1.-smoothstep(0.85,1.9,length(uv));
+  col*=1.-smoothstep(0.8,1.85,length(uv));
 
-  // Stealth tone-map -- very dark, content dominates
-  col*=0.20;
-  col=col/(1.+col*.35);
-  col=pow(max(col,0.),vec3(.38));
+  // Near-black tone map
+  col*=0.14;
+  col=col/(1.+col*.3);
+  col=pow(max(col,0.),vec3(.36));
 
   O=vec4(col,1.);
 }`;
