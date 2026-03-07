@@ -330,8 +330,7 @@ body {
 .gallery-stage {
   position: relative;
   width: 280px;
-  aspect-ratio: 9 / 19.5;
-  perspective: 1200px;
+  aspect-ratio: 814 / 1345;
 }
 .gallery-card {
   position: absolute;
@@ -352,16 +351,16 @@ body {
 .gallery-card img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
   display: block;
 }
 
-/* Default stacking: card 1 front, 2 & 3 behind-right */
+/* Default stacking: sunset arc — right to left sweep */
 .gc-1 {
   z-index: 3;
   opacity: 1;
-  transform: rotateY(0deg) translateZ(0px);
+  transform: translateX(0) translateY(0) rotateZ(0deg) scale(1);
   box-shadow:
     0 25px 80px rgba(0,0,0,0.6),
     0 0 60px rgba(0,229,160,0.06);
@@ -370,15 +369,15 @@ body {
 
 .gc-2 {
   z-index: 2;
-  opacity: 0.4;
-  transform: translateX(20%) rotateY(-12deg) translateZ(-60px);
+  opacity: 0.35;
+  transform: translateX(38%) translateY(-10%) rotateZ(8deg) scale(0.88);
   filter: blur(1.5px) brightness(0.7);
   box-shadow: 0 15px 40px rgba(0,0,0,0.4);
 }
 .gc-3 {
   z-index: 1;
-  opacity: 0.25;
-  transform: translateX(35%) rotateY(-18deg) translateZ(-120px);
+  opacity: 0.2;
+  transform: translateX(60%) translateY(-18%) rotateZ(14deg) scale(0.78);
   filter: blur(2.5px) brightness(0.5);
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
@@ -973,19 +972,19 @@ body {
   to   { transform: scaleX(1); opacity: 0.6; }
 }
 
-/* 3D Gallery card transitions */
+/* Sunset arc card transitions — sweep right → center → left */
 @keyframes gc1-anim {
   0%, 75% {
     z-index: 3;
     opacity: 1;
-    transform: rotateY(0deg) translateZ(0px);
+    transform: translateX(0) translateY(0) rotateZ(0deg) scale(1);
     filter: blur(0px) brightness(1);
     box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,160,0.06);
   }
   100% {
     z-index: 1;
     opacity: 0.35;
-    transform: translateX(-20%) rotateY(12deg) translateZ(-80px);
+    transform: translateX(-38%) translateY(10%) rotateZ(-8deg) scale(0.88);
     filter: blur(2px) brightness(0.6);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   }
@@ -993,22 +992,22 @@ body {
 @keyframes gc2-anim {
   0%, 5% {
     z-index: 2;
-    opacity: 0.4;
-    transform: translateX(20%) rotateY(-12deg) translateZ(-60px);
+    opacity: 0.35;
+    transform: translateX(38%) translateY(-10%) rotateZ(8deg) scale(0.88);
     filter: blur(1.5px) brightness(0.7);
     box-shadow: 0 15px 40px rgba(0,0,0,0.4);
   }
   20%, 75% {
     z-index: 3;
     opacity: 1;
-    transform: rotateY(0deg) translateZ(0px);
+    transform: translateX(0) translateY(0) rotateZ(0deg) scale(1);
     filter: blur(0px) brightness(1);
     box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,160,0.06);
   }
   100% {
     z-index: 1;
     opacity: 0.35;
-    transform: translateX(-20%) rotateY(12deg) translateZ(-80px);
+    transform: translateX(-38%) translateY(10%) rotateZ(-8deg) scale(0.88);
     filter: blur(2px) brightness(0.6);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   }
@@ -1016,15 +1015,15 @@ body {
 @keyframes gc3-anim {
   0%, 5% {
     z-index: 1;
-    opacity: 0.25;
-    transform: translateX(20%) rotateY(-12deg) translateZ(-60px);
+    opacity: 0.2;
+    transform: translateX(38%) translateY(-10%) rotateZ(8deg) scale(0.88);
     filter: blur(2px) brightness(0.6);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   }
   20%, 100% {
     z-index: 3;
     opacity: 1;
-    transform: rotateY(0deg) translateZ(0px);
+    transform: translateX(0) translateY(0) rotateZ(0deg) scale(1);
     filter: blur(0px) brightness(1);
     box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,160,0.06);
   }
