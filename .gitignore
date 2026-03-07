@@ -1,0 +1,14 @@
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+frontend/dist/
+backend/.env
+.env
+.DS_Store
+Thumbs.db
+*.log
+_gen/
+_gen2/
+_gen3/
+.claude/
+frontend/src/index_test.txt

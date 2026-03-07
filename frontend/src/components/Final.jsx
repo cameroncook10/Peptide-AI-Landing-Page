@@ -1,0 +1,60 @@
+import { useEffect, useRef } from 'react';
+
+export default function Final() {
+  const innerRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          innerRef.current.classList.add('visible');
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (innerRef.current) observer.observe(innerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section className="final">
+      <div className="final-glow" />
+      <div className="final-inner reveal" ref={innerRef}>
+        <div className="eyebrow">Launching Soon</div>
+        <h2>
+          The smarter way<br />
+          to run your <span className="accent">protocol.</span>
+        </h2>
+        <p>
+          Peptide AI combines protocol management, biometric tracking, and AI insights
+          in one clean app. Join the waitlist to be first in.
+        </p>
+        <div className="cta-row">
+          <a className="cta primary" href="#waitlist">Join the Waitlist</a>
+          <a className="cta secondary" href="https://peptideai.co" target="_blank" rel="noopener">Learn More</a>
+        </div>
+        <div className="social-links">
+          <a href="https://www.tiktok.com/@peptideai.co" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.87a8.18 8.18 0 0 0 4.78 1.52V6.93a4.85 4.85 0 0 1-1.01-.24z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/peptideai.co" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+            </svg>
+          </a>
+          <a href="https://twitter.com/PeptideAI" target="_blank" rel="noopener" aria-label="Twitter / X">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.741l7.734-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+            </svg>
+          </a>
+        </div>
+        <a className="backtop" href="#top">↑ Back to top</a>
+      </div>
+    </section>
+  );
+}
