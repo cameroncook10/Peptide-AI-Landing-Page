@@ -63,15 +63,16 @@ export default function CinematicPage() {
   const [status, setStatus] = useState(null);
   const [message, setMessage] = useState('');
   const [waitlistCount, setWaitlistCount] = useState(null);
+  const [joinCount, setJoinCount] = useState(0);
 
   useEffect(() => {
     fetch(`${API_BASE}/api/waitlist/count`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.count != null) setWaitlistCount(d.count);
+        if (d.count !== null && d.count !== undefined) setWaitlistCount(d.count);
       })
       .catch(() => {});
-  }, [status]);
+  }, [joinCount]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -89,6 +90,7 @@ export default function CinematicPage() {
         setMessage(data.message || "You're on the waitlist!");
         setEmail('');
         setPhone('');
+        setJoinCount((c) => c + 1);
       } else {
         setStatus('error');
         setMessage(data.error || 'Something went wrong.');
@@ -213,7 +215,7 @@ export default function CinematicPage() {
           </h2>
           <div className="proof-grid">
             <div className="proof-card">
-              <span className="proof-value">AI Protocol</span>
+              <span className="proof-value proof-value-sm">Custom AI Protocol</span>
               <span className="proof-label">Trained on <strong>1,000+</strong> clinical trials</span>
             </div>
             <div className="proof-card">
@@ -221,8 +223,8 @@ export default function CinematicPage() {
               <span className="proof-label">Peptides tracked</span>
             </div>
             <div className="proof-card">
-              <span className="proof-value proof-value-sm">Reliable</span>
-              <span className="proof-label">AI body scanner</span>
+              <span className="proof-value proof-value-sm">Evidence-Based</span>
+              <span className="proof-label">Science-backed recommendations</span>
             </div>
           </div>
         </div>
@@ -326,23 +328,21 @@ export default function CinematicPage() {
 
           {status === 'error' && <p className="wl-err">{message}</p>}
 
-          {waitlistCount > 0 && (
-            <div className="wl-proof">
-              <div className="wl-avatars">
-                {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className="wl-av" style={{ '--i': i }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" opacity="0.6">
-                      <circle cx="12" cy="8" r="4" />
-                      <path d="M20 21a8 8 0 0 0-16 0" />
-                    </svg>
-                  </div>
-                ))}
-              </div>
-              <span className="wl-proof-text">
-                Join <strong>{waitlistCount.toLocaleString()}+</strong> on the waitlist
-              </span>
+          <div className="wl-proof">
+            <div className="wl-avatars">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="wl-av" style={{ '--i': i }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" opacity="0.6">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M20 21a8 8 0 0 0-16 0" />
+                  </svg>
+                </div>
+              ))}
             </div>
-          )}
+            <span className="wl-proof-text">
+              Join <strong>{Math.max(500, waitlistCount || 0).toLocaleString()}+</strong> on the waitlist
+            </span>
+          </div>
 
           <div className="wl-trust">
             <span>

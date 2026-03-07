@@ -49,7 +49,7 @@ export default function Final() {
         </motion.p>
         <motion.div className="cta-row" variants={fadeUp}>
           <a className="cta primary" href="#waitlist">Join the Waitlist</a>
-          <a className="cta secondary" href="https://peptideai.co" target="_blank" rel="noopener">Learn More</a>
+          {/* removed external learn-more link to keep focus on waitlist */}
         </motion.div>
         <motion.div className="social-links" variants={fadeUp}>
           <a href="https://www.tiktok.com/@peptideai.co" target="_blank" rel="noopener" aria-label="TikTok">
