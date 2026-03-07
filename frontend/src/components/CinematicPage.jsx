@@ -38,9 +38,9 @@ void main(){
   float n1=fbm(vUv*3.0+vec2(t,t*0.7));
   float n2=fbm(vUv*2.5-vec2(t*0.5,t*0.3));
   float n3=fbm(vUv*4.0+vec2(-t*0.3,t*0.5));
-  vec3 c=mix(vec3(0.02,0.03,0.07),vec3(0.0,0.05,0.04),n1*0.6);
-  c=mix(c,vec3(0.04,0.015,0.06),n2*0.3);
-  c+=vec3(0.0,n3*0.012,n3*0.008);
+  vec3 c=mix(vec3(0.01,0.015,0.04),vec3(0.0,0.03,0.025),n1*0.5);
+  c=mix(c,vec3(0.025,0.01,0.035),n2*0.25);
+  c+=vec3(0.0,n3*0.008,n3*0.005);
   gl_FragColor=vec4(c,1.0);
 }`;
 
@@ -57,7 +57,7 @@ function createScene(canvas) {
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x020308);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
+  renderer.toneMappingExposure = 1.0;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -93,11 +93,11 @@ function createScene(canvas) {
 
   // Backbone tubes (glossy physical material with clearcoat)
   const bbMat = new THREE.MeshPhysicalMaterial({
-    color: 0x00e5a0,
-    emissive: 0x00e5a0,
-    emissiveIntensity: 0.5,
-    metalness: 0.2,
-    roughness: 0.15,
+    color: 0x00b37a,
+    emissive: 0x00b37a,
+    emissiveIntensity: 0.3,
+    metalness: 0.25,
+    roughness: 0.18,
     clearcoat: 1.0,
     clearcoatRoughness: 0.1,
   });
@@ -109,8 +109,8 @@ function createScene(canvas) {
 
   // Base-pair rungs + connection nodes
   const palette = [
-    { c: 0x00e5a0, e: 0x00e5a0 },
-    { c: 0x00B4D8, e: 0x00B4D8 },
+    { c: 0x00b37a, e: 0x00b37a },
+    { c: 0x0090b0, e: 0x0090b0 },
   ];
   const RUNG_COUNT = 100;
   const nodeGeo = new THREE.SphereGeometry(0.15, 16, 16);
@@ -138,8 +138,8 @@ function createScene(canvas) {
     dnaGroup.add(rung);
 
     const nMat = new THREE.MeshPhysicalMaterial({
-      color: pal.c, emissive: pal.e, emissiveIntensity: 0.9,
-      metalness: 0.1, roughness: 0.12,
+      color: pal.c, emissive: pal.e, emissiveIntensity: 0.5,
+      metalness: 0.15, roughness: 0.15,
       clearcoat: 0.6, clearcoatRoughness: 0.2,
     });
     const n1 = new THREE.Mesh(nodeGeo, nMat); n1.position.copy(p1); n1.castShadow = true; dnaGroup.add(n1);
@@ -166,7 +166,7 @@ function createScene(canvas) {
   const pGeo = new THREE.BufferGeometry();
   pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
   dnaGroup.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-    color: 0x00e5a0, size: 0.04, transparent: true, opacity: 0.35,
+    color: 0x00b37a, size: 0.04, transparent: true, opacity: 0.2,
     blending: THREE.AdditiveBlending,
   })));
 
@@ -188,11 +188,11 @@ function createScene(canvas) {
   })));
 
   // ── Lights ──
-  scene.add(new THREE.AmbientLight(0x0a0e18, 2));
-  const keyLight = new THREE.PointLight(0x00e5a0, 4, 40);
-  const fillLight = new THREE.PointLight(0x00B4D8, 2, 30);
+  scene.add(new THREE.AmbientLight(0x060a10, 1.5));
+  const keyLight = new THREE.PointLight(0x00b37a, 3, 35);
+  const fillLight = new THREE.PointLight(0x0090b0, 1.5, 25);
   fillLight.position.set(-5, 0, -5);
-  const rimLight = new THREE.PointLight(0x00e5a0, 1.5, 25);
+  const rimLight = new THREE.PointLight(0x00b37a, 1, 20);
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
 
@@ -231,9 +231,9 @@ function createScene(canvas) {
   composer.addPass(new RenderPass(scene, camera));
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(innerWidth, innerHeight),
-    0.4,   // strength — subtle but visible
-    0.6,   // radius
-    0.3,   // threshold — only bright emissives bloom
+    0.3,   // strength — subtle
+    0.5,   // radius
+    0.4,   // threshold — only brightest emissives bloom
   );
   composer.addPass(bloomPass);
 
@@ -438,9 +438,9 @@ export default function CinematicPage() {
 
       // Lights breathe
       keyLight.position.copy(camera.position).multiplyScalar(0.8);
-      keyLight.intensity = 4 + Math.sin(now * 0.5) * 0.4;
-      fillLight.intensity = 2 + Math.sin(now * 0.3 + 1) * 0.3;
-      rimLight.intensity = 1.5 + Math.sin(now * 0.7 + 2) * 0.2;
+      keyLight.intensity = 3 + Math.sin(now * 0.5) * 0.3;
+      fillLight.intensity = 1.5 + Math.sin(now * 0.3 + 1) * 0.2;
+      rimLight.intensity = 1 + Math.sin(now * 0.7 + 2) * 0.15;
 
       // Shadow light follows camera loosely
       shadowLight.position.set(
