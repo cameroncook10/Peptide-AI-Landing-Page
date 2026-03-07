@@ -48,11 +48,6 @@
   inherits: false;
   initial-value: 0deg;
 }
-@property --pg {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 0.08;
-}
 
 /* ═══════════════════════════════════════════════════
    RESET + BASE
@@ -312,54 +307,100 @@ body {
   margin: 0 auto;
   padding: 0 32px;
 }
-.feat-phone {
+/* ─── 3D Gallery (replaces phone mockup) ─── */
+.feat-gallery {
   position: sticky;
   top: 0;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   align-self: start;
   z-index: 2;
 }
-.phone-frame {
-  position: relative;
-  width: 300px;
-  aspect-ratio: 814/1345;
-  border-radius: 36px;
-  background: var(--layer-2);
-  border: 1px solid rgba(255,255,255,0.07);
-  padding: 4px;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,0.5),
-    0 0 calc(var(--pg) * 500px) rgba(0,229,160, var(--pg)),
-    inset 0 1px 0 rgba(255,255,255,0.06);
-  overflow: hidden;
-  will-change: box-shadow;
+.gallery-glow {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(60px);
 }
-.phone-inner {
+.gallery-stage {
+  position: relative;
+  width: 280px;
+  aspect-ratio: 9 / 19.5;
+  perspective: 1200px;
+}
+.gallery-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--layer-1);
+  will-change: transform, opacity;
+}
+.gallery-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  pointer-events: none;
+}
+.gallery-card img {
   width: 100%;
   height: 100%;
-  border-radius: 32px;
-  overflow: hidden;
-  position: relative;
-  background: var(--layer-0);
-}
-.phone-screen {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: top center;
-  will-change: opacity, transform;
+  display: block;
 }
-/* Base: only first screen visible */
-.phone-screen { opacity: 0; }
-.ps-1 { opacity: 1; }
 
-.phone-shine {
-  position: absolute; inset: 0; border-radius: 36px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%);
-  pointer-events: none; z-index: 5;
+/* Default stacking: card 1 front, 2 & 3 behind-right */
+.gc-1 {
+  z-index: 3;
+  opacity: 1;
+  transform: rotateY(0deg) translateZ(0px);
+  box-shadow:
+    0 25px 80px rgba(0,0,0,0.6),
+    0 0 60px rgba(0,229,160,0.06);
+}
+.gc-1::after { border-color: rgba(0,229,160,0.2); }
+
+.gc-2 {
+  z-index: 2;
+  opacity: 0.4;
+  transform: translateX(20%) rotateY(-12deg) translateZ(-60px);
+  filter: blur(1.5px) brightness(0.7);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+.gc-3 {
+  z-index: 1;
+  opacity: 0.25;
+  transform: translateX(35%) rotateY(-18deg) translateZ(-120px);
+  filter: blur(2.5px) brightness(0.5);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Dot indicators */
+.gallery-dots {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
+  position: relative;
+  z-index: 5;
+}
+.gallery-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-disabled);
+  transition: all 0.3s;
+}
+.gd-1 {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(0,229,160,0.5);
 }
 
 /* Feature copy column */
@@ -732,11 +773,6 @@ body {
     animation-timeline: scroll(root block);
   }
 
-  /* ── Phone glow pulse ── */
-  .phone-frame {
-    animation: phone-glow linear;
-    animation-timeline: scroll(root block);
-  }
 
   /* ── Hero dissolve ── */
   .hero-glow {
@@ -762,19 +798,36 @@ body {
     animation-range: entry 5% entry 30%;
   }
 
-  /* ── Phone screen swap ── */
-  .ps-1 {
-    animation: screen-first linear both;
+  /* ── 3D Gallery card shuffle ── */
+  .gc-1 {
+    animation: gc1-anim linear both;
     animation-timeline: --feat-1;
     animation-range: cover 0% cover 100%;
   }
-  .ps-2 {
-    animation: screen-mid linear both;
+  .gc-2 {
+    animation: gc2-anim linear both;
     animation-timeline: --feat-2;
     animation-range: cover 0% cover 100%;
   }
-  .ps-3 {
-    animation: screen-last linear both;
+  .gc-3 {
+    animation: gc3-anim linear both;
+    animation-timeline: --feat-3;
+    animation-range: cover 0% cover 100%;
+  }
+
+  /* ── Dot indicators ── */
+  .gd-1 {
+    animation: dot-off linear both;
+    animation-timeline: --feat-1;
+    animation-range: cover 0% cover 100%;
+  }
+  .gd-2 {
+    animation: dot-on linear both;
+    animation-timeline: --feat-2;
+    animation-range: cover 0% cover 100%;
+  }
+  .gd-3 {
+    animation: dot-on linear both;
     animation-timeline: --feat-3;
     animation-range: cover 0% cover 100%;
   }
@@ -883,12 +936,6 @@ body {
   to   { transform: translate3d(100px, 80px, 0); }
 }
 
-/* Phone glow pulse */
-@keyframes phone-glow {
-  0%, 100% { --pg: 0.06; }
-  35%      { --pg: 0.15; }
-  65%      { --pg: 0.2; }
-}
 
 /* Hero dissolve — opacity + blur + scale */
 @keyframes hero-dissolve {
@@ -926,19 +973,83 @@ body {
   to   { transform: scaleX(1); opacity: 0.6; }
 }
 
-/* Phone screen transitions */
-@keyframes screen-first {
-  0%, 80%  { opacity: 1; transform: scale(1); }
-  95%, 100% { opacity: 0; transform: scale(0.97); }
+/* 3D Gallery card transitions */
+@keyframes gc1-anim {
+  0%, 75% {
+    z-index: 3;
+    opacity: 1;
+    transform: rotateY(0deg) translateZ(0px);
+    filter: blur(0px) brightness(1);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,160,0.06);
+  }
+  100% {
+    z-index: 1;
+    opacity: 0.35;
+    transform: translateX(-20%) rotateY(12deg) translateZ(-80px);
+    filter: blur(2px) brightness(0.6);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
 }
-@keyframes screen-mid {
-  0%, 5%   { opacity: 0; transform: scale(1.03); }
-  20%, 80% { opacity: 1; transform: scale(1); }
-  95%, 100% { opacity: 0; transform: scale(0.97); }
+@keyframes gc2-anim {
+  0%, 5% {
+    z-index: 2;
+    opacity: 0.4;
+    transform: translateX(20%) rotateY(-12deg) translateZ(-60px);
+    filter: blur(1.5px) brightness(0.7);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  }
+  20%, 75% {
+    z-index: 3;
+    opacity: 1;
+    transform: rotateY(0deg) translateZ(0px);
+    filter: blur(0px) brightness(1);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,160,0.06);
+  }
+  100% {
+    z-index: 1;
+    opacity: 0.35;
+    transform: translateX(-20%) rotateY(12deg) translateZ(-80px);
+    filter: blur(2px) brightness(0.6);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
 }
-@keyframes screen-last {
-  0%, 5%  { opacity: 0; transform: scale(1.03); }
-  20%, 100% { opacity: 1; transform: scale(1); }
+@keyframes gc3-anim {
+  0%, 5% {
+    z-index: 1;
+    opacity: 0.25;
+    transform: translateX(20%) rotateY(-12deg) translateZ(-60px);
+    filter: blur(2px) brightness(0.6);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  20%, 100% {
+    z-index: 3;
+    opacity: 1;
+    transform: rotateY(0deg) translateZ(0px);
+    filter: blur(0px) brightness(1);
+    box-shadow: 0 25px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0,229,160,0.06);
+  }
+}
+
+/* Gallery dot animations */
+@keyframes dot-off {
+  0%, 70% {
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(0,229,160,0.5);
+  }
+  100% {
+    background: var(--text-disabled);
+    box-shadow: none;
+  }
+}
+@keyframes dot-on {
+  0%, 5% {
+    background: var(--text-disabled);
+    box-shadow: none;
+  }
+  25%, 100% {
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(0,229,160,0.5);
+  }
 }
 
 
@@ -961,14 +1072,14 @@ body {
   .hero-tags { gap: 8px; }
   .tag-pill { font-size: 11px; padding: 5px 12px; }
 
-  /* Features: single column, phone sticky on top */
+  /* Features: single column, gallery sticky on top */
   .zone-features {
     display: block;
     padding: 0 16px;
   }
-  .feat-phone {
+  .feat-gallery {
     position: sticky;
-    top: 56px; /* nav height */
+    top: 56px;
     height: auto;
     z-index: 3;
     padding: 20px 0 40px;
@@ -978,10 +1089,11 @@ body {
       rgba(6,8,16,0) 100%
     );
   }
-  .phone-frame {
+  .gallery-stage {
     width: 200px;
     margin: 0 auto;
   }
+  .gallery-glow { display: none; }
   .feat-copy { padding: 0; }
   .feat-item {
     min-height: 80vh;
@@ -1009,7 +1121,7 @@ body {
     width: 100%;
   }
   .hero-actions .btn { width: 100%; justify-content: center; }
-  .phone-frame { width: 180px; }
+  .gallery-stage { width: 180px; }
   .btn { height: 48px; padding: 0 22px; font-size: 14px; }
 
   .proof-card { padding: 36px 20px 32px; }
@@ -1032,7 +1144,8 @@ body {
   .scroll-cue,
   .hero-glow,
   .hero-dots,
-  .phone-screen,
+  .gallery-card,
+  .gallery-dot,
   .feat-title,
   .feat-num,
   .feat-desc,
@@ -1052,6 +1165,6 @@ body {
     clip-path: none !important;
   }
 
-  .ps-1 { opacity: 1 !important; }
-  .ps-2, .ps-3 { opacity: 0 !important; }
+  .gc-1 { opacity: 1 !important; }
+  .gc-2, .gc-3 { opacity: 0 !important; }
 }

@@ -175,20 +175,19 @@ export default function CinematicPage() {
           FEATURES ZONE
           ══════════════════════════════════ */}
       <section className="zone zone-features" id="features">
-        <div className="feat-phone">
-          <div className="phone-frame">
-            <div className="phone-inner">
-              {FEATURES.map((f, i) => (
-                <img
-                  key={i}
-                  className={`phone-screen ps-${i + 1}`}
-                  src={f.screen}
-                  alt={f.title}
-                  loading="lazy"
-                />
-              ))}
-            </div>
-            <div className="phone-shine" />
+        <div className="feat-gallery">
+          <div className="gallery-glow" />
+          <div className="gallery-stage">
+            {FEATURES.map((f, i) => (
+              <div key={i} className={`gallery-card gc-${i + 1}`}>
+                <img src={f.screen} alt={f.title} loading="lazy" />
+              </div>
+            ))}
+          </div>
+          <div className="gallery-dots">
+            {FEATURES.map((_, i) => (
+              <span key={i} className={`gallery-dot gd-${i + 1}`} />
+            ))}
           </div>
         </div>
 
