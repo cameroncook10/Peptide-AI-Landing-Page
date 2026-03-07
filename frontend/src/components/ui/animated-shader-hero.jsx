@@ -53,10 +53,33 @@ float fbm(vec2 p){
 
 void main(){
   vec2 uv=(FC-.5*R)/MN;
-  vec3 col=vec3(0.016,0.022,0.068);
+
+  // Near-black deep space base
+  vec3 col=vec3(0.004,0.005,0.018);
+
+  // Atmospheric nebula - subtle against dark bg
   float nb=fbm(uv*1.2+T*.025);
-  col+=vec3(0.,0.038,0.115)*nb*nb*3.5;
-  col+=vec3(0.008,0.,0.07)*fbm(uv*2.4-T*.018)*.5;
+  col+=vec3(0.,0.022,0.07)*nb*nb*2.8;
+  col+=vec3(0.005,0.,0.04)*fbm(uv*2.4-T*.018)*.4;
+
+  // Star field - tiny twinkling data points
+  vec2 gridId=floor(uv*28.);
+  vec2 gridUv=fract(uv*28.)-.5;
+  float rnd=h2(gridId);
+  if(rnd>.82){
+    float twinkle=.5+.5*sin(T*1.8+rnd*12.);
+    float starD=length(gridUv);
+    float brightness=.0005*twinkle*smoothstep(.08,.0,starD);
+    vec3 starCol=mix(vec3(0.5,0.9,1.),vec3(0.7,1.,0.85),h2(gridId+1.));
+    col+=starCol*brightness;
+  }
+
+  // Faint molecular dot grid
+  vec2 molUv=fract(uv*6.5+vec2(T*.008,-T*.006))-.5;
+  float molDot=smoothstep(.055,.018,length(molUv));
+  col+=vec3(0.,0.898,0.627)*molDot*.01*fbm(uv*3.+T*.01);
+
+  // DNA Double Helix
   float freq=8.0;
   float amp=0.27;
   float scroll=T*0.35;
@@ -67,29 +90,41 @@ void main(){
   float invLen=inversesqrt(1.+slope*slope);
   float dp1=abs(uv.x-xs1)*invLen;
   float dp2=abs(uv.x-xs2)*invLen;
-  col+=vec3(0.,0.898,0.627)*0.0048/(dp1+0.007);
-  col+=vec3(0.,0.702,1.0)*0.0048/(dp2+0.007);
+
+  // Strands brighter on darker bg
+  col+=vec3(0.,0.898,0.627)*0.007/(dp1+0.007);
+  col+=vec3(0.,0.702,1.0  )*0.007/(dp2+0.007);
+
+  // Soft glow along helix axis
+  col+=vec3(0.,0.12,0.2)*0.003/(abs(uv.x)*abs(uv.x)+0.08);
+
+  // Atom nodes every PI/x
   float nodeT=fract(phase*(3./PI));
   float nodeMask=smoothstep(.38,.0,abs(nodeT-.5));
   float dn1=length(uv-vec2(xs1,uv.y));
   float dn2=length(uv-vec2(xs2,uv.y));
-  col+=vec3(0.35,1.,0.82)*nodeMask*0.008/(dn1*dn1+.0008);
-  col+=vec3(0.25,0.78,1.)*nodeMask*0.008/(dn2*dn2+.0008);
+  col+=vec3(0.35,1.,0.82)*nodeMask*.012/(dn1*dn1+.0008);
+  col+=vec3(0.25,0.78,1.)*nodeMask*.012/(dn2*dn2+.0008);
+
+  // Cross-bridges using if instead of continue
   float bGlow=0.;
   for(float period=-3.;period<=3.;period++){
     for(float k=0.;k<6.;k++){
       float angle=k*(PI/3.);
       float bY=(angle+2.*PI*period-scroll)/freq;
-      if(abs(bY-uv.y)>.44) continue;
-      float bx1=amp*sin(angle);
-      float bx2=-bx1;
-      float lo=min(bx1,bx2),hi=max(bx1,bx2);
-      float cx=clamp(uv.x,lo,hi);
-      float bd=length(uv-vec2(cx,bY));
-      bGlow+=.5/(bd*bd*900.+1.);
+      if(abs(bY-uv.y)<.44){
+        float bx1=amp*sin(angle);
+        float bx2=-bx1;
+        float lo=min(bx1,bx2),hi=max(bx1,bx2);
+        float cx=clamp(uv.x,lo,hi);
+        float bd=length(uv-vec2(cx,bY));
+        bGlow+=.5/(bd*bd*900.+1.);
+      }
     }
   }
-  col+=vec3(0.482,0.38,1.)*bGlow*.0022;
+  col+=vec3(0.482,0.38,1.)*bGlow*.003;
+
+  // Floating amino-acid beads
   for(float i=0.;i<12.;i++){
     vec2 pos=vec2(h2(vec2(i*17.3,1.)),h2(vec2(i*6.1,3.)))-.5;
     pos*=2.4;
@@ -99,22 +134,24 @@ void main(){
     vec3 beadCol=i<4. ? vec3(0.,0.898,0.627) : i<8. ? vec3(0.,0.702,1.) : vec3(0.482,0.38,1.);
     float pulse=.5+.5*sin(T*1.3+i*2.7);
     float r=.015+.006*pulse;
-    col+=beadCol*.0018/(d*d+.001);
-    col+=beadCol*.22*smoothstep(r,r*.5,d);
+    col+=beadCol*.0025/(d*d+.001);
+    col+=beadCol*.28*smoothstep(r,r*.5,d);
   }
-  col*=1.-smoothstep(.48,1.08,length(uv));
-  col=col/(1.+col*.8);
+
+  // Vignette
+  col*=1.-smoothstep(.4,1.0,length(uv));
+
+  // Tone map + gamma
+  col=col/(1.+col*.7);
   col=pow(max(col,0.),vec3(.45));
+
   O=vec4(col,1.);
 }`
 
 function useShaderBackground() {
   const canvasRef = useRef(null);
   const animFrameRef = useRef(null);
-  const glRef = useRef(null);
-  const progRef = useRef(null);
-  const bufRef = useRef(null);
-  const mouseRef = useRef([0, 0]);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -122,8 +159,7 @@ function useShaderBackground() {
 
     const gl = canvas.getContext('webgl2');
     if (!gl) return;
-    glRef.current = gl;
-
+  
     const dpr = Math.max(1, 0.5 * window.devicePixelRatio);
 
     function resize() {
@@ -149,13 +185,11 @@ function useShaderBackground() {
     gl.attachShader(prog, vs);
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
-    progRef.current = prog;
-
+  
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,1,-1,-1,1,1,1,-1]), gl.STATIC_DRAW);
-    bufRef.current = buf;
-
+  
     const pos = gl.getAttribLocation(prog, 'position');
     gl.enableVertexAttribArray(pos);
     gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
@@ -202,7 +236,7 @@ export default function AnimatedShaderHero({
 
   return (
     <div id={id}
-      style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: '#060810' }} className={className}>
+      style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: '#02030C' }} className={className}>
       <style>{SHADER_ANIMATIONS}</style>
 
       <canvas
@@ -214,7 +248,7 @@ export default function AnimatedShaderHero({
         position: 'absolute', inset: 0, zIndex: 10,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        color: '#fff', padding: '0 1.5rem',
+        color: '#fff', padding: '0 1.5rem', textAlign: 'center',
       }}>
         {trustBadge && (
           <div className="shader-fade-in-down" style={{ marginBottom: '2rem' }}>
