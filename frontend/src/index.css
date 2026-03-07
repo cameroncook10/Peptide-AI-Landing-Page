@@ -240,36 +240,151 @@ body {
 }
 
 /* ── Stats ────────────────────────────── */
-.stats { padding: 80px 24px; background: var(--layer-0); border-top: 1px solid var(--border-subtle); }
-.stats-inner {
-  max-width: 900px; margin: 0 auto;
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+.stats {
+  position: relative;
+  padding: 100px 24px 120px;
+  background: var(--layer-0);
+  overflow: hidden;
 }
-.stat {
-  background: var(--layer-2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 36px 28px;
-  text-align: center; transition: border-color 0.3s, box-shadow 0.3s;
+
+/* Lamp glow effect at top of stats */
+.stats-lamp {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 600px; height: 1px;
+  display: flex; justify-content: center;
 }
-.stat:hover { border-color: var(--border-accent); box-shadow: var(--glow-accent); }
-/* Gradient transition from Stats to Waitlist */
-.stats::after {
-  content: '';
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 120px;
-  background: linear-gradient(to bottom, var(--layer-0), transparent);
+.stats-lamp-beam {
+  width: 100%; height: 200px;
+  background: conic-gradient(
+    from 90deg at 50% 0%,
+    transparent 30%,
+    rgba(0,229,160,0.06) 40%,
+    rgba(0,229,160,0.12) 50%,
+    rgba(0,229,160,0.06) 60%,
+    transparent 70%
+  );
+  transform-origin: top center;
+  filter: blur(20px);
   pointer-events: none;
 }
-.stats { position: relative; }
+
+.stats-container { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; }
+
+.stats-header { text-align: center; margin-bottom: 52px; }
+.stats-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(30px, 4.5vw, 48px);
+  line-height: 1.1; letter-spacing: -0.8px;
+  color: var(--text-primary);
+  margin-top: 20px;
+}
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+}
+
+/* Spotlight card wrapper */
+.stat-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 1px;
+  cursor: default;
+}
+
+/* Mouse-following border glow */
+.stat-card-border {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.stat-card:hover .stat-card-border { opacity: 1; }
+
+/* Mouse-following spotlight fill */
+.stat-card-spotlight {
+  position: absolute; inset: 1px;
+  border-radius: calc(var(--radius-lg) - 1px);
+  pointer-events: none; z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.stat-card:hover .stat-card-spotlight { opacity: 1; }
+
+/* Card inner content */
+.stat-card-inner {
+  position: relative; z-index: 1;
+  background: var(--layer-2);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius-lg) - 1px);
+  padding: 40px 28px 36px;
+  text-align: center;
+  transition: border-color 0.4s, box-shadow 0.4s, background 0.4s;
+}
+.stat-card:hover .stat-card-inner {
+  border-color: rgba(0,229,160,0.12);
+  box-shadow:
+    0 0 0 1px rgba(0,229,160,0.06),
+    0 8px 40px rgba(0,0,0,0.3),
+    0 0 60px rgba(0,229,160,0.04);
+  background: rgba(15,19,24,0.9);
+}
+
+/* Stat icon */
+.stat-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: rgba(0,229,160,0.06);
+  border: 1px solid rgba(0,229,160,0.1);
+  color: var(--accent);
+  margin-bottom: 20px;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.stat-card:hover .stat-icon {
+  background: rgba(0,229,160,0.1);
+  border-color: rgba(0,229,160,0.2);
+  box-shadow: 0 0 20px rgba(0,229,160,0.12);
+  transform: translateY(-2px);
+}
+
 .stat-num {
-  font-family: var(--font-mono); font-size: clamp(32px, 4.5vw, 52px);
-  font-weight: 600; letter-spacing: -1px; color: var(--text-primary);
+  font-family: var(--font-mono); font-size: clamp(36px, 4.5vw, 56px);
+  font-weight: 700; letter-spacing: -1.5px; color: var(--text-primary);
   margin-bottom: 8px; display: block;
+  line-height: 1;
 }
 .stat-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--text-muted);
 }
 .stat-star { color: #FFD700; margin-left: 2px; }
+
+/* Accent line at bottom of card */
+.stat-accent-line {
+  width: 32px; height: 2px; margin: 18px auto 0;
+  background: linear-gradient(90deg, var(--accent), rgba(0,180,220,0.6));
+  border-radius: 1px;
+  opacity: 0; transform: scaleX(0);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.stat-card:hover .stat-accent-line {
+  opacity: 1; transform: scaleX(1);
+}
+
+/* ── Section divider glow ─────────────── */
+.stats::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.4;
+}
 
 /* ── Waitlist ─────────────────────────── */
 .waitlist {
@@ -277,6 +392,14 @@ body {
   display: flex; align-items: center; justify-content: center;
   min-height: 80vh; padding: 120px 24px 100px;
   background: var(--layer-0);
+}
+/* Glowing line divider at top */
+.waitlist::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.3;
 }
 
 /* Aurora mesh gradient background */
@@ -678,13 +801,20 @@ body {
   .waitlist-headline-accent { animation: none; }
   .waitlist-field-glow { transition: none; }
   .confetti-piece { animation: none; }
+  .stats-lamp-beam { animation: none; }
 }
 
 /* ── Final ────────────────────────────── */
 .final {
   position: relative; overflow: hidden; text-align: center;
   padding: 120px 24px 100px; background: var(--layer-0);
-  border-top: 1px solid rgba(0,229,160,0.1);
+}
+.final::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.3;
 }
 .final-glow {
   position: absolute; bottom: -180px; left: 50%; transform: translateX(-50%);
@@ -763,9 +893,17 @@ body {
   letter-spacing: 0.01em; flex-shrink: 0;
   transition: border-color 0.2s, color 0.2s;
 }
+.ticker-tag:hover {
+  border-color: rgba(255,255,255,0.08);
+  color: var(--text-secondary);
+}
 .ticker-tag-accent {
   color: var(--accent); border-color: var(--border-accent);
   background: var(--accent-dim);
+}
+.ticker-tag-accent:hover {
+  border-color: rgba(0,229,160,0.35);
+  box-shadow: 0 0 12px rgba(0,229,160,0.08);
 }
 
 /* ── App Showcase ────────────────────── */
@@ -819,7 +957,9 @@ body {
   .features-sticky { position: relative; top: auto; height: auto; margin-bottom: 32px; }
   .story-sections { padding: 0; }
   .step { min-height: auto; padding: 28px 24px; margin-bottom: 12px; }
-  .stats-inner { grid-template-columns: 1fr; gap: 12px; }
+  .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stats { padding: 72px 16px 80px; }
+  .stats-header { margin-bottom: 36px; }
   .waitlist { padding: 80px 16px 72px; min-height: auto; }
   .waitlist-card-inner { padding: 36px 22px 32px; }
   .waitlist-headline { font-size: clamp(28px, 7vw, 40px); }
