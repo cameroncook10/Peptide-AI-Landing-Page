@@ -48,18 +48,21 @@ void main(){
    High-Quality DNA Helix Scene
    ═══════════════════════════════════════════════════ */
 function createScene(canvas) {
+  const mob = innerWidth < 780;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 200);
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-  const dpr = Math.min(devicePixelRatio, 2);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mob, alpha: false });
+  const dpr = Math.min(devicePixelRatio, mob ? 1.5 : 2);
   renderer.setPixelRatio(dpr);
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x020308);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if (!mob) {
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  }
 
   // ── Nebula sky-dome ──
   const nebulaMat = new THREE.ShaderMaterial({
@@ -69,7 +72,7 @@ function createScene(canvas) {
     side: THREE.BackSide,
     depthWrite: false,
   });
-  const nebula = new THREE.Mesh(new THREE.SphereGeometry(90, 64, 32), nebulaMat);
+  const nebula = new THREE.Mesh(new THREE.SphereGeometry(90, mob ? 32 : 64, mob ? 16 : 32), nebulaMat);
   nebula.renderOrder = -1000;
   scene.add(nebula);
 
@@ -77,7 +80,9 @@ function createScene(canvas) {
   const dnaGroup = new THREE.Group();
   scene.add(dnaGroup);
 
-  const TURNS = 8, HEIGHT = 50, RADIUS = 2.8, SEGMENTS = 500;
+  const TURNS = 8, HEIGHT = 50, RADIUS = 2.8;
+  const SEGMENTS = mob ? 200 : 500;
+  const TUBE_RADIAL = mob ? 8 : 16;
 
   const pts1 = [], pts2 = [];
   for (let i = 0; i <= SEGMENTS; i++) {
@@ -91,20 +96,20 @@ function createScene(canvas) {
   const c1 = new THREE.CatmullRomCurve3(pts1);
   const c2 = new THREE.CatmullRomCurve3(pts2);
 
-  // Backbone tubes (glossy physical material with clearcoat)
-  const bbMat = new THREE.MeshPhysicalMaterial({
-    color: 0x00b37a,
-    emissive: 0x00b37a,
-    emissiveIntensity: 0.45,
-    metalness: 0.25,
-    roughness: 0.18,
-    clearcoat: 1.0,
-    clearcoatRoughness: 0.1,
-  });
-  const bb1 = new THREE.Mesh(new THREE.TubeGeometry(c1, SEGMENTS, 0.12, 16, false), bbMat);
-  const bb2 = new THREE.Mesh(new THREE.TubeGeometry(c2, SEGMENTS, 0.12, 16, false), bbMat);
-  bb1.castShadow = true; bb1.receiveShadow = true;
-  bb2.castShadow = true; bb2.receiveShadow = true;
+  // Backbone tubes — use cheaper MeshStandardMaterial on mobile
+  const bbMat = mob
+    ? new THREE.MeshStandardMaterial({
+        color: 0x00b37a, emissive: 0x00b37a, emissiveIntensity: 0.45,
+        metalness: 0.25, roughness: 0.2,
+      })
+    : new THREE.MeshPhysicalMaterial({
+        color: 0x00b37a, emissive: 0x00b37a, emissiveIntensity: 0.45,
+        metalness: 0.25, roughness: 0.18,
+        clearcoat: 1.0, clearcoatRoughness: 0.1,
+      });
+  const bb1 = new THREE.Mesh(new THREE.TubeGeometry(c1, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
+  const bb2 = new THREE.Mesh(new THREE.TubeGeometry(c2, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
+  if (!mob) { bb1.castShadow = true; bb1.receiveShadow = true; bb2.castShadow = true; bb2.receiveShadow = true; }
   dnaGroup.add(bb1, bb2);
 
   // Base-pair rungs + connection nodes
@@ -112,10 +117,31 @@ function createScene(canvas) {
     { c: 0x00b37a, e: 0x00b37a },
     { c: 0x0090b0, e: 0x0090b0 },
   ];
-  const RUNG_COUNT = 100;
-  const nodeGeo = new THREE.SphereGeometry(0.15, 16, 16);
-  const glowGeo = new THREE.SphereGeometry(0.35, 12, 12);
+  const RUNG_COUNT = mob ? 50 : 100;
+  const nodeGeo = new THREE.SphereGeometry(0.15, mob ? 8 : 16, mob ? 8 : 16);
+  const glowGeo = mob ? null : new THREE.SphereGeometry(0.35, 12, 12);
   const up = new THREE.Vector3(0, 1, 0);
+
+  // Share materials to reduce draw-call overhead
+  const rungMats = palette.map(pal => new THREE.MeshStandardMaterial({
+    color: 0x161b24, emissive: pal.e, emissiveIntensity: 0.12,
+    metalness: 0.6, roughness: 0.3,
+  }));
+  const nodeMats = palette.map(pal =>
+    mob
+      ? new THREE.MeshStandardMaterial({
+          color: pal.c, emissive: pal.e, emissiveIntensity: 0.5,
+          metalness: 0.15, roughness: 0.15,
+        })
+      : new THREE.MeshPhysicalMaterial({
+          color: pal.c, emissive: pal.e, emissiveIntensity: 0.5,
+          metalness: 0.15, roughness: 0.15,
+          clearcoat: 0.6, clearcoatRoughness: 0.2,
+        })
+  );
+  const glowMats = mob ? null : palette.map(pal =>
+    new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.1 })
+  );
 
   for (let i = 0; i < RUNG_COUNT; i++) {
     const t = i / RUNG_COUNT;
@@ -123,38 +149,29 @@ function createScene(canvas) {
     const dist = p1.distanceTo(p2);
     const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
     const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
-    const pal = palette[i % 2];
+    const pi = i % 2;
 
     const rung = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.04, 0.04, dist, 8),
-      new THREE.MeshStandardMaterial({
-        color: 0x161b24, emissive: pal.e, emissiveIntensity: 0.12,
-        metalness: 0.6, roughness: 0.3,
-      }),
+      new THREE.CylinderGeometry(0.04, 0.04, dist, mob ? 4 : 8),
+      rungMats[pi],
     );
     rung.position.copy(mid);
     rung.quaternion.setFromUnitVectors(up, dir);
-    rung.castShadow = true; rung.receiveShadow = true;
+    if (!mob) { rung.castShadow = true; rung.receiveShadow = true; }
     dnaGroup.add(rung);
 
-    const nMat = new THREE.MeshPhysicalMaterial({
-      color: pal.c, emissive: pal.e, emissiveIntensity: 0.5,
-      metalness: 0.15, roughness: 0.15,
-      clearcoat: 0.6, clearcoatRoughness: 0.2,
-    });
-    const n1 = new THREE.Mesh(nodeGeo, nMat); n1.position.copy(p1); n1.castShadow = true; dnaGroup.add(n1);
-    const n2 = new THREE.Mesh(nodeGeo, nMat); n2.position.copy(p2); n2.castShadow = true; dnaGroup.add(n2);
+    const n1 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n1.position.copy(p1); if (!mob) n1.castShadow = true; dnaGroup.add(n1);
+    const n2 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n2.position.copy(p2); if (!mob) n2.castShadow = true; dnaGroup.add(n2);
 
-    // Glow halos (every 3rd rung)
-    if (i % 3 === 0) {
-      const gMat = new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.1 });
-      const g1 = new THREE.Mesh(glowGeo, gMat); g1.position.copy(p1); dnaGroup.add(g1);
-      const g2 = new THREE.Mesh(glowGeo, gMat); g2.position.copy(p2); dnaGroup.add(g2);
+    // Glow halos (desktop only, every 3rd rung)
+    if (!mob && i % 3 === 0) {
+      const g1 = new THREE.Mesh(glowGeo, glowMats[pi]); g1.position.copy(p1); dnaGroup.add(g1);
+      const g2 = new THREE.Mesh(glowGeo, glowMats[pi]); g2.position.copy(p2); dnaGroup.add(g2);
     }
   }
 
   // ── Floating particles near DNA ──
-  const P_COUNT = 600;
+  const P_COUNT = mob ? 200 : 600;
   const pPos = new Float32Array(P_COUNT * 3);
   for (let i = 0; i < P_COUNT; i++) {
     const t = Math.random(), angle = Math.random() * Math.PI * 2;
@@ -171,7 +188,7 @@ function createScene(canvas) {
   })));
 
   // ── Star field ──
-  const S_COUNT = 3000;
+  const S_COUNT = mob ? 1000 : 3000;
   const sPos = new Float32Array(S_COUNT * 3);
   for (let i = 0; i < S_COUNT; i++) {
     const th = Math.random() * Math.PI * 2;
@@ -196,24 +213,25 @@ function createScene(canvas) {
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
 
-  // Shadow-casting directional light
+  // Shadow-casting directional light (desktop only)
   const shadowLight = new THREE.DirectionalLight(0xffffff, 0.6);
   shadowLight.position.set(5, 10, 8);
-  shadowLight.castShadow = true;
-  shadowLight.shadow.mapSize.width = 1024;
-  shadowLight.shadow.mapSize.height = 1024;
-  shadowLight.shadow.camera.near = 0.1;
-  shadowLight.shadow.camera.far = 80;
-  shadowLight.shadow.camera.left = -10;
-  shadowLight.shadow.camera.right = 10;
-  shadowLight.shadow.camera.top = 30;
-  shadowLight.shadow.camera.bottom = -30;
-  shadowLight.shadow.bias = -0.002;
-  shadowLight.shadow.radius = 4;
+  if (!mob) {
+    shadowLight.castShadow = true;
+    shadowLight.shadow.mapSize.width = 1024;
+    shadowLight.shadow.mapSize.height = 1024;
+    shadowLight.shadow.camera.near = 0.1;
+    shadowLight.shadow.camera.far = 80;
+    shadowLight.shadow.camera.left = -10;
+    shadowLight.shadow.camera.right = 10;
+    shadowLight.shadow.camera.top = 30;
+    shadowLight.shadow.camera.bottom = -30;
+    shadowLight.shadow.bias = -0.002;
+    shadowLight.shadow.radius = 4;
+  }
   scene.add(shadowLight);
 
-  // ── Camera path (smoother, more keyframes) ──
-  const mob = innerWidth < 780;
+  // ── Camera path ──
   const cameraPath = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 10, mob ? 32 : 26),
     new THREE.Vector3(4, 7, mob ? 26 : 22),
@@ -226,16 +244,19 @@ function createScene(canvas) {
     new THREE.Vector3(0, -15, mob ? 1 : 0.5),
   ]);
 
-  // ── Bloom post-processing ──
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(innerWidth, innerHeight),
-    0.4,   // strength — subtle neon glow
-    0.5,   // radius
-    0.35,  // threshold — catch more emissives
-  );
-  composer.addPass(bloomPass);
+  // ── Bloom post-processing (desktop only) ──
+  let composer = null;
+  if (!mob) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(innerWidth, innerHeight),
+      0.4,   // strength — subtle neon glow
+      0.5,   // radius
+      0.35,  // threshold — catch more emissives
+    );
+    composer.addPass(bloomPass);
+  }
 
   return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat };
 }
@@ -416,7 +437,7 @@ export default function CinematicPage() {
       camera.aspect = innerWidth / innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(innerWidth, innerHeight);
-      composer.setSize(innerWidth, innerHeight);
+      if (composer) composer.setSize(innerWidth, innerHeight);
     }
     addEventListener('resize', onResize);
 
@@ -460,7 +481,8 @@ export default function CinematicPage() {
       updatePanels(t);
       updateHero(t);
 
-      composer.render();
+      if (composer) composer.render();
+      else renderer.render(scene, camera);
     }
     animate();
 
