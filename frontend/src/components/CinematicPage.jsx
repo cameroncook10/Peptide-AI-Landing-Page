@@ -156,7 +156,8 @@ void main(){
   // Very gentle vignette
   col*=1.-smoothstep(1.0,2.2,length(uv));
 
-  // Tone map + gamma
+  // Tone map + gamma — pulled back so content dominates
+  col*=0.7;
   col=col/(1.+col*.7);
   col=pow(max(col,0.),vec3(.45));
 
