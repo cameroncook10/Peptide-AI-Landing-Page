@@ -1,38 +1,79 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 const STATS = [
-  { num: '10k+', label: 'Users on waitlist' },
-  { num: '50+', label: 'Peptides tracked' },
-  { num: '4.9★', label: 'App Store rating' },
+  { end: 10, suffix: 'k+', label: 'Users on waitlist' },
+  { end: 50, suffix: '+', label: 'Peptides tracked' },
+  { end: 4.9, suffix: '', label: 'App Store rating', decimal: true, star: true },
 ];
 
-export default function Stats() {
-  const refs = useRef([]);
+function AnimatedNumber({ end, suffix, decimal, star, trigger }) {
+  const [value, setValue] = useState(0);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry, i) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => entry.target.classList.add('visible'), i * 100);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    refs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+    if (!trigger || hasAnimated.current) return;
+    hasAnimated.current = true;
+
+    const duration = 1800;
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(eased * end);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  }, [trigger, end]);
+
+  const display = decimal
+    ? value.toFixed(1)
+    : Math.round(value);
 
   return (
-    <section className="stats">
+    <span className="stat-num">
+      {display}{suffix}{star ? <span className="stat-star">★</span> : null}
+    </span>
+  );
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 32, scale: 0.95, filter: 'blur(8px)' },
+  show: (i) => ({
+    opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+    transition: { duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
+export default function Stats() {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+
+  return (
+    <section className="stats" ref={sectionRef}>
       <div className="stats-inner">
         {STATS.map((s, i) => (
-          <div key={i} className="stat reveal" ref={(el) => (refs.current[i] = el)}>
-            <span className="stat-num">{s.num}</span>
+          <motion.div
+            key={i}
+            className="stat"
+            custom={i}
+            variants={cardVariants}
+            initial="hidden"
+            animate={isInView ? 'show' : 'hidden'}
+          >
+            <AnimatedNumber
+              end={s.end}
+              suffix={s.suffix}
+              decimal={s.decimal}
+              star={s.star}
+              trigger={isInView}
+            />
             <div className="stat-label">{s.label}</div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>

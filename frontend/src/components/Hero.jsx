@@ -1,13 +1,30 @@
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import FloatingBackground from './ui/floating-paths';
 
 export default function Hero() {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+
+  // Parallax: content fades, scales down, and drifts up as you scroll past
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const contentScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.92]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   return (
-    <header className="hero" id="top">
+    <header className="hero" id="top" ref={heroRef}>
       <div className="noise" />
-      <div className="hero-glow" />
+      <motion.div className="hero-glow" style={{ opacity: glowOpacity }} />
       <FloatingBackground />
 
-      <div className="hero-inner">
+      <motion.div
+        className="hero-inner"
+        style={{ y: contentY, scale: contentScale, opacity: contentOpacity }}
+      >
         <div className="eyebrow">AI-Powered Peptide Tracking</div>
         <h1>
           <span className="line">Optimize your</span>
@@ -36,14 +53,18 @@ export default function Hero() {
             Coming Soon
           </span>
         </div>
-      </div>
+      </motion.div>
 
-      <a className="scroll-cue" href="#features">
+      <motion.a
+        className="scroll-cue"
+        href="#features"
+        style={{ opacity: contentOpacity }}
+      >
         <span>See features</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 5v14M5 12l7 7 7-7" />
         </svg>
-      </a>
+      </motion.a>
     </header>
   );
 }

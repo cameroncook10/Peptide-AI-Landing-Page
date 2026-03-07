@@ -232,6 +232,12 @@ body {
   font-size: 15px; line-height: 1.75; color: var(--text-muted);
   max-width: 340px;
 }
+.step-progress {
+  width: 48px; height: 3px; margin-top: 20px;
+  background: linear-gradient(90deg, var(--accent), #00B4D8);
+  border-radius: 2px;
+  transform-origin: left;
+}
 
 /* ── Stats ────────────────────────────── */
 .stats { padding: 80px 24px; background: var(--layer-0); border-top: 1px solid var(--border-subtle); }
@@ -263,6 +269,7 @@ body {
   font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--text-muted);
 }
+.stat-star { color: #FFD700; margin-left: 2px; }
 
 /* ── Waitlist ─────────────────────────── */
 .waitlist {
@@ -685,7 +692,7 @@ body {
   background: radial-gradient(ellipse at center, rgba(0,229,160,0.1) 0%, transparent 65%);
   pointer-events: none;
 }
-.final-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+.final-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; text-align: center; }
 .final h2 {
   font-family: var(--font-display); font-size: clamp(38px, 6vw, 68px);
   font-weight: 400; letter-spacing: -1px; line-height: 1.08;
