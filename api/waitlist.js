@@ -1,28 +1,39 @@
-const { list, put } = require('@vercel/blob');
+const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 
-async function getWaitlist() {
-  try {
-    const { blobs } = await list({ prefix: 'waitlist.json' });
-    if (blobs.length === 0) return [];
-    const res = await fetch(blobs[0].url + '?t=' + Date.now());
-    return await res.json();
-  } catch {
-    return [];
-  }
-}
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
 
-async function saveWaitlist(data) {
-  await put('waitlist.json', JSON.stringify(data, null, 2), {
-    access: 'public',
-    addRandomSuffix: false,
-    contentType: 'application/json',
+async function sendEmails(email, phone, totalCount) {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) return;
+  const t = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
+  try {
+    await t.sendMail({
+      from: `"Peptide AI" <${process.env.SMTP_USER}>`,
+      to: process.env.OWNER_EMAIL || process.env.SMTP_USER,
+      subject: 'New Waitlist Signup — Peptide AI',
+      html: `<p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone || 'not provided'}</p><p><strong>Total signups:</strong> ${totalCount}</p>`,
+    });
+  } catch (e) { console.error('Owner email error:', e.message); }
+  try {
+    await t.sendMail({
+      from: `"Peptide AI" <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: "You're on the Peptide AI waitlist!",
+      html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#060810;color:#EEF2FF;border-radius:20px;"><h2 style="color:#00E5A0;margin-bottom:12px;">You're on the list.</h2><p style="color:#7A8499;line-height:1.7;">We'll notify you the moment <strong style="color:#EEF2FF;">Peptide AI</strong> drops on the App Store and Google Play.</p><p style="color:#343D50;font-size:13px;margin-top:28px;">— The Peptide AI team</p></div>`,
+    });
+  } catch (e) { console.error('Confirm email error:', e.message); }
 }
 
 module.exports = async function handler(req, res) {
-  const origin = process.env.FRONTEND_URL || '*';
-  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -30,41 +41,26 @@ module.exports = async function handler(req, res) {
 
   const { email, phone } = req.body || {};
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return res.status(400).json({ error: 'Valid email required.' });
+    return res.status(400).json({ error: 'Valid email address required.' });
   }
 
-  const waitlist = await getWaitlist();
-  if (waitlist.some(e => e.email.toLowerCase() === email.toLowerCase())) {
-    return res.status(409).json({ error: "You're already on the waitlist!" });
-  }
+  const { error } = await supabase
+    .from('waitlist')
+    .insert({ email, phone: phone || null });
 
-  waitlist.push({ email, phone: phone || null, joinedAt: new Date().toISOString() });
-  await saveWaitlist(waitlist);
-
-  if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        secure: process.env.SMTP_PORT === '465',
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-      });
-      await transporter.sendMail({
-        from: `"Peptide AI" <${process.env.SMTP_USER}>`,
-        to: process.env.OWNER_EMAIL,
-        subject: 'New Waitlist Signup',
-        text: `New signup:\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nTotal: ${waitlist.length}`,
-      });
-      await transporter.sendMail({
-        from: `"Peptide AI" <${process.env.SMTP_USER}>`,
-        to: email,
-        subject: "You're on the Peptide AI waitlist!",
-        text: `You're in! We'll notify you the moment Peptide AI launches on the App Store and Google Play.\n\n— The Peptide AI Team`,
-      });
-    } catch (err) {
-      console.error('Email error:', err.message);
+  if (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'This email is already on the waitlist.' });
     }
+    console.error('Supabase insert error:', error);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
   }
 
-  return res.status(201).json({ message: "You're on the waitlist! We'll notify you at launch." });
+  const { count } = await supabase
+    .from('waitlist')
+    .select('*', { count: 'exact', head: true });
+
+  await sendEmails(email, phone, count);
+
+  return res.status(201).json({ success: true, message: "You're on the list! We'll notify you at launch." });
 };

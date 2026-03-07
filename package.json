@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@vercel/blob": "^0.23.4",
-    "nodemailer": "^6.9.9"
+    "nodemailer": "^6.9.9",
+    "@supabase/supabase-js": "^2.98.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
