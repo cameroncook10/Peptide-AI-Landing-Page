@@ -7,7 +7,7 @@
   position: relative;
 }
 .cinematic-scroll-spacer {
-  height: 600vh;
+  height: 400vh;
   position: relative;
   pointer-events: none;
 }
