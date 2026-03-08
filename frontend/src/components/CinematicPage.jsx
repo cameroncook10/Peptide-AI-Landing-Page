@@ -70,6 +70,36 @@ void main(){
   gl_FragColor=vec4(c*alpha,alpha);
 }`;
 
+// Per-particle color shader for DNA rungs (gradient base-pair effect)
+const RUNG_VERT = `
+attribute float aSize;
+attribute float aBright;
+attribute vec3 aColor;
+varying float vBright;
+varying vec3 vColor;
+void main(){
+  vBright=aBright;
+  vColor=aColor;
+  vec4 mv=modelViewMatrix*vec4(position,1.0);
+  gl_PointSize=aSize*(300.0/(-mv.z));
+  gl_Position=projectionMatrix*mv;
+}`;
+
+const RUNG_FRAG = `
+uniform float uOpacity;
+varying float vBright;
+varying vec3 vColor;
+void main(){
+  float d=length(gl_PointCoord-0.5)*2.0;
+  if(d>1.0) discard;
+  float glow=exp(-d*d*2.0);
+  float core=smoothstep(0.35,0.0,d);
+  float outer=exp(-d*d*0.8)*0.3;
+  float alpha=(glow*0.7+core*1.0+outer)*vBright*uOpacity;
+  vec3 c=vColor*(0.6+core*0.6);
+  gl_FragColor=vec4(c*alpha,alpha);
+}`;
+
 // Animated flying star shader
 const STAR_VERT = `
 attribute float aSize;
@@ -230,13 +260,18 @@ function createScene(canvas, THREE, postFx) {
     }
   });
 
-  // Step 2: rung connections + junction nodes
+  // Step 2: rung connections + junction nodes (cyan-to-magenta gradient base pairs)
   buildQueue.push(() => {
-    const rPos = [], rSizes = [], rBrights = [];
-    const nPos = [], nSizes = [], nBrights = [];
+    const rPos = [], rSizes = [], rBrights = [], rColors = [];
+    const nPos = [], nSizes = [], nBrights = [], nColors = [];
+    // Two color pairs that alternate per rung (like A-T vs G-C base pairs)
+    const pairA = [new THREE.Color(0x00e5ff), new THREE.Color(0xff44cc)]; // cyan → magenta
+    const pairB = [new THREE.Color(0x44ddff), new THREE.Color(0xcc66ff)]; // sky blue → violet
+    const tmp = new THREE.Color();
     for (let i = 0; i < RUNG_COUNT; i++) {
       const t = i / RUNG_COUNT;
       const p1 = ctx.c1.getPoint(t), p2 = ctx.c2.getPoint(t);
+      const pair = i % 2 === 0 ? pairA : pairB;
       for (let j = 0; j <= RUNG_INTERP; j++) {
         const f = j / RUNG_INTERP;
         rPos.push(
@@ -244,36 +279,47 @@ function createScene(canvas, THREE, postFx) {
           p1.y + (p2.y - p1.y) * f + (Math.random() - 0.5) * 0.06,
           p1.z + (p2.z - p1.z) * f + (Math.random() - 0.5) * 0.06,
         );
-        rSizes.push(0.05 + Math.random() * 0.06);
-        rBrights.push(0.6 + Math.random() * 0.4);
+        // Center particles are larger for a "bulge" effect
+        const centerDist = Math.abs(f - 0.5) * 2; // 0 at center, 1 at edges
+        rSizes.push(0.06 + (1 - centerDist) * 0.05 + Math.random() * 0.04);
+        rBrights.push(0.65 + (1 - centerDist) * 0.2 + Math.random() * 0.15);
+        // Gradient color from one strand to the other
+        tmp.copy(pair[0]).lerp(pair[1], f);
+        rColors.push(tmp.r, tmp.g, tmp.b);
       }
-      for (const p of [p1, p2]) {
+      // Junction nodes at each backbone connection — match the pair color at that end
+      for (let k = 0; k < 2; k++) {
+        const p = k === 0 ? p1 : p2;
         nPos.push(p.x, p.y, p.z);
-        nSizes.push(0.12 + Math.random() * 0.1);
-        nBrights.push(0.8 + Math.random() * 0.2);
+        nSizes.push(0.14 + Math.random() * 0.1);
+        nBrights.push(0.9 + Math.random() * 0.1);
+        const nc = pair[k];
+        nColors.push(nc.r, nc.g, nc.b);
       }
     }
 
     const rungMat = new THREE.ShaderMaterial({
-      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ee77) }, uOpacity: { value: mob ? 1.2 : 0.85 } },
+      vertexShader: RUNG_VERT, fragmentShader: RUNG_FRAG,
+      uniforms: { uOpacity: { value: mob ? 1.3 : 0.95 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     const rGeo = new THREE.BufferGeometry();
     rGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(rPos), 3));
     rGeo.setAttribute('aSize', new THREE.BufferAttribute(new Float32Array(rSizes), 1));
     rGeo.setAttribute('aBright', new THREE.BufferAttribute(new Float32Array(rBrights), 1));
+    rGeo.setAttribute('aColor', new THREE.BufferAttribute(new Float32Array(rColors), 3));
     dnaGroup.add(new THREE.Points(rGeo, rungMat));
 
     const nodeMat = new THREE.ShaderMaterial({
-      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x33ffdd) }, uOpacity: { value: mob ? 1.6 : 1.2 } },
+      vertexShader: RUNG_VERT, fragmentShader: RUNG_FRAG,
+      uniforms: { uOpacity: { value: mob ? 1.8 : 1.4 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     const nGeo = new THREE.BufferGeometry();
     nGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nPos), 3));
     nGeo.setAttribute('aSize', new THREE.BufferAttribute(new Float32Array(nSizes), 1));
     nGeo.setAttribute('aBright', new THREE.BufferAttribute(new Float32Array(nBrights), 1));
+    nGeo.setAttribute('aColor', new THREE.BufferAttribute(new Float32Array(nColors), 3));
     dnaGroup.add(new THREE.Points(nGeo, nodeMat));
   });
 
