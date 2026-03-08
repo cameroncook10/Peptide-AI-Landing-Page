@@ -35,16 +35,16 @@ void main(){
   float n2=fbm(vUv*3.5-vec2(t*0.4,t*0.25));
   float n3=fbm(vUv*5.0+vec2(-t*0.2,t*0.4));
   float n4=fbm(vUv*1.8+vec2(t*0.15,-t*0.35));
-  // Near-black base
-  vec3 c=vec3(0.001,0.001,0.003);
-  // Very faint teal wisps
-  c+=vec3(0.0,0.012,0.008)*pow(n1,3.0);
-  // Deep blue-violet
-  c+=vec3(0.003,0.0,0.008)*pow(n2,2.5);
-  // Faint teal core
-  c+=vec3(0.0,0.018,0.012)*pow(max(n3-0.4,0.0),2.5)*0.8;
-  // Barely-there aurora
-  c+=vec3(0.0,0.006,0.003)*n4*n1;
+  // Near-black green base
+  vec3 c=vec3(0.002,0.005,0.002);
+  // Green wisps
+  c+=vec3(0.0,0.025,0.008)*pow(n1,3.0);
+  // Deep green layer
+  c+=vec3(0.0,0.015,0.005)*pow(n2,2.5);
+  // Bright green core
+  c+=vec3(0.0,0.03,0.01)*pow(max(n3-0.4,0.0),2.5)*0.8;
+  // Green aurora
+  c+=vec3(0.0,0.012,0.004)*n4*n1;
   gl_FragColor=vec4(c,1.0);
 }`;
 
@@ -60,9 +60,9 @@ function createScene(canvas, THREE, postFx) {
   const dpr = Math.min(devicePixelRatio, mob ? 1.5 : 2);
   renderer.setPixelRatio(dpr);
   renderer.setSize(innerWidth, innerHeight);
-  renderer.setClearColor(0x000002);
+  renderer.setClearColor(0x000800);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.65;
+  renderer.toneMappingExposure = 0.85;
   if (!mob) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -83,15 +83,15 @@ function createScene(canvas, THREE, postFx) {
   scene.add(dnaGroup);
 
   // ── Lights (cheap, create immediately) ──
-  scene.add(new THREE.AmbientLight(0x000a06, 1.0));
-  const keyLight = new THREE.PointLight(0x00dd88, 2.5, 35);
-  const fillLight = new THREE.PointLight(0x0088bb, 1.2, 25);
+  scene.add(new THREE.AmbientLight(0x001a08, 0.8));
+  const keyLight = new THREE.PointLight(0x00ff66, 3.5, 35);
+  const fillLight = new THREE.PointLight(0x00cc55, 1.5, 25);
   fillLight.position.set(-5, 0, -5);
-  const rimLight = new THREE.PointLight(0x00dd88, 0.8, 20);
+  const rimLight = new THREE.PointLight(0x00ff88, 1.2, 20);
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
 
-  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.2);
   shadowLight.position.set(5, 10, 8);
   if (!mob) {
     shadowLight.castShadow = true;
@@ -127,22 +127,22 @@ function createScene(canvas, THREE, postFx) {
     composer = new postFx.EffectComposer(renderer);
     composer.addPass(new postFx.RenderPass(scene, camera));
     composer.addPass(new postFx.UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.6, 0.15,
+      new THREE.Vector2(innerWidth, innerHeight), 1.8, 0.8, 0.1,
     ));
   }
 
-  // ── Build queue: heavy geometry spread across frames ──
+  // ── Build queue: particle-cloud DNA spread across frames ──
   const TURNS = 8, HEIGHT = 50, RADIUS = 2.8;
   const SEGMENTS = mob ? 150 : 500;
-  const TUBE_RADIAL = mob ? 6 : 16;
   const RUNG_COUNT = mob ? 40 : 100;
-  const RUNGS_PER_FRAME = mob ? 10 : 25;
+  const STRAND_PTS = mob ? 800 : 3000;
+  const HALO_PTS = mob ? 400 : 1500;
+  const RUNG_INTERP = mob ? 10 : 18;
 
   const buildQueue = [];
-  // Shared state passed between build steps
   const ctx = { c1: null, c2: null };
 
-  // Step 1: backbone tubes
+  // Step 1: backbone particle strands + glow halo
   buildQueue.push(() => {
     const pts1 = [], pts2 = [];
     for (let i = 0; i <= SEGMENTS; i++) {
@@ -155,63 +155,88 @@ function createScene(canvas, THREE, postFx) {
     ctx.c1 = new THREE.CatmullRomCurve3(pts1);
     ctx.c2 = new THREE.CatmullRomCurve3(pts2);
 
-    const bbMat = mob
-      ? new THREE.MeshStandardMaterial({ color: 0x00cc88, emissive: 0x007755, emissiveIntensity: 0.45, metalness: 0.2, roughness: 0.3 })
-      : new THREE.MeshPhysicalMaterial({ color: 0x00cc88, emissive: 0x007755, emissiveIntensity: 0.45, metalness: 0.2, roughness: 0.25, clearcoat: 1.0, clearcoatRoughness: 0.1 });
-    const bb1 = new THREE.Mesh(new THREE.TubeGeometry(ctx.c1, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
-    const bb2 = new THREE.Mesh(new THREE.TubeGeometry(ctx.c2, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
-    if (!mob) { bb1.castShadow = true; bb1.receiveShadow = true; bb2.castShadow = true; bb2.receiveShadow = true; }
-    dnaGroup.add(bb1, bb2);
+    // Helper: sample points along curve with gaussian noise for cloud thickness
+    function sampleStrand(curve, count, noiseR) {
+      const pos = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        const t = i / count;
+        const p = curve.getPoint(t);
+        // Box-Muller approximation for gaussian scatter
+        const u1 = Math.random() || 0.001, u2 = Math.random();
+        const g = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2) * noiseR;
+        const angle = Math.random() * Math.PI * 2;
+        pos[i * 3] = p.x + Math.cos(angle) * g;
+        pos[i * 3 + 1] = p.y + (Math.random() - 0.5) * noiseR * 0.5;
+        pos[i * 3 + 2] = p.z + Math.sin(angle) * g;
+      }
+      return pos;
+    }
+
+    // Main backbone strands (dense, bright)
+    const strandMat = new THREE.PointsMaterial({
+      color: 0x00ff88, size: mob ? 0.06 : 0.08, transparent: true,
+      opacity: 0.7, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    });
+    for (const curve of [ctx.c1, ctx.c2]) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(sampleStrand(curve, STRAND_PTS, 0.15), 3));
+      dnaGroup.add(new THREE.Points(geo, strandMat));
+    }
+
+    // Glow halo (sparser, larger, softer)
+    const haloMat = new THREE.PointsMaterial({
+      color: 0x00ff88, size: mob ? 0.15 : 0.22, transparent: true,
+      opacity: 0.12, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    });
+    for (const curve of [ctx.c1, ctx.c2]) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(sampleStrand(curve, HALO_PTS, 0.4), 3));
+      dnaGroup.add(new THREE.Points(geo, haloMat));
+    }
   });
 
-  // Steps 2+: rungs in batches
-  const palette = [{ c: 0x00bb77, e: 0x006644 }, { c: 0x0099cc, e: 0x005577 }];
-  for (let batch = 0; batch < RUNG_COUNT; batch += RUNGS_PER_FRAME) {
-    const start = batch, end = Math.min(batch + RUNGS_PER_FRAME, RUNG_COUNT);
-    buildQueue.push(() => {
-      const nodeGeo = new THREE.SphereGeometry(0.15, mob ? 8 : 16, mob ? 8 : 16);
-      const up = new THREE.Vector3(0, 1, 0);
-      const rungMats = palette.map(pal => new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.2, metalness: 0.3, roughness: 0.4 }));
-      const nodeMats = palette.map(pal =>
-        mob
-          ? new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.45, metalness: 0.15, roughness: 0.2 })
-          : new THREE.MeshPhysicalMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.45, metalness: 0.15, roughness: 0.18, clearcoat: 0.8, clearcoatRoughness: 0.15 })
-      );
-      const glowGeo = mob ? null : new THREE.SphereGeometry(0.42, 12, 12);
-      const glowMats = mob ? null : palette.map(pal => new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.06 }));
-
-      for (let i = start; i < end; i++) {
-        const t = i / RUNG_COUNT;
-        const p1 = ctx.c1.getPoint(t), p2 = ctx.c2.getPoint(t);
-        const dist = p1.distanceTo(p2);
-        const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
-        const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
-        const pi = i % 2;
-
-        const rung = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, dist, mob ? 4 : 8), rungMats[pi]);
-        rung.position.copy(mid);
-        rung.quaternion.setFromUnitVectors(up, dir);
-        if (!mob) { rung.castShadow = true; rung.receiveShadow = true; }
-        dnaGroup.add(rung);
-
-        const n1 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n1.position.copy(p1); if (!mob) n1.castShadow = true; dnaGroup.add(n1);
-        const n2 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n2.position.copy(p2); if (!mob) n2.castShadow = true; dnaGroup.add(n2);
-
-        if (!mob && i % 3 === 0) {
-          const g1 = new THREE.Mesh(glowGeo, glowMats[pi]); g1.position.copy(p1); dnaGroup.add(g1);
-          const g2 = new THREE.Mesh(glowGeo, glowMats[pi]); g2.position.copy(p2); dnaGroup.add(g2);
-        }
-      }
-    });
-  }
-
-  // Final step: particles + stars
+  // Step 2: rung connections as point clouds + bright junction nodes
   buildQueue.push(() => {
-    const P_COUNT = mob ? 150 : 600;
+    const rungPositions = [];
+    const nodePositions = [];
+    for (let i = 0; i < RUNG_COUNT; i++) {
+      const t = i / RUNG_COUNT;
+      const p1 = ctx.c1.getPoint(t), p2 = ctx.c2.getPoint(t);
+      // Interpolated points along the rung
+      for (let j = 0; j <= RUNG_INTERP; j++) {
+        const f = j / RUNG_INTERP;
+        const x = p1.x + (p2.x - p1.x) * f + (Math.random() - 0.5) * 0.08;
+        const y = p1.y + (p2.y - p1.y) * f + (Math.random() - 0.5) * 0.08;
+        const z = p1.z + (p2.z - p1.z) * f + (Math.random() - 0.5) * 0.08;
+        rungPositions.push(x, y, z);
+      }
+      // Bright junction nodes at endpoints
+      nodePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+    }
+
+    const rungGeo = new THREE.BufferGeometry();
+    rungGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(rungPositions), 3));
+    dnaGroup.add(new THREE.Points(rungGeo, new THREE.PointsMaterial({
+      color: 0x00dd66, size: mob ? 0.05 : 0.06, transparent: true,
+      opacity: 0.5, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    })));
+
+    const nodeGeo = new THREE.BufferGeometry();
+    nodeGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nodePositions), 3));
+    dnaGroup.add(new THREE.Points(nodeGeo, new THREE.PointsMaterial({
+      color: 0x00ffaa, size: mob ? 0.12 : 0.15, transparent: true,
+      opacity: 0.9, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    })));
+  });
+
+  // Step 3: surrounding particles + fog + stars
+  buildQueue.push(() => {
+    // Surrounding particle cloud (hugs the helix)
+    const P_COUNT = mob ? 600 : 3000;
     const pPos = new Float32Array(P_COUNT * 3);
     for (let i = 0; i < P_COUNT; i++) {
       const t = Math.random(), angle = Math.random() * Math.PI * 2;
-      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 8;
+      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 5;
       pPos[i * 3] = Math.cos(angle) * r;
       pPos[i * 3 + 1] = y;
       pPos[i * 3 + 2] = Math.sin(angle) * r;
@@ -219,9 +244,26 @@ function createScene(canvas, THREE, postFx) {
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
     dnaGroup.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-      color: 0x00aa66, size: 0.04, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending,
+      color: 0x00ff77, size: 0.06, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending,
     })));
 
+    // Ambient green fog (large faint particles)
+    const FOG_COUNT = mob ? 300 : 1000;
+    const fogPos = new Float32Array(FOG_COUNT * 3);
+    for (let i = 0; i < FOG_COUNT; i++) {
+      const t = Math.random(), angle = Math.random() * Math.PI * 2;
+      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 12;
+      fogPos[i * 3] = Math.cos(angle) * r;
+      fogPos[i * 3 + 1] = y;
+      fogPos[i * 3 + 2] = Math.sin(angle) * r;
+    }
+    const fogGeo = new THREE.BufferGeometry();
+    fogGeo.setAttribute('position', new THREE.BufferAttribute(fogPos, 3));
+    dnaGroup.add(new THREE.Points(fogGeo, new THREE.PointsMaterial({
+      color: 0x00ff88, size: 0.15, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending,
+    })));
+
+    // Star field (green-tinted)
     const S_COUNT = mob ? 800 : 3000;
     const sPos = new Float32Array(S_COUNT * 3);
     for (let i = 0; i < S_COUNT; i++) {
@@ -234,7 +276,7 @@ function createScene(canvas, THREE, postFx) {
     }
     const sGeo = new THREE.BufferGeometry();
     sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-    scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0xa0c8ff, size: 0.06, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending })));
+    scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0x88ffbb, size: 0.06, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending })));
   });
 
   return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue };
@@ -475,7 +517,7 @@ export default function CinematicPage() {
         addEventListener('resize', onResize);
 
         const lookAt = new THREE.Vector3();
-        const lerpSpeed = mob ? 0.06 : 0.032;
+        const lerpSpeed = mob ? 0.08 : 0.055;
 
         function animate() {
           fid = requestAnimationFrame(animate);

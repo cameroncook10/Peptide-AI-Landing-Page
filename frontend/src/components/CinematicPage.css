@@ -108,7 +108,7 @@
 .cinematic-hero .hero-headline .hw.accent {
   color: #00e5a0;
   -webkit-text-fill-color: #00e5a0;
-  font-size: 110%;
+  font-size: 105%;
   animation: hw-reveal-accent 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
@@ -193,7 +193,7 @@
 
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .cinematic-panel.visible {
   opacity: 1;
@@ -204,6 +204,7 @@
 .panel-step {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
+  line-height: 1;
   letter-spacing: 0.2em;
   color: #00e5a0;
   text-transform: uppercase;
@@ -267,8 +268,8 @@
 .content-below {
   position: relative;
   z-index: 20;
-  background: #060810;
-  box-shadow: 0 -40px 80px 30px rgba(6,8,16,0.98);
+  background: #040a06;
+  box-shadow: 0 -40px 80px 30px rgba(4,10,6,0.98);
 }
 
 /* Shared section header */
@@ -279,6 +280,7 @@
 .cine-eyebrow {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
+  line-height: 1.2;
   letter-spacing: 0.25em;
   color: #00e5a0;
   text-transform: uppercase;
@@ -327,11 +329,11 @@
 }
 .cine-ticker-fade-left {
   left: 0;
-  background: linear-gradient(to right, #060810, transparent);
+  background: linear-gradient(to right, #040a06, transparent);
 }
 .cine-ticker-fade-right {
   right: 0;
-  background: linear-gradient(to left, #060810, transparent);
+  background: linear-gradient(to left, #040a06, transparent);
 }
 .cine-ticker-row {
   overflow: hidden;
@@ -723,8 +725,8 @@
   .cinematic-canvas-wrap {
     background:
       radial-gradient(ellipse at 30% 25%, rgba(0,229,160,0.05) 0%, transparent 50%),
-      radial-gradient(ellipse at 75% 75%, rgba(0,136,187,0.04) 0%, transparent 50%),
-      #000002;
+      radial-gradient(ellipse at 75% 75%, rgba(0,180,80,0.04) 0%, transparent 50%),
+      #000800;
   }
 
   .cinematic-hero .hero-headline {
