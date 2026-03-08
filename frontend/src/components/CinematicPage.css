@@ -170,7 +170,10 @@
 }
 
 .hero-scroll-cue {
-  margin-top: 2.5rem;
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,7 +186,6 @@
   opacity: 0;
   animation: hw-reveal 0.6s 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   z-index: 10;
-  width: 100%;
 }
 .hero-scroll-cue svg {
   animation: bounce-arrow 2s 2s ease-in-out infinite;
@@ -1248,12 +1250,8 @@
   }
 
   .hero-scroll-cue {
-    margin-top: 1.5rem;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    text-align: center;
+    bottom: 1.5rem;
+    font-size: 0.6rem;
   }
 
   .cinematic-panel {
