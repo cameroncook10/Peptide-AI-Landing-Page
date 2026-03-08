@@ -1,9 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import './CinematicPage.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -55,7 +51,7 @@ void main(){
 /* ═══════════════════════════════════════════════════
    High-Quality DNA Helix Scene
    ═══════════════════════════════════════════════════ */
-function createScene(canvas) {
+function createScene(canvas, THREE, postFx) {
   const mob = innerWidth < 780;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 200);
@@ -127,10 +123,10 @@ function createScene(canvas) {
 
   // ── Bloom post-processing (desktop only) ──
   let composer = null;
-  if (!mob) {
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    composer.addPass(new UnrealBloomPass(
+  if (!mob && postFx) {
+    composer = new postFx.EffectComposer(renderer);
+    composer.addPass(new postFx.RenderPass(scene, camera));
+    composer.addPass(new postFx.UnrealBloomPass(
       new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.6, 0.15,
     ));
   }
@@ -374,100 +370,124 @@ export default function CinematicPage() {
     }
   }, [email, phone]);
 
-  // ── Three.js (progressive loading) ──
+  // ── Three.js (lazy-loaded so hero text renders instantly) ──
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
-      createScene(canvas);
+    let fid, onScroll, onResize, renderer;
+    let cancelled = false;
 
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let current = 0, target = 0;
+    const mob = innerWidth < 780;
 
-    function onScroll() {
-      const spacer = spacerRef.current;
-      if (!spacer) return;
-      const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
-      const scrollable = spacerBottom - innerHeight;
-      target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
+    // Dynamically import Three.js (and post-processing on desktop only)
+    const imports = [import('three')];
+    if (!mob) {
+      imports.push(import('three/examples/jsm/postprocessing/EffectComposer.js'));
+      imports.push(import('three/examples/jsm/postprocessing/RenderPass.js'));
+      imports.push(import('three/examples/jsm/postprocessing/UnrealBloomPass.js'));
     }
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
 
-    const milestones = [0.10, 0.30, 0.50, 0.72];
-    const panels = panelsRef.current;
+    Promise.all(imports).then(([THREE, ...postMods]) => {
+      if (cancelled) return;
 
-    function updatePanels(p) {
-      for (let i = 0; i < panels.length; i++) {
-        const el = panels[i];
-        if (!el) continue;
-        const start = milestones[i];
-        const end = milestones[i + 1] || 0.94;
-        el.classList.toggle('visible', p >= start && p < end);
+      const postFx = mob ? null : {
+        EffectComposer: postMods[0].EffectComposer,
+        RenderPass: postMods[1].RenderPass,
+        UnrealBloomPass: postMods[2].UnrealBloomPass,
+      };
+
+      const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
+        createScene(canvas, THREE, postFx);
+      renderer = r;
+
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let current = 0, target = 0;
+
+      onScroll = () => {
+        const spacer = spacerRef.current;
+        if (!spacer) return;
+        const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
+        const scrollable = spacerBottom - innerHeight;
+        target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      const milestones = [0.10, 0.30, 0.50, 0.72];
+      const panels = panelsRef.current;
+
+      function updatePanels(p) {
+        for (let i = 0; i < panels.length; i++) {
+          const el = panels[i];
+          if (!el) continue;
+          const start = milestones[i];
+          const end = milestones[i + 1] || 0.94;
+          el.classList.toggle('visible', p >= start && p < end);
+        }
       }
-    }
 
-    function updateHero(p) {
-      const hero = heroRef.current;
-      if (!hero) return;
-      const o = Math.max(0, 1 - p * 7);
-      hero.style.opacity = o;
-      hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
-    }
+      function updateHero(p) {
+        const hero = heroRef.current;
+        if (!hero) return;
+        const o = Math.max(0, 1 - p * 7);
+        hero.style.opacity = o;
+        hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
+      }
 
-    function onResize() {
-      camera.aspect = innerWidth / innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(innerWidth, innerHeight);
-      if (composer) composer.setSize(innerWidth, innerHeight);
-    }
-    addEventListener('resize', onResize);
+      onResize = () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+        if (composer) composer.setSize(innerWidth, innerHeight);
+      };
+      addEventListener('resize', onResize);
 
-    const lookAt = new THREE.Vector3();
-    let fid;
+      const lookAt = new THREE.Vector3();
 
-    function animate() {
-      fid = requestAnimationFrame(animate);
+      function animate() {
+        fid = requestAnimationFrame(animate);
 
-      // Process one build step per frame (progressive geometry loading)
-      if (buildQueue.length > 0) buildQueue.shift()();
+        // Process one build step per frame (progressive geometry loading)
+        if (buildQueue.length > 0) buildQueue.shift()();
 
-      if (reducedMotion) current = 0;
-      else current += (target - current) * 0.032;
+        if (reducedMotion) current = 0;
+        else current += (target - current) * 0.032;
 
-      const t = Math.max(0, Math.min(1, current));
-      const now = performance.now() * 0.001;
+        const t = Math.max(0, Math.min(1, current));
+        const now = performance.now() * 0.001;
 
-      camera.position.copy(cameraPath.getPoint(t));
-      lookAt.set(0, t * -15, 0);
-      camera.lookAt(lookAt);
+        camera.position.copy(cameraPath.getPoint(t));
+        lookAt.set(0, t * -15, 0);
+        camera.lookAt(lookAt);
 
-      keyLight.position.copy(camera.position).multiplyScalar(0.8);
-      keyLight.intensity = 2.5 + Math.sin(now * 0.4) * 0.3;
-      fillLight.intensity = 1.2 + Math.sin(now * 0.25 + 1) * 0.15;
-      rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.1;
+        keyLight.position.copy(camera.position).multiplyScalar(0.8);
+        keyLight.intensity = 2.5 + Math.sin(now * 0.4) * 0.3;
+        fillLight.intensity = 1.2 + Math.sin(now * 0.25 + 1) * 0.15;
+        rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.1;
 
-      shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
-      shadowLight.target.position.set(0, camera.position.y - 2, 0);
-      shadowLight.target.updateMatrixWorld();
+        shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
+        shadowLight.target.position.set(0, camera.position.y - 2, 0);
+        shadowLight.target.updateMatrixWorld();
 
-      dnaGroup.rotation.y = now * 0.01;
-      nebulaMat.uniforms.uTime.value = now;
+        dnaGroup.rotation.y = now * 0.01;
+        nebulaMat.uniforms.uTime.value = now;
 
-      updatePanels(t);
-      updateHero(t);
+        updatePanels(t);
+        updateHero(t);
 
-      if (composer) composer.render();
-      else renderer.render(scene, camera);
-    }
-    animate();
+        if (composer) composer.render();
+        else renderer.render(scene, camera);
+      }
+      animate();
+    });
 
     return () => {
-      cancelAnimationFrame(fid);
-      removeEventListener('scroll', onScroll);
-      removeEventListener('resize', onResize);
-      renderer.dispose();
+      cancelled = true;
+      if (fid) cancelAnimationFrame(fid);
+      if (onScroll) removeEventListener('scroll', onScroll);
+      if (onResize) removeEventListener('resize', onResize);
+      if (renderer) renderer.dispose();
     };
   }, []);
 
