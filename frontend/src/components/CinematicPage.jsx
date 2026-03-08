@@ -136,7 +136,7 @@ void main(){
 function createScene(canvas, THREE, postFx) {
   const mob = innerWidth < 780;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 200);
+  const camera = new THREE.PerspectiveCamera(mob ? 50 : 60, innerWidth / innerHeight, 0.1, 200);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mob, alpha: false });
   const dpr = Math.min(devicePixelRatio, mob ? 1.5 : 2);
@@ -171,15 +171,15 @@ function createScene(canvas, THREE, postFx) {
 
   // ── Camera path ──
   const cameraPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 10, mob ? 18 : 26),
-    new THREE.Vector3(3, 7, mob ? 13 : 22),
-    new THREE.Vector3(5, 4, mob ? 9 : 18),
-    new THREE.Vector3(-3, 1, mob ? 6.5 : 12),
-    new THREE.Vector3(-4, -2, mob ? 5 : 8),
-    new THREE.Vector3(3, -5, mob ? 4.5 : 6),
-    new THREE.Vector3(2, -8, mob ? 3.5 : 3),
-    new THREE.Vector3(0, -12, mob ? 2 : 1),
-    new THREE.Vector3(0, -15, mob ? 1 : 0.5),
+    new THREE.Vector3(0, 10, mob ? 12 : 26),
+    new THREE.Vector3(3, 7, mob ? 9 : 22),
+    new THREE.Vector3(5, 4, mob ? 7 : 18),
+    new THREE.Vector3(-3, 1, mob ? 5.5 : 12),
+    new THREE.Vector3(-4, -2, mob ? 4.5 : 8),
+    new THREE.Vector3(3, -5, mob ? 4 : 6),
+    new THREE.Vector3(2, -8, mob ? 3 : 3),
+    new THREE.Vector3(0, -12, mob ? 1.8 : 1),
+    new THREE.Vector3(0, -15, mob ? 0.8 : 0.5),
   ]);
 
   // ── Bloom post-processing (desktop only) ──
@@ -967,7 +967,7 @@ export default function CinematicPage() {
           camera.lookAt(lookAt);
 
           // Dynamic FOV zoom when panel is active (cinematic close-up)
-          const targetFov = activePanel >= 0 ? (mob ? 40 : 50) : 60;
+          const targetFov = activePanel >= 0 ? (mob ? 35 : 50) : (mob ? 50 : 60);
           camera.fov += (targetFov - camera.fov) * 0.04;
           camera.updateProjectionMatrix();
 
