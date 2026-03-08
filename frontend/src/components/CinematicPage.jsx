@@ -370,28 +370,78 @@ export default function CinematicPage() {
     }
   }, [email, phone]);
 
-  // ── Three.js (lazy-loaded so hero text renders instantly) ──
+  // ── Three.js (desktop only) + scroll-driven panels (always) ──
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     let fid, onScroll, onResize, renderer;
     let cancelled = false;
-
     const mob = innerWidth < 780;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Dynamically import Three.js (and post-processing on desktop only)
-    const imports = [import('three')];
-    if (!mob) {
-      imports.push(import('three/examples/jsm/postprocessing/EffectComposer.js'));
-      imports.push(import('three/examples/jsm/postprocessing/RenderPass.js'));
-      imports.push(import('three/examples/jsm/postprocessing/UnrealBloomPass.js'));
+    // ── Scroll tracking (runs on all devices) ──
+    let current = 0, target = 0;
+    onScroll = () => {
+      const spacer = spacerRef.current;
+      if (!spacer) return;
+      const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
+      const scrollable = spacerBottom - innerHeight;
+      target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    const milestones = [0.10, 0.30, 0.50, 0.72];
+    const panels = panelsRef.current;
+
+    function updatePanels(p) {
+      for (let i = 0; i < panels.length; i++) {
+        const el = panels[i];
+        if (!el) continue;
+        const start = milestones[i];
+        const end = milestones[i + 1] || 0.94;
+        el.classList.toggle('visible', p >= start && p < end);
+      }
     }
+
+    function updateHero(p) {
+      const hero = heroRef.current;
+      if (!hero) return;
+      const o = Math.max(0, 1 - p * 7);
+      hero.style.opacity = o;
+      hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
+    }
+
+    // ── Mobile: skip Three.js entirely for instant load ──
+    if (mob) {
+      function mobileLoop() {
+        fid = requestAnimationFrame(mobileLoop);
+        if (reducedMotion) current = 0;
+        else current += (target - current) * 0.06;
+        const t = Math.max(0, Math.min(1, current));
+        updatePanels(t);
+        updateHero(t);
+      }
+      mobileLoop();
+      return () => {
+        if (fid) cancelAnimationFrame(fid);
+        removeEventListener('scroll', onScroll);
+      };
+    }
+
+    // ── Desktop: load Three.js + post-processing ──
+    const imports = [
+      import('three'),
+      import('three/examples/jsm/postprocessing/EffectComposer.js'),
+      import('three/examples/jsm/postprocessing/RenderPass.js'),
+      import('three/examples/jsm/postprocessing/UnrealBloomPass.js'),
+    ];
 
     Promise.all(imports).then(([THREE, ...postMods]) => {
       if (cancelled) return;
 
-      const postFx = mob ? null : {
+      const postFx = {
         EffectComposer: postMods[0].EffectComposer,
         RenderPass: postMods[1].RenderPass,
         UnrealBloomPass: postMods[2].UnrealBloomPass,
@@ -400,40 +450,6 @@ export default function CinematicPage() {
       const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
         createScene(canvas, THREE, postFx);
       renderer = r;
-
-      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let current = 0, target = 0;
-
-      onScroll = () => {
-        const spacer = spacerRef.current;
-        if (!spacer) return;
-        const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
-        const scrollable = spacerBottom - innerHeight;
-        target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
-      };
-      addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-
-      const milestones = [0.10, 0.30, 0.50, 0.72];
-      const panels = panelsRef.current;
-
-      function updatePanels(p) {
-        for (let i = 0; i < panels.length; i++) {
-          const el = panels[i];
-          if (!el) continue;
-          const start = milestones[i];
-          const end = milestones[i + 1] || 0.94;
-          el.classList.toggle('visible', p >= start && p < end);
-        }
-      }
-
-      function updateHero(p) {
-        const hero = heroRef.current;
-        if (!hero) return;
-        const o = Math.max(0, 1 - p * 7);
-        hero.style.opacity = o;
-        hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
-      }
 
       onResize = () => {
         camera.aspect = innerWidth / innerHeight;
@@ -448,7 +464,6 @@ export default function CinematicPage() {
       function animate() {
         fid = requestAnimationFrame(animate);
 
-        // Process one build step per frame (progressive geometry loading)
         if (buildQueue.length > 0) buildQueue.shift()();
 
         if (reducedMotion) current = 0;

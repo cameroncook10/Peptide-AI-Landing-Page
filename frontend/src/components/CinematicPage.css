@@ -78,11 +78,17 @@
 }
 
 /* ── Word-by-word headline reveal ── */
-.hero-headline {
+/* Scoped to .cinematic-hero to override any global .hero-headline gradient text */
+.cinematic-hero .hero-headline {
   font-family: 'DM Serif Display', serif;
   font-size: clamp(3.5rem, 10vw, 7rem);
   font-weight: 400;
   color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  filter: none;
   line-height: 1.0;
   letter-spacing: -0.03em;
   text-shadow:
@@ -91,7 +97,7 @@
     0 8px 60px rgba(0,0,0,0.95);
 }
 
-.hero-headline .hw {
+.cinematic-hero .hero-headline .hw {
   display: inline-block;
   opacity: 0;
   transform: translateY(30px) scale(0.95);
@@ -99,8 +105,9 @@
   animation: hw-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.hero-headline .hw.accent {
+.cinematic-hero .hero-headline .hw.accent {
   color: #00e5a0;
+  -webkit-text-fill-color: #00e5a0;
   font-size: 110%;
   animation: hw-reveal-accent 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -709,7 +716,18 @@
    MOBILE
    ═══════════════════════════════════════════════════ */
 @media (max-width: 780px) {
-  .hero-headline {
+  /* Hide Three.js canvas on mobile; CSS gradient replaces it */
+  .cinematic-canvas-wrap canvas {
+    display: none;
+  }
+  .cinematic-canvas-wrap {
+    background:
+      radial-gradient(ellipse at 30% 25%, rgba(0,229,160,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% 75%, rgba(0,136,187,0.04) 0%, transparent 50%),
+      #000002;
+  }
+
+  .cinematic-hero .hero-headline {
     font-size: clamp(2.4rem, 11vw, 4rem);
   }
   .hero-sub {
@@ -773,7 +791,7 @@
 }
 
 @media (max-width: 480px) {
-  .hero-headline {
+  .cinematic-hero .hero-headline {
     font-size: clamp(2rem, 11vw, 3rem);
   }
   .cinematic-panel {
@@ -795,10 +813,10 @@
    REDUCED MOTION
    ═══════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
-  .hero-headline .hw,
-  .hero-badge,
-  .hero-sub,
-  .hero-scroll-cue {
+  .cinematic-hero .hero-headline .hw,
+  .cinematic-hero .hero-badge,
+  .cinematic-hero .hero-sub,
+  .cinematic-hero .hero-scroll-cue {
     animation: none;
     opacity: 1;
     transform: none;
