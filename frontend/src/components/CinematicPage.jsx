@@ -115,9 +115,8 @@ function createScene(canvas, THREE, postFx) {
   renderer.setClearColor(0x000800);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
-  // No shadow maps needed — fully particle-based scene
 
-  // ── Nebula sky-dome (lightweight — renders immediately) ──
+  // ── Nebula sky-dome ──
   const nebulaMat = new THREE.ShaderMaterial({
     vertexShader: NEBULA_VERT,
     fragmentShader: NEBULA_FRAG,
@@ -131,8 +130,7 @@ function createScene(canvas, THREE, postFx) {
   const dnaGroup = new THREE.Group();
   scene.add(dnaGroup);
 
-  // ── Lights (cheap, create immediately) ──
-  // Minimal lighting — particles are self-illuminated via additive blending + shaders
+  // ── Lights ──
   scene.add(new THREE.AmbientLight(0x001a08, 0.5));
   const keyLight = new THREE.PointLight(0x00ff88, 2.0, 40);
   const fillLight = new THREE.PointLight(0x00cc66, 1.0, 30);
@@ -140,7 +138,6 @@ function createScene(canvas, THREE, postFx) {
   const rimLight = new THREE.PointLight(0x00ffaa, 0.8, 25);
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
-  const shadowLight = { position: keyLight.position, target: { position: new THREE.Vector3(), updateMatrixWorld(){} } };
 
   // ── Camera path ──
   const cameraPath = new THREE.CatmullRomCurve3([
@@ -176,7 +173,7 @@ function createScene(canvas, THREE, postFx) {
   const buildQueue = [];
   const ctx = { c1: null, c2: null, starMat: null };
 
-  // Step 1: helix backbone strands with custom glow shader
+  // Step 1: helix backbone strands
   buildQueue.push(() => {
     const pts1 = [], pts2 = [];
     for (let i = 0; i <= SEGMENTS; i++) {
@@ -212,7 +209,6 @@ function createScene(canvas, THREE, postFx) {
       return geo;
     }
 
-    // Core strands — bright neon green, tight cluster
     const coreMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
       uniforms: { uColor: { value: new THREE.Color(0x00ffbb) }, uOpacity: { value: 1.0 } },
@@ -222,7 +218,6 @@ function createScene(canvas, THREE, postFx) {
       dnaGroup.add(new THREE.Points(makeStrand(c, STRAND_PTS, 0.12, 0.06, 0.08), coreMat));
     }
 
-    // Outer glow halo — softer, wider, larger particles
     const haloMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
       uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: 0.4 } },
@@ -233,7 +228,7 @@ function createScene(canvas, THREE, postFx) {
     }
   });
 
-  // Step 2: neon rung connections + bright junction nodes
+  // Step 2: rung connections + junction nodes
   buildQueue.push(() => {
     const rPos = [], rSizes = [], rBrights = [];
     const nPos = [], nSizes = [], nBrights = [];
@@ -250,7 +245,6 @@ function createScene(canvas, THREE, postFx) {
         rSizes.push(0.03 + Math.random() * 0.04);
         rBrights.push(0.4 + Math.random() * 0.4);
       }
-      // Bright junction nodes
       for (const p of [p1, p2]) {
         nPos.push(p.x, p.y, p.z);
         nSizes.push(0.12 + Math.random() * 0.1);
@@ -281,9 +275,8 @@ function createScene(canvas, THREE, postFx) {
     dnaGroup.add(new THREE.Points(nGeo, nodeMat));
   });
 
-  // Step 3: floating particles around helix + flying animated stars
+  // Step 3: floating particles + flying stars
   buildQueue.push(() => {
-    // Surrounding particle mist
     const P_COUNT = mob ? 800 : 4000;
     const pPos = [], pSizes = [], pBrights = [];
     for (let i = 0; i < P_COUNT; i++) {
@@ -304,7 +297,6 @@ function createScene(canvas, THREE, postFx) {
     pGeo.setAttribute('aBright', new THREE.BufferAttribute(new Float32Array(pBrights), 1));
     dnaGroup.add(new THREE.Points(pGeo, mistMat));
 
-    // Flying animated stars — these orbit and twinkle
     const S_COUNT = mob ? 1500 : 5000;
     const sPos = new Float32Array(S_COUNT * 3);
     const sSizes = new Float32Array(S_COUNT);
@@ -335,7 +327,7 @@ function createScene(canvas, THREE, postFx) {
     scene.add(new THREE.Points(sGeo, starMat));
   });
 
-  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx };
+  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx };
 }
 
 /* ═══════════════════════════════════════════════════
@@ -349,10 +341,16 @@ const ACCENTS = new Set(['AI Insights', 'Stack Optimizer', 'Custom Protocols', '
    Stats
    ═══════════════════════════════════════════════════ */
 const STATS = [
-  { end: 1000, suffix: '+', label: 'Clinical studies referenced' },
-  { end: 50, suffix: '+', label: 'Peptides cataloged' },
-  { end: 12, suffix: '+', label: 'Biomarkers tracked' },
+  { end: 1000, suffix: '+', label: 'Clinical studies referenced', icon: 'book' },
+  { end: 50, suffix: '+', label: 'Peptides cataloged', icon: 'flask' },
+  { end: 12, suffix: '+', label: 'Biomarkers tracked', icon: 'pulse' },
 ];
+
+const STAT_ICONS = {
+  book: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" /><path d="M8 7h6" /><path d="M8 11h4" /></svg>,
+  flask: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.14A1 1 0 0 0 5.598 22h12.804a1 1 0 0 0 .879-1.86l-5.07-9.716A2 2 0 0 1 14 9.527V2" /><path d="M8.5 2h7" /><path d="M7 16.5h10" /></svg>,
+  pulse: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
+};
 
 function AnimatedNum({ end, suffix, decimal, star, trigger }) {
   const [val, setVal] = useState(0);
@@ -370,7 +368,7 @@ function AnimatedNum({ end, suffix, decimal, star, trigger }) {
   return (
     <span className="cine-stat-num">
       {decimal ? val.toFixed(1) : Math.round(val)}{suffix}
-      {star && <span className="cine-stat-star">★</span>}
+      {star && <span className="cine-stat-star">&#9733;</span>}
     </span>
   );
 }
@@ -411,6 +409,260 @@ const RESEARCH = [
 ];
 
 /* ═══════════════════════════════════════════════════
+   How It Works Data
+   ═══════════════════════════════════════════════════ */
+const STEPS = [
+  {
+    num: '01',
+    title: 'Create Your Protocol',
+    desc: 'Select from 50+ peptides, set dosing schedules, and build a personalized stack tailored to your goals.',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14" /><path d="M5 12h14" /></svg>,
+  },
+  {
+    num: '02',
+    title: 'Log & Sync Data',
+    desc: 'Track doses manually or sync biometrics from Apple Health, Oura, Whoop, and other wearables automatically.',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
+  },
+  {
+    num: '03',
+    title: 'Get AI Insights',
+    desc: 'Our ML models analyze your data to surface correlations, suggest optimizations, and flag potential issues.',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>,
+  },
+  {
+    num: '04',
+    title: 'Optimize & Iterate',
+    desc: 'Refine your protocol based on real results. See exactly what works for your unique biology.',
+    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /></svg>,
+  },
+];
+
+/* ═══════════════════════════════════════════════════
+   FAQ Data
+   ═══════════════════════════════════════════════════ */
+const FAQS = [
+  { q: 'What is Peptide AI?', a: 'Peptide AI is an all-in-one app for building peptide protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights to optimize your stack.' },
+  { q: 'Is it free to join the waitlist?', a: 'Absolutely. Joining the waitlist is 100% free and gives you early access when we launch, along with exclusive pricing and features.' },
+  { q: 'What peptides does the app support?', a: 'We currently catalog 50+ peptides including BPC-157, TB-500, Semax, CJC-1295, Ipamorelin, PT-141, AOD-9604, DSIP, Epitalon, and many more. New peptides are added regularly.' },
+  { q: 'How does the AI analysis work?', a: 'Our machine learning models analyze your biometric data (HRV, sleep, recovery) alongside your dosing logs to identify correlations, surface optimization opportunities, and provide personalized recommendations.' },
+  { q: 'What wearables are supported?', a: 'We integrate with Apple Health, Oura Ring, Whoop, Garmin, and other popular health platforms. More integrations are being added before launch.' },
+  { q: 'Is my data secure?', a: 'Yes. All data is encrypted end-to-end. We never sell your data. Your health information stays private and is only used to generate your personal insights.' },
+];
+
+/* ═══════════════════════════════════════════════════
+   Testimonials Data
+   ═══════════════════════════════════════════════════ */
+const TESTIMONIALS = [
+  { name: 'Dr. Michael R.', role: 'Sports Medicine', quote: 'Finally, a tool that brings data-driven precision to peptide protocols. The AI insights are genuinely impressive.', initials: 'MR' },
+  { name: 'Sarah K.', role: 'Biohacker', quote: 'I\'ve been tracking my BPC-157 and TB-500 stack manually for months. This app is going to be a game changer.', initials: 'SK' },
+  { name: 'James T.', role: 'Fitness Coach', quote: 'The biometric integration with Oura and Whoop is exactly what my clients need to optimize recovery protocols.', initials: 'JT' },
+  { name: 'Dr. Lisa P.', role: 'Functional Medicine', quote: 'Correlating peptide dosing with HRV and sleep data? This is the future of personalized health optimization.', initials: 'LP' },
+];
+
+/* ═══════════════════════════════════════════════════
+   Spotlight Card Component (mouse-tracking glow)
+   ═══════════════════════════════════════════════════ */
+function SpotlightCard({ children, className = '', as: Tag = 'div', ...props }) {
+  const ref = useRef(null);
+  const handleMouse = useCallback((e) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--spot-x', `${e.clientX - rect.left}px`);
+    el.style.setProperty('--spot-y', `${e.clientY - rect.top}px`);
+  }, []);
+  return (
+    <Tag ref={ref} className={`spotlight-card ${className}`} onMouseMove={handleMouse} {...props}>
+      <div className="spotlight-card-glow" />
+      {children}
+    </Tag>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   3D Tilt Card Component
+   ═══════════════════════════════════════════════════ */
+function TiltCard({ children, className = '', intensity = 8 }) {
+  const ref = useRef(null);
+  const handleMove = useCallback((e) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    el.style.transform = `perspective(600px) rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) scale3d(1.02, 1.02, 1.02)`;
+  }, [intensity]);
+  const handleLeave = useCallback(() => {
+    const el = ref.current;
+    if (el) el.style.transform = '';
+  }, []);
+  return (
+    <div ref={ref} className={`tilt-card ${className}`} onMouseMove={handleMove} onMouseLeave={handleLeave}>
+      {children}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   FAQ Accordion Item
+   ═══════════════════════════════════════════════════ */
+function FaqItem({ q, a, isOpen, onToggle }) {
+  return (
+    <div className={`faq-item ${isOpen ? 'faq-item-open' : ''}`} onClick={onToggle}>
+      <div className="faq-q">
+        <span>{q}</span>
+        <motion.span
+          className="faq-chevron"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m6 9 6 6 6-6" /></svg>
+        </motion.span>
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="faq-a"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p>{a}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Floating Particles Component
+   ═══════════════════════════════════════════════════ */
+function FloatingParticles({ count = 20, color = 'rgba(0,229,160,0.15)' }) {
+  const particles = useRef(
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: 2 + Math.random() * 4,
+      dur: 15 + Math.random() * 25,
+      delay: Math.random() * -20,
+    }))
+  ).current;
+
+  return (
+    <div className="floating-particles" aria-hidden="true">
+      {particles.map(p => (
+        <span
+          key={p.id}
+          className="fp"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+            background: color,
+            animationDuration: `${p.dur}s`,
+            animationDelay: `${p.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Magnetic Button Component
+   ═══════════════════════════════════════════════════ */
+function MagneticBtn({ children, className = '', href, onClick, type, disabled }) {
+  const ref = useRef(null);
+  const handleMove = useCallback((e) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    el.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+  }, []);
+  const handleLeave = useCallback(() => {
+    const el = ref.current;
+    if (el) el.style.transform = '';
+  }, []);
+  const Tag = href ? 'a' : 'button';
+  return (
+    <Tag ref={ref} className={`magnetic-btn ${className}`} href={href} onClick={onClick} type={type} disabled={disabled} onMouseMove={handleMove} onMouseLeave={handleLeave}>
+      {children}
+    </Tag>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Cursor Trail Effect (desktop only)
+   ═══════════════════════════════════════════════════ */
+function CursorTrail() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    if (innerWidth < 780) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let w = innerWidth, h = innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+
+    const trail = [];
+    const MAX = 25;
+    let mx = w / 2, my = h / 2;
+    let fid;
+
+    const onResize = () => {
+      w = innerWidth; h = innerHeight;
+      canvas.width = w; canvas.height = h;
+    };
+    const onMove = (e) => { mx = e.clientX; my = e.clientY; };
+    addEventListener('resize', onResize);
+    addEventListener('mousemove', onMove);
+
+    function loop() {
+      fid = requestAnimationFrame(loop);
+      ctx.clearRect(0, 0, w, h);
+      trail.unshift({ x: mx, y: my, life: 1 });
+      if (trail.length > MAX) trail.pop();
+
+      for (let i = 0; i < trail.length; i++) {
+        const p = trail[i];
+        p.life -= 0.035;
+        if (p.life <= 0) { trail.splice(i, 1); i--; continue; }
+        const r = p.life * 6;
+        const alpha = p.life * 0.4;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 229, 160, ${alpha})`;
+        ctx.fill();
+
+        // Add glow ring
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 229, 160, ${alpha * 0.15})`;
+        ctx.fill();
+      }
+    }
+    loop();
+
+    return () => {
+      cancelAnimationFrame(fid);
+      removeEventListener('resize', onResize);
+      removeEventListener('mousemove', onMove);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="cursor-trail-canvas" />;
+}
+
+/* ═══════════════════════════════════════════════════
    Main Component
    ═══════════════════════════════════════════════════ */
 export default function CinematicPage() {
@@ -427,6 +679,18 @@ export default function CinematicPage() {
   const [waitlistCount, setWaitlistCount] = useState(null);
   const [joinCount, setJoinCount] = useState(0);
 
+  // FAQ state
+  const [openFaq, setOpenFaq] = useState(null);
+
+  // Testimonial auto-scroll
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setActiveTestimonial(p => (p + 1) % TESTIMONIALS.length);
+    }, 5000);
+    return () => clearInterval(iv);
+  }, []);
+
   // InView refs for content sections
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true, margin: '-80px' });
@@ -434,6 +698,12 @@ export default function CinematicPage() {
   const researchInView = useInView(researchRef, { once: true, margin: '-80px' });
   const showcaseRef = useRef(null);
   const showcaseInView = useInView(showcaseRef, { once: true, margin: '-80px' });
+  const stepsRef = useRef(null);
+  const stepsInView = useInView(stepsRef, { once: true, margin: '-80px' });
+  const faqRef = useRef(null);
+  const faqInView = useInView(faqRef, { once: true, margin: '-80px' });
+  const testimonialRef = useRef(null);
+  const testimonialInView = useInView(testimonialRef, { once: true, margin: '-80px' });
 
   useEffect(() => {
     fetch(`${API_BASE}/api/waitlist/count`)
@@ -468,7 +738,7 @@ export default function CinematicPage() {
     }
   }, [email, phone]);
 
-  // ── Three.js (desktop only) + scroll-driven panels (always) ──
+  // ── Three.js + scroll-driven panels ──
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -478,7 +748,6 @@ export default function CinematicPage() {
     const mob = innerWidth < 780;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // ── Scroll tracking (runs on all devices) ──
     let current = 0, target = 0;
     onScroll = () => {
       const spacer = spacerRef.current;
@@ -511,11 +780,8 @@ export default function CinematicPage() {
       hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
     }
 
-    // ── Mobile: run scroll loop immediately, defer Three.js to background ──
-    // ── Desktop: load Three.js right away ──
     let lightFid;
     if (mob) {
-      // Lightweight loop so panels + hero work instantly while Three.js downloads
       function lightLoop() {
         lightFid = requestAnimationFrame(lightLoop);
         if (reducedMotion) current = 0;
@@ -527,7 +793,6 @@ export default function CinematicPage() {
       lightLoop();
     }
 
-    // Defer Three.js import on mobile so first paint is instant
     const deferMs = mob ? 1500 : 0;
     const deferTimer = setTimeout(() => {
       if (cancelled) return;
@@ -544,7 +809,6 @@ export default function CinematicPage() {
       Promise.all(imports).then(([THREE, ...postMods]) => {
         if (cancelled) return;
 
-        // Kill the lightweight scroll loop — the full animate loop takes over
         if (lightFid) { cancelAnimationFrame(lightFid); lightFid = null; }
 
         const postFx = mob ? null : {
@@ -553,11 +817,10 @@ export default function CinematicPage() {
           UnrealBloomPass: postMods[2].UnrealBloomPass,
         };
 
-        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx } =
+        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx } =
           createScene(canvas, THREE, postFx);
         renderer = r;
 
-        // Fade canvas in on mobile after scene is ready
         if (mob) {
           canvas.style.opacity = '0';
           canvas.style.transition = 'opacity 0.8s ease';
@@ -595,11 +858,9 @@ export default function CinematicPage() {
           fillLight.intensity = 1.0 + Math.sin(now * 0.25 + 1) * 0.2;
           rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.15;
 
-          // Smooth organic rotation
           dnaGroup.rotation.y = now * 0.025;
           nebulaMat.uniforms.uTime.value = now;
 
-          // Animate flying stars
           if (sceneCtx.starMat) sceneCtx.starMat.uniforms.uTime.value = now;
 
           updatePanels(t);
@@ -625,8 +886,10 @@ export default function CinematicPage() {
 
   return (
     <main className="cinematic-world">
-      {/* ═══ PHASE 1: Cinematic DNA Scroll ═══ */}
+      {/* Cursor trail effect */}
+      <CursorTrail />
 
+      {/* ═══ PHASE 1: Cinematic DNA Scroll ═══ */}
       <div className="cinematic-scroll-spacer" ref={spacerRef}>
         <div id="top" style={{ position: 'absolute', top: 0 }} />
         <div id="features" style={{ position: 'absolute', top: '10%' }} />
@@ -688,7 +951,7 @@ export default function CinematicPage() {
         <span className="panel-step">04</span>
         <h2>Your biology is your data.</h2>
         <p>Be first in line when we launch.</p>
-        <a className="panel-cta-btn" href="#waitlist">Join the Waitlist</a>
+        <MagneticBtn className="panel-cta-btn" href="#waitlist">Join the Waitlist</MagneticBtn>
       </div>
 
       {/* ═══ PHASE 2: Rich Content (normal scroll) ═══ */}
@@ -714,8 +977,35 @@ export default function CinematicPage() {
           </div>
         </div>
 
+        {/* ── How It Works ── */}
+        <section className="cine-steps" ref={stepsRef}>
+          <FloatingParticles count={15} />
+          <div className="cine-section-header">
+            <div className="cine-eyebrow">How It Works</div>
+            <h2>Four steps to a <span className="accent">smarter protocol.</span></h2>
+          </div>
+          <div className="cine-steps-grid">
+            {STEPS.map((step, i) => (
+              <motion.div
+                key={i}
+                className="cine-step-card"
+                initial={{ opacity: 0, y: 40 }}
+                animate={stepsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="cine-step-num">{step.num}</div>
+                <div className="cine-step-icon">{step.icon}</div>
+                <h3>{step.title}</h3>
+                <p>{step.desc}</p>
+                {i < STEPS.length - 1 && <div className="cine-step-connector" />}
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
         {/* ── App Showcase ── */}
         <section className="cine-showcase" ref={showcaseRef}>
+          <FloatingParticles count={10} color="rgba(0,180,216,0.12)" />
           <div className="cine-section-header">
             <div className="cine-eyebrow">See It In Action</div>
             <h2>Track every metric. <span className="accent">See real results.</span></h2>
@@ -740,28 +1030,33 @@ export default function CinematicPage() {
 
         {/* ── Stats ── */}
         <section className="cine-stats" ref={statsRef}>
+          <FloatingParticles count={12} />
           <div className="cine-section-header">
             <div className="cine-eyebrow">By The Numbers</div>
             <h2>Grounded in <span className="accent">real research.</span></h2>
           </div>
           <div className="cine-stats-grid">
             {STATS.map((s, i) => (
-              <motion.div
-                key={i}
-                className="cine-stat-card"
-                initial={{ opacity: 0, y: 30 }}
-                animate={statsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <AnimatedNum end={s.end} suffix={s.suffix} decimal={s.decimal} star={s.star} trigger={statsInView} />
-                <div className="cine-stat-label">{s.label}</div>
-              </motion.div>
+              <TiltCard key={i} className="cine-stat-card-wrap">
+                <SpotlightCard className="cine-stat-card">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="cine-stat-icon">{STAT_ICONS[s.icon]}</div>
+                    <AnimatedNum end={s.end} suffix={s.suffix} decimal={s.decimal} star={s.star} trigger={statsInView} />
+                    <div className="cine-stat-label">{s.label}</div>
+                  </motion.div>
+                </SpotlightCard>
+              </TiltCard>
             ))}
           </div>
         </section>
 
         {/* ── Research / Science ── */}
         <section className="cine-research" ref={researchRef}>
+          <FloatingParticles count={12} color="rgba(0,229,160,0.1)" />
           <div className="cine-section-header">
             <div className="cine-eyebrow">Backed By Science</div>
             <h2>Research-grade <span className="accent">protocol intelligence.</span></h2>
@@ -769,24 +1064,94 @@ export default function CinematicPage() {
           </div>
           <div className="cine-research-grid">
             {RESEARCH.map((item, i) => (
-              <motion.div
-                key={i}
-                className="cine-research-card"
-                initial={{ opacity: 0, y: 30 }}
-                animate={researchInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="cine-research-icon">{item.icon}</div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </motion.div>
+              <TiltCard key={i} className="cine-research-card-wrap">
+                <SpotlightCard className="cine-research-card">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={researchInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="cine-research-icon">{item.icon}</div>
+                    <h3>{item.title}</h3>
+                    <p>{item.desc}</p>
+                  </motion.div>
+                </SpotlightCard>
+              </TiltCard>
             ))}
           </div>
+        </section>
+
+        {/* ── Testimonials ── */}
+        <section className="cine-testimonials" ref={testimonialRef}>
+          <FloatingParticles count={10} color="rgba(0,229,160,0.08)" />
+          <div className="cine-section-header">
+            <div className="cine-eyebrow">What People Are Saying</div>
+            <h2>Trusted by <span className="accent">health optimizers.</span></h2>
+          </div>
+          <div className="cine-testimonial-carousel">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTestimonial}
+                className="cine-testimonial-card"
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -60 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="cine-testimonial-quote">
+                  <svg className="cine-quote-mark" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" opacity="0.2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" /><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" /></svg>
+                  <p>{TESTIMONIALS[activeTestimonial].quote}</p>
+                </div>
+                <div className="cine-testimonial-author">
+                  <div className="cine-testimonial-avatar">{TESTIMONIALS[activeTestimonial].initials}</div>
+                  <div>
+                    <div className="cine-testimonial-name">{TESTIMONIALS[activeTestimonial].name}</div>
+                    <div className="cine-testimonial-role">{TESTIMONIALS[activeTestimonial].role}</div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            <div className="cine-testimonial-dots">
+              {TESTIMONIALS.map((_, i) => (
+                <button
+                  key={i}
+                  className={`cine-testimonial-dot ${i === activeTestimonial ? 'active' : ''}`}
+                  onClick={() => setActiveTestimonial(i)}
+                  aria-label={`Testimonial ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ ── */}
+        <section className="cine-faq" ref={faqRef}>
+          <div className="cine-section-header">
+            <div className="cine-eyebrow">FAQ</div>
+            <h2>Got <span className="accent">questions?</span></h2>
+          </div>
+          <motion.div
+            className="cine-faq-list"
+            initial={{ opacity: 0, y: 30 }}
+            animate={faqInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {FAQS.map((faq, i) => (
+              <FaqItem
+                key={i}
+                q={faq.q}
+                a={faq.a}
+                isOpen={openFaq === i}
+                onToggle={() => setOpenFaq(openFaq === i ? null : i)}
+              />
+            ))}
+          </motion.div>
         </section>
 
         {/* ── Final CTA / Waitlist ── */}
         <section className="cine-final" id="waitlist">
           <div className="cine-final-glow" />
+          <FloatingParticles count={18} />
           <div className="cine-final-inner">
             <div className="cine-eyebrow">Launching Soon</div>
             <h2>The smarter way to run your <span className="accent">protocol.</span></h2>
@@ -811,12 +1176,15 @@ export default function CinematicPage() {
                   <p>{message}</p>
                 </motion.div>
               ) : (
-                <motion.form key="form" className="cine-final-form" onSubmit={handleSubmit} initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <input className="cine-final-input" type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required disabled={status === 'loading'} />
-                  <input className="cine-final-input" type="tel" placeholder="Phone (optional — for SMS)" value={phone} onChange={e => setPhone(e.target.value)} disabled={status === 'loading'} />
-                  <button className="cine-final-btn" type="submit" disabled={status === 'loading'}>
-                    {status === 'loading' ? 'Joining...' : 'Join the Waitlist'}
-                  </button>
+                <motion.form key="form" className="cine-final-form glow-border-wrap" onSubmit={handleSubmit} initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <div className="glow-border" />
+                  <div className="cine-final-form-inner">
+                    <input className="cine-final-input" type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required disabled={status === 'loading'} />
+                    <input className="cine-final-input" type="tel" placeholder="Phone (optional — for SMS)" value={phone} onChange={e => setPhone(e.target.value)} disabled={status === 'loading'} />
+                    <MagneticBtn className="cine-final-btn" type="submit" disabled={status === 'loading'}>
+                      {status === 'loading' ? 'Joining...' : 'Join the Waitlist'}
+                    </MagneticBtn>
+                  </div>
                 </motion.form>
               )}
             </AnimatePresence>
@@ -828,6 +1196,21 @@ export default function CinematicPage() {
                 Join <strong>{Math.max(500, waitlistCount).toLocaleString()}+</strong> on the waitlist
               </div>
             )}
+
+            <div className="cine-trust-badges">
+              <div className="cine-trust-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                <span>Data Encrypted</span>
+              </div>
+              <div className="cine-trust-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                <span>No Spam</span>
+              </div>
+              <div className="cine-trust-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+                <span>Instant Alerts</span>
+              </div>
+            </div>
 
             <div className="cine-social-links">
               <a href="https://www.tiktok.com/@peptideai.co" target="_blank" rel="noopener" aria-label="TikTok">
@@ -841,7 +1224,7 @@ export default function CinematicPage() {
               </a>
             </div>
 
-            <a className="cine-backtop" href="#top">↑ Back to top</a>
+            <a className="cine-backtop" href="#top">&#8593; Back to top</a>
           </div>
         </section>
       </div>
