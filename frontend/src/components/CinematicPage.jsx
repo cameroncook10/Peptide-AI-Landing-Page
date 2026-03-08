@@ -124,7 +124,7 @@ function createScene(canvas, THREE, postFx) {
     side: THREE.BackSide,
     depthWrite: false,
   });
-  scene.add(new THREE.Mesh(new THREE.SphereGeometry(90, mob ? 32 : 64, mob ? 16 : 32), nebulaMat));
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(160, mob ? 32 : 64, mob ? 16 : 32), nebulaMat));
 
   // ── DNA Group ──
   const dnaGroup = new THREE.Group();
