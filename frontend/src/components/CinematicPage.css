@@ -159,10 +159,7 @@
 }
 
 .hero-scroll-cue {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;

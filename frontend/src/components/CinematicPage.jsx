@@ -165,10 +165,10 @@ function createScene(canvas, THREE, postFx) {
   // ── Build queue: neon particle-cloud DNA + flying stars ──
   const TURNS = 8, HEIGHT = 50, RADIUS = 2.8;
   const SEGMENTS = mob ? 200 : 500;
-  const RUNG_COUNT = mob ? 50 : 120;
-  const STRAND_PTS = mob ? 1200 : 5000;
-  const HALO_PTS = mob ? 600 : 2000;
-  const RUNG_INTERP = mob ? 12 : 22;
+  const RUNG_COUNT = mob ? 80 : 200;
+  const STRAND_PTS = mob ? 2000 : 5000;
+  const HALO_PTS = mob ? 1000 : 2000;
+  const RUNG_INTERP = mob ? 28 : 40;
 
   const buildQueue = [];
   const ctx = { c1: null, c2: null, starMat: null };
@@ -213,20 +213,20 @@ function createScene(canvas, THREE, postFx) {
 
     const coreMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ffbb) }, uOpacity: { value: 1.0 } },
+      uniforms: { uColor: { value: new THREE.Color(0x00ffbb) }, uOpacity: { value: mob ? 1.4 : 1.0 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     for (const c of [ctx.c1, ctx.c2]) {
-      dnaGroup.add(new THREE.Points(makeStrand(c, STRAND_PTS, 0.12, 0.06, 0.08), coreMat));
+      dnaGroup.add(new THREE.Points(makeStrand(c, STRAND_PTS, 0.12, mob ? 0.09 : 0.06, mob ? 0.12 : 0.08), coreMat));
     }
 
     const haloMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: 0.4 } },
+      uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: mob ? 0.7 : 0.4 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     for (const c of [ctx.c1, ctx.c2]) {
-      dnaGroup.add(new THREE.Points(makeStrand(c, HALO_PTS, 0.45, 0.15, 0.2), haloMat));
+      dnaGroup.add(new THREE.Points(makeStrand(c, HALO_PTS, 0.45, mob ? 0.2 : 0.15, mob ? 0.28 : 0.2), haloMat));
     }
   });
 
@@ -244,8 +244,8 @@ function createScene(canvas, THREE, postFx) {
           p1.y + (p2.y - p1.y) * f + (Math.random() - 0.5) * 0.06,
           p1.z + (p2.z - p1.z) * f + (Math.random() - 0.5) * 0.06,
         );
-        rSizes.push(0.03 + Math.random() * 0.04);
-        rBrights.push(0.4 + Math.random() * 0.4);
+        rSizes.push(0.05 + Math.random() * 0.06);
+        rBrights.push(0.6 + Math.random() * 0.4);
       }
       for (const p of [p1, p2]) {
         nPos.push(p.x, p.y, p.z);
@@ -256,7 +256,7 @@ function createScene(canvas, THREE, postFx) {
 
     const rungMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ee77) }, uOpacity: { value: 0.6 } },
+      uniforms: { uColor: { value: new THREE.Color(0x00ee77) }, uOpacity: { value: mob ? 1.2 : 0.85 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     const rGeo = new THREE.BufferGeometry();
@@ -267,7 +267,7 @@ function createScene(canvas, THREE, postFx) {
 
     const nodeMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x33ffdd) }, uOpacity: { value: 1.2 } },
+      uniforms: { uColor: { value: new THREE.Color(0x33ffdd) }, uOpacity: { value: mob ? 1.6 : 1.2 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     const nGeo = new THREE.BufferGeometry();
@@ -279,18 +279,18 @@ function createScene(canvas, THREE, postFx) {
 
   // Step 3: floating particles + flying stars
   buildQueue.push(() => {
-    const P_COUNT = mob ? 800 : 4000;
+    const P_COUNT = mob ? 1500 : 4000;
     const pPos = [], pSizes = [], pBrights = [];
     for (let i = 0; i < P_COUNT; i++) {
       const t = Math.random(), angle = Math.random() * Math.PI * 2;
       const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 6;
       pPos.push(Math.cos(angle) * r, y, Math.sin(angle) * r);
-      pSizes.push(0.03 + Math.random() * 0.06);
-      pBrights.push(0.2 + Math.random() * 0.5);
+      pSizes.push(mob ? 0.05 + Math.random() * 0.1 : 0.03 + Math.random() * 0.06);
+      pBrights.push(mob ? 0.4 + Math.random() * 0.6 : 0.2 + Math.random() * 0.5);
     }
     const mistMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: 0.4 } },
+      uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: mob ? 0.7 : 0.4 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     const pGeo = new THREE.BufferGeometry();
@@ -342,7 +342,7 @@ function createScene(canvas, THREE, postFx) {
       const cz = (p1.z + p2.z) * 0.5;
       hotspotYs.push(cy);
 
-      const CLUSTER = mob ? 18 : 45;
+      const CLUSTER = mob ? 28 : 45;
       const cPos = new Float32Array(CLUSTER * 3);
       const cSizes = new Float32Array(CLUSTER);
       const cBrights = new Float32Array(CLUSTER);
