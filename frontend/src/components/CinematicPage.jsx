@@ -413,92 +413,111 @@ export default function CinematicPage() {
       hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
     }
 
-    // ── Mobile: skip Three.js entirely for instant load ──
+    // ── Mobile: run scroll loop immediately, defer Three.js to background ──
+    // ── Desktop: load Three.js right away ──
+    let lightFid;
     if (mob) {
-      function mobileLoop() {
-        fid = requestAnimationFrame(mobileLoop);
+      // Lightweight loop so panels + hero work instantly while Three.js downloads
+      function lightLoop() {
+        lightFid = requestAnimationFrame(lightLoop);
         if (reducedMotion) current = 0;
         else current += (target - current) * 0.06;
         const t = Math.max(0, Math.min(1, current));
         updatePanels(t);
         updateHero(t);
       }
-      mobileLoop();
-      return () => {
-        if (fid) cancelAnimationFrame(fid);
-        removeEventListener('scroll', onScroll);
-      };
+      lightLoop();
     }
 
-    // ── Desktop: load Three.js + post-processing ──
-    const imports = [
-      import('three'),
-      import('three/examples/jsm/postprocessing/EffectComposer.js'),
-      import('three/examples/jsm/postprocessing/RenderPass.js'),
-      import('three/examples/jsm/postprocessing/UnrealBloomPass.js'),
-    ];
-
-    Promise.all(imports).then(([THREE, ...postMods]) => {
+    // Defer Three.js import on mobile so first paint is instant
+    const deferMs = mob ? 1500 : 0;
+    const deferTimer = setTimeout(() => {
       if (cancelled) return;
 
-      const postFx = {
-        EffectComposer: postMods[0].EffectComposer,
-        RenderPass: postMods[1].RenderPass,
-        UnrealBloomPass: postMods[2].UnrealBloomPass,
-      };
+      const imports = mob
+        ? [import('three')]
+        : [
+            import('three'),
+            import('three/examples/jsm/postprocessing/EffectComposer.js'),
+            import('three/examples/jsm/postprocessing/RenderPass.js'),
+            import('three/examples/jsm/postprocessing/UnrealBloomPass.js'),
+          ];
 
-      const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
-        createScene(canvas, THREE, postFx);
-      renderer = r;
+      Promise.all(imports).then(([THREE, ...postMods]) => {
+        if (cancelled) return;
 
-      onResize = () => {
-        camera.aspect = innerWidth / innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(innerWidth, innerHeight);
-        if (composer) composer.setSize(innerWidth, innerHeight);
-      };
-      addEventListener('resize', onResize);
+        // Kill the lightweight scroll loop — the full animate loop takes over
+        if (lightFid) { cancelAnimationFrame(lightFid); lightFid = null; }
 
-      const lookAt = new THREE.Vector3();
+        const postFx = mob ? null : {
+          EffectComposer: postMods[0].EffectComposer,
+          RenderPass: postMods[1].RenderPass,
+          UnrealBloomPass: postMods[2].UnrealBloomPass,
+        };
 
-      function animate() {
-        fid = requestAnimationFrame(animate);
+        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
+          createScene(canvas, THREE, postFx);
+        renderer = r;
 
-        if (buildQueue.length > 0) buildQueue.shift()();
+        // Fade canvas in on mobile after scene is ready
+        if (mob) {
+          canvas.style.opacity = '0';
+          canvas.style.transition = 'opacity 0.8s ease';
+          requestAnimationFrame(() => { canvas.style.opacity = '1'; });
+        }
 
-        if (reducedMotion) current = 0;
-        else current += (target - current) * 0.032;
+        onResize = () => {
+          camera.aspect = innerWidth / innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(innerWidth, innerHeight);
+          if (composer) composer.setSize(innerWidth, innerHeight);
+        };
+        addEventListener('resize', onResize);
 
-        const t = Math.max(0, Math.min(1, current));
-        const now = performance.now() * 0.001;
+        const lookAt = new THREE.Vector3();
+        const lerpSpeed = mob ? 0.06 : 0.032;
 
-        camera.position.copy(cameraPath.getPoint(t));
-        lookAt.set(0, t * -15, 0);
-        camera.lookAt(lookAt);
+        function animate() {
+          fid = requestAnimationFrame(animate);
 
-        keyLight.position.copy(camera.position).multiplyScalar(0.8);
-        keyLight.intensity = 2.5 + Math.sin(now * 0.4) * 0.3;
-        fillLight.intensity = 1.2 + Math.sin(now * 0.25 + 1) * 0.15;
-        rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.1;
+          if (buildQueue.length > 0) buildQueue.shift()();
 
-        shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
-        shadowLight.target.position.set(0, camera.position.y - 2, 0);
-        shadowLight.target.updateMatrixWorld();
+          if (reducedMotion) current = 0;
+          else current += (target - current) * lerpSpeed;
 
-        dnaGroup.rotation.y = now * 0.01;
-        nebulaMat.uniforms.uTime.value = now;
+          const t = Math.max(0, Math.min(1, current));
+          const now = performance.now() * 0.001;
 
-        updatePanels(t);
-        updateHero(t);
+          camera.position.copy(cameraPath.getPoint(t));
+          lookAt.set(0, t * -15, 0);
+          camera.lookAt(lookAt);
 
-        if (composer) composer.render();
-        else renderer.render(scene, camera);
-      }
-      animate();
-    });
+          keyLight.position.copy(camera.position).multiplyScalar(0.8);
+          keyLight.intensity = 2.5 + Math.sin(now * 0.4) * 0.3;
+          fillLight.intensity = 1.2 + Math.sin(now * 0.25 + 1) * 0.15;
+          rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.1;
+
+          shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
+          shadowLight.target.position.set(0, camera.position.y - 2, 0);
+          shadowLight.target.updateMatrixWorld();
+
+          dnaGroup.rotation.y = now * 0.01;
+          nebulaMat.uniforms.uTime.value = now;
+
+          updatePanels(t);
+          updateHero(t);
+
+          if (composer) composer.render();
+          else renderer.render(scene, camera);
+        }
+        animate();
+      });
+    }, deferMs);
 
     return () => {
       cancelled = true;
+      clearTimeout(deferTimer);
+      if (lightFid) cancelAnimationFrame(lightFid);
       if (fid) cancelAnimationFrame(fid);
       if (onScroll) removeEventListener('scroll', onScroll);
       if (onResize) removeEventListener('resize', onResize);

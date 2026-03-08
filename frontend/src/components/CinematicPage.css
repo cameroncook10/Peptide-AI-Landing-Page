@@ -716,9 +716,9 @@
    MOBILE
    ═══════════════════════════════════════════════════ */
 @media (max-width: 780px) {
-  /* Hide Three.js canvas on mobile; CSS gradient replaces it */
+  /* Canvas starts hidden; JS fades it in once Three.js is ready */
   .cinematic-canvas-wrap canvas {
-    display: none;
+    opacity: 0;
   }
   .cinematic-canvas-wrap {
     background:
