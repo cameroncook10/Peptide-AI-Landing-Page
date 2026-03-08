@@ -391,106 +391,116 @@ export default function CinematicPage() {
     }
   }, [email, phone]);
 
-  // ── Three.js ──
+  // ── Three.js (deferred init so UI paints first) ──
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat } =
-      createScene(canvas);
+    let fid, onScroll, onResize, renderer;
+    let cancelled = false;
 
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let current = 0, target = 0;
+    // Defer heavy scene construction so the hero text / UI renders immediately
+    const initId = requestAnimationFrame(() => {
+      if (cancelled) return;
 
-    function onScroll() {
-      const spacer = spacerRef.current;
-      if (!spacer) return;
-      const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
-      const scrollable = spacerBottom - innerHeight;
-      target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
-    }
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+      const sceneData = createScene(canvas);
+      ({ renderer } = sceneData);
+      const { scene, camera, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat } = sceneData;
 
-    const milestones = [0.10, 0.30, 0.50, 0.72];
-    const panels = panelsRef.current;
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let current = 0, target = 0;
 
-    function updatePanels(p) {
-      for (let i = 0; i < panels.length; i++) {
-        const el = panels[i];
-        if (!el) continue;
-        const start = milestones[i];
-        const end = milestones[i + 1] || 0.94;
-        el.classList.toggle('visible', p >= start && p < end);
+      onScroll = () => {
+        const spacer = spacerRef.current;
+        if (!spacer) return;
+        const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
+        const scrollable = spacerBottom - innerHeight;
+        target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      const milestones = [0.10, 0.30, 0.50, 0.72];
+      const panels = panelsRef.current;
+
+      function updatePanels(p) {
+        for (let i = 0; i < panels.length; i++) {
+          const el = panels[i];
+          if (!el) continue;
+          const start = milestones[i];
+          const end = milestones[i + 1] || 0.94;
+          el.classList.toggle('visible', p >= start && p < end);
+        }
       }
-    }
 
-    function updateHero(p) {
-      const hero = heroRef.current;
-      if (!hero) return;
-      const o = Math.max(0, 1 - p * 7);
-      hero.style.opacity = o;
-      hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
-    }
+      function updateHero(p) {
+        const hero = heroRef.current;
+        if (!hero) return;
+        const o = Math.max(0, 1 - p * 7);
+        hero.style.opacity = o;
+        hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
+      }
 
-    function onResize() {
-      camera.aspect = innerWidth / innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(innerWidth, innerHeight);
-      if (composer) composer.setSize(innerWidth, innerHeight);
-    }
-    addEventListener('resize', onResize);
+      onResize = () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+        if (composer) composer.setSize(innerWidth, innerHeight);
+      };
+      addEventListener('resize', onResize);
 
-    const lookAt = new THREE.Vector3();
-    let fid;
+      const lookAt = new THREE.Vector3();
 
-    function animate() {
-      fid = requestAnimationFrame(animate);
-      if (reducedMotion) current = 0;
-      else current += (target - current) * 0.06;
+      function animate() {
+        fid = requestAnimationFrame(animate);
+        if (reducedMotion) current = 0;
+        else current += (target - current) * 0.06;
 
-      const t = Math.max(0, Math.min(1, current));
-      const now = performance.now() * 0.001;
+        const t = Math.max(0, Math.min(1, current));
+        const now = performance.now() * 0.001;
 
-      // Camera
-      camera.position.copy(cameraPath.getPoint(t));
-      lookAt.set(0, t * -15, 0);
-      camera.lookAt(lookAt);
+        // Camera
+        camera.position.copy(cameraPath.getPoint(t));
+        lookAt.set(0, t * -15, 0);
+        camera.lookAt(lookAt);
 
-      // Lights breathe
-      keyLight.position.copy(camera.position).multiplyScalar(0.8);
-      keyLight.intensity = 3 + Math.sin(now * 0.5) * 0.3;
-      fillLight.intensity = 1.5 + Math.sin(now * 0.3 + 1) * 0.2;
-      rimLight.intensity = 1 + Math.sin(now * 0.7 + 2) * 0.15;
+        // Lights breathe
+        keyLight.position.copy(camera.position).multiplyScalar(0.8);
+        keyLight.intensity = 3 + Math.sin(now * 0.5) * 0.3;
+        fillLight.intensity = 1.5 + Math.sin(now * 0.3 + 1) * 0.2;
+        rimLight.intensity = 1 + Math.sin(now * 0.7 + 2) * 0.15;
 
-      // Shadow light follows camera loosely
-      shadowLight.position.set(
-        camera.position.x + 5,
-        camera.position.y + 6,
-        camera.position.z + 4,
-      );
-      shadowLight.target.position.set(0, camera.position.y - 2, 0);
-      shadowLight.target.updateMatrixWorld();
+        // Shadow light follows camera loosely
+        shadowLight.position.set(
+          camera.position.x + 5,
+          camera.position.y + 6,
+          camera.position.z + 4,
+        );
+        shadowLight.target.position.set(0, camera.position.y - 2, 0);
+        shadowLight.target.updateMatrixWorld();
 
-      // DNA subtle rotation
-      dnaGroup.rotation.y = now * 0.015;
+        // DNA subtle rotation
+        dnaGroup.rotation.y = now * 0.015;
 
-      // Nebula time
-      nebulaMat.uniforms.uTime.value = now;
+        // Nebula time
+        nebulaMat.uniforms.uTime.value = now;
 
-      updatePanels(t);
-      updateHero(t);
+        updatePanels(t);
+        updateHero(t);
 
-      if (composer) composer.render();
-      else renderer.render(scene, camera);
-    }
-    animate();
+        if (composer) composer.render();
+        else renderer.render(scene, camera);
+      }
+      animate();
+    });
 
     return () => {
-      cancelAnimationFrame(fid);
-      removeEventListener('scroll', onScroll);
-      removeEventListener('resize', onResize);
-      renderer.dispose();
+      cancelled = true;
+      cancelAnimationFrame(initId);
+      if (fid) cancelAnimationFrame(fid);
+      if (onScroll) removeEventListener('scroll', onScroll);
+      if (onResize) removeEventListener('resize', onResize);
+      if (renderer) renderer.dispose();
     };
   }, []);
 
