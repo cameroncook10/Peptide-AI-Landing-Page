@@ -62,10 +62,11 @@ varying float vBright;
 void main(){
   float d=length(gl_PointCoord-0.5)*2.0;
   if(d>1.0) discard;
-  float glow=exp(-d*d*3.0);
-  float core=smoothstep(0.4,0.0,d);
-  float alpha=(glow*0.6+core*0.8)*vBright*uOpacity;
-  vec3 c=uColor*(0.7+core*0.5);
+  float glow=exp(-d*d*2.0);
+  float core=smoothstep(0.35,0.0,d);
+  float outer=exp(-d*d*0.8)*0.3;
+  float alpha=(glow*0.7+core*1.0+outer)*vBright*uOpacity;
+  vec3 c=uColor*(0.6+core*0.6);
   gl_FragColor=vec4(c*alpha,alpha);
 }`;
 
@@ -113,7 +114,7 @@ function createScene(canvas, THREE, postFx) {
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x000800);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.85;
+  renderer.toneMappingExposure = 1.1;
   // No shadow maps needed — fully particle-based scene
 
   // ── Nebula sky-dome (lightweight — renders immediately) ──
@@ -160,7 +161,7 @@ function createScene(canvas, THREE, postFx) {
     composer = new postFx.EffectComposer(renderer);
     composer.addPass(new postFx.RenderPass(scene, camera));
     composer.addPass(new postFx.UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight), 1.8, 0.8, 0.1,
+      new THREE.Vector2(innerWidth, innerHeight), 2.5, 1.0, 0.05,
     ));
   }
 
@@ -214,7 +215,7 @@ function createScene(canvas, THREE, postFx) {
     // Core strands — bright neon green, tight cluster
     const coreMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ffaa) }, uOpacity: { value: 0.9 } },
+      uniforms: { uColor: { value: new THREE.Color(0x00ffbb) }, uOpacity: { value: 1.0 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     for (const c of [ctx.c1, ctx.c2]) {
@@ -224,7 +225,7 @@ function createScene(canvas, THREE, postFx) {
     // Outer glow halo — softer, wider, larger particles
     const haloMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ff88) }, uOpacity: { value: 0.25 } },
+      uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: 0.4 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     for (const c of [ctx.c1, ctx.c2]) {
@@ -270,7 +271,7 @@ function createScene(canvas, THREE, postFx) {
 
     const nodeMat = new THREE.ShaderMaterial({
       vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
-      uniforms: { uColor: { value: new THREE.Color(0x00ffcc) }, uOpacity: { value: 1.0 } },
+      uniforms: { uColor: { value: new THREE.Color(0x33ffdd) }, uOpacity: { value: 1.2 } },
       transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
     const nGeo = new THREE.BufferGeometry();
@@ -595,7 +596,7 @@ export default function CinematicPage() {
           rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.15;
 
           // Smooth organic rotation
-          dnaGroup.rotation.y = now * 0.04;
+          dnaGroup.rotation.y = now * 0.025;
           nebulaMat.uniforms.uTime.value = now;
 
           // Animate flying stars

@@ -395,35 +395,76 @@
   gap: 1.5rem;
   perspective: 1200px;
 }
+/* iPhone 15 Pro style frame */
 .cine-phone {
-  width: 220px;
+  width: 200px;
   flex-shrink: 0;
-  background: #0a0e16;
-  border-radius: 28px;
-  border: 2px solid rgba(255,255,255,0.06);
-  padding: 6px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  background: #1a1a1a;
+  border-radius: 40px;
+  border: 3px solid #2a2a2a;
+  padding: 10px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+  position: relative;
+  aspect-ratio: auto;
+}
+.cine-phone::before {
+  /* Dynamic Island */
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 22px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 3;
+}
+.cine-phone::after {
+  /* Side button accent */
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 100px;
+  width: 3px;
+  height: 40px;
+  background: #333;
+  border-radius: 0 2px 2px 0;
 }
 .cine-phone:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.7),
+    0 0 30px rgba(0,229,160,0.06),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
 }
 .cine-phone img {
   width: 100%;
-  border-radius: 22px;
+  aspect-ratio: 9 / 19.5;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 30px;
   display: block;
 }
 .cine-phone-center {
-  width: 260px;
+  width: 240px;
   z-index: 2;
-  border-color: rgba(0,229,160,0.2);
+  border-color: rgba(0,229,160,0.15);
   box-shadow:
-    0 24px 72px rgba(0,0,0,0.6),
-    0 0 40px rgba(0,229,160,0.08);
-  transform: scale(1.05);
+    0 30px 80px rgba(0,0,0,0.7),
+    0 0 50px rgba(0,229,160,0.1),
+    inset 0 0 0 1px rgba(0,229,160,0.1);
+  transform: scale(1.08);
+}
+.cine-phone-center::before {
+  width: 84px;
+  height: 24px;
 }
 .cine-phone-center:hover {
-  transform: scale(1.05) translateY(-4px);
+  transform: scale(1.08) translateY(-6px);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -763,12 +804,12 @@
     gap: 1.5rem;
   }
   .cine-phone {
-    width: 70vw;
-    max-width: 280px;
+    width: 60vw;
+    max-width: 240px;
   }
   .cine-phone-center {
-    width: 80vw;
-    max-width: 320px;
+    width: 70vw;
+    max-width: 280px;
     transform: none;
   }
   .cine-phone-center:hover {
