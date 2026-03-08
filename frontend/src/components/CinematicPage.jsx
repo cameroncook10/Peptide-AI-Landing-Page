@@ -64,7 +64,7 @@ function createScene(canvas) {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   }
 
-  // ── Nebula sky-dome ──
+  // ── Nebula sky-dome (lightweight — renders immediately) ──
   const nebulaMat = new THREE.ShaderMaterial({
     vertexShader: NEBULA_VERT,
     fragmentShader: NEBULA_FRAG,
@@ -72,139 +72,13 @@ function createScene(canvas) {
     side: THREE.BackSide,
     depthWrite: false,
   });
-  const nebula = new THREE.Mesh(new THREE.SphereGeometry(90, mob ? 32 : 64, mob ? 16 : 32), nebulaMat);
-  nebula.renderOrder = -1000;
-  scene.add(nebula);
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(90, mob ? 32 : 64, mob ? 16 : 32), nebulaMat));
 
   // ── DNA Group ──
   const dnaGroup = new THREE.Group();
   scene.add(dnaGroup);
 
-  const TURNS = 8, HEIGHT = 50, RADIUS = 2.8;
-  const SEGMENTS = mob ? 200 : 500;
-  const TUBE_RADIAL = mob ? 8 : 16;
-
-  const pts1 = [], pts2 = [];
-  for (let i = 0; i <= SEGMENTS; i++) {
-    const t = i / SEGMENTS;
-    const a = t * Math.PI * 2 * TURNS;
-    const y = (t - 0.5) * HEIGHT;
-    pts1.push(new THREE.Vector3(Math.cos(a) * RADIUS, y, Math.sin(a) * RADIUS));
-    pts2.push(new THREE.Vector3(Math.cos(a + Math.PI) * RADIUS, y, Math.sin(a + Math.PI) * RADIUS));
-  }
-
-  const c1 = new THREE.CatmullRomCurve3(pts1);
-  const c2 = new THREE.CatmullRomCurve3(pts2);
-
-  // Backbone tubes — use cheaper MeshStandardMaterial on mobile
-  const bbMat = mob
-    ? new THREE.MeshStandardMaterial({
-        color: 0x00b37a, emissive: 0x00b37a, emissiveIntensity: 0.45,
-        metalness: 0.25, roughness: 0.2,
-      })
-    : new THREE.MeshPhysicalMaterial({
-        color: 0x00b37a, emissive: 0x00b37a, emissiveIntensity: 0.45,
-        metalness: 0.25, roughness: 0.18,
-        clearcoat: 1.0, clearcoatRoughness: 0.1,
-      });
-  const bb1 = new THREE.Mesh(new THREE.TubeGeometry(c1, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
-  const bb2 = new THREE.Mesh(new THREE.TubeGeometry(c2, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
-  if (!mob) { bb1.castShadow = true; bb1.receiveShadow = true; bb2.castShadow = true; bb2.receiveShadow = true; }
-  dnaGroup.add(bb1, bb2);
-
-  // Base-pair rungs + connection nodes
-  const palette = [
-    { c: 0x00b37a, e: 0x00b37a },
-    { c: 0x0090b0, e: 0x0090b0 },
-  ];
-  const RUNG_COUNT = mob ? 50 : 100;
-  const nodeGeo = new THREE.SphereGeometry(0.15, mob ? 8 : 16, mob ? 8 : 16);
-  const glowGeo = mob ? null : new THREE.SphereGeometry(0.35, 12, 12);
-  const up = new THREE.Vector3(0, 1, 0);
-
-  // Share materials to reduce draw-call overhead
-  const rungMats = palette.map(pal => new THREE.MeshStandardMaterial({
-    color: 0x161b24, emissive: pal.e, emissiveIntensity: 0.12,
-    metalness: 0.6, roughness: 0.3,
-  }));
-  const nodeMats = palette.map(pal =>
-    mob
-      ? new THREE.MeshStandardMaterial({
-          color: pal.c, emissive: pal.e, emissiveIntensity: 0.5,
-          metalness: 0.15, roughness: 0.15,
-        })
-      : new THREE.MeshPhysicalMaterial({
-          color: pal.c, emissive: pal.e, emissiveIntensity: 0.5,
-          metalness: 0.15, roughness: 0.15,
-          clearcoat: 0.6, clearcoatRoughness: 0.2,
-        })
-  );
-  const glowMats = mob ? null : palette.map(pal =>
-    new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.1 })
-  );
-
-  for (let i = 0; i < RUNG_COUNT; i++) {
-    const t = i / RUNG_COUNT;
-    const p1 = c1.getPoint(t), p2 = c2.getPoint(t);
-    const dist = p1.distanceTo(p2);
-    const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
-    const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
-    const pi = i % 2;
-
-    const rung = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.04, 0.04, dist, mob ? 4 : 8),
-      rungMats[pi],
-    );
-    rung.position.copy(mid);
-    rung.quaternion.setFromUnitVectors(up, dir);
-    if (!mob) { rung.castShadow = true; rung.receiveShadow = true; }
-    dnaGroup.add(rung);
-
-    const n1 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n1.position.copy(p1); if (!mob) n1.castShadow = true; dnaGroup.add(n1);
-    const n2 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n2.position.copy(p2); if (!mob) n2.castShadow = true; dnaGroup.add(n2);
-
-    // Glow halos (desktop only, every 3rd rung)
-    if (!mob && i % 3 === 0) {
-      const g1 = new THREE.Mesh(glowGeo, glowMats[pi]); g1.position.copy(p1); dnaGroup.add(g1);
-      const g2 = new THREE.Mesh(glowGeo, glowMats[pi]); g2.position.copy(p2); dnaGroup.add(g2);
-    }
-  }
-
-  // ── Floating particles near DNA ──
-  const P_COUNT = mob ? 200 : 600;
-  const pPos = new Float32Array(P_COUNT * 3);
-  for (let i = 0; i < P_COUNT; i++) {
-    const t = Math.random(), angle = Math.random() * Math.PI * 2;
-    const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 8;
-    pPos[i * 3] = Math.cos(angle) * r;
-    pPos[i * 3 + 1] = y;
-    pPos[i * 3 + 2] = Math.sin(angle) * r;
-  }
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  dnaGroup.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-    color: 0x00b37a, size: 0.04, transparent: true, opacity: 0.2,
-    blending: THREE.AdditiveBlending,
-  })));
-
-  // ── Star field ──
-  const S_COUNT = mob ? 1000 : 3000;
-  const sPos = new Float32Array(S_COUNT * 3);
-  for (let i = 0; i < S_COUNT; i++) {
-    const th = Math.random() * Math.PI * 2;
-    const ph = Math.acos(2 * Math.random() - 1);
-    const r = 25 + Math.random() * 40;
-    sPos[i * 3] = r * Math.sin(ph) * Math.cos(th);
-    sPos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
-    sPos[i * 3 + 2] = r * Math.cos(ph);
-  }
-  const sGeo = new THREE.BufferGeometry();
-  sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-  scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({
-    color: 0x8a94a9, size: 0.05, transparent: true, opacity: 0.6,
-  })));
-
-  // ── Lights ──
+  // ── Lights (cheap, create immediately) ──
   scene.add(new THREE.AmbientLight(0x060a10, 1.5));
   const keyLight = new THREE.PointLight(0x00b37a, 3, 35);
   const fillLight = new THREE.PointLight(0x0090b0, 1.5, 25);
@@ -213,7 +87,6 @@ function createScene(canvas) {
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
 
-  // Shadow-casting directional light (desktop only)
   const shadowLight = new THREE.DirectionalLight(0xffffff, 0.6);
   shadowLight.position.set(5, 10, 8);
   if (!mob) {
@@ -249,16 +122,118 @@ function createScene(canvas) {
   if (!mob) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight),
-      0.4,   // strength — subtle neon glow
-      0.5,   // radius
-      0.35,  // threshold — catch more emissives
-    );
-    composer.addPass(bloomPass);
+    composer.addPass(new UnrealBloomPass(
+      new THREE.Vector2(innerWidth, innerHeight), 0.4, 0.5, 0.35,
+    ));
   }
 
-  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat };
+  // ── Build queue: heavy geometry spread across frames ──
+  const TURNS = 8, HEIGHT = 50, RADIUS = 2.8;
+  const SEGMENTS = mob ? 150 : 500;
+  const TUBE_RADIAL = mob ? 6 : 16;
+  const RUNG_COUNT = mob ? 40 : 100;
+  const RUNGS_PER_FRAME = mob ? 10 : 25;
+
+  const buildQueue = [];
+  // Shared state passed between build steps
+  const ctx = { c1: null, c2: null };
+
+  // Step 1: backbone tubes
+  buildQueue.push(() => {
+    const pts1 = [], pts2 = [];
+    for (let i = 0; i <= SEGMENTS; i++) {
+      const t = i / SEGMENTS;
+      const a = t * Math.PI * 2 * TURNS;
+      const y = (t - 0.5) * HEIGHT;
+      pts1.push(new THREE.Vector3(Math.cos(a) * RADIUS, y, Math.sin(a) * RADIUS));
+      pts2.push(new THREE.Vector3(Math.cos(a + Math.PI) * RADIUS, y, Math.sin(a + Math.PI) * RADIUS));
+    }
+    ctx.c1 = new THREE.CatmullRomCurve3(pts1);
+    ctx.c2 = new THREE.CatmullRomCurve3(pts2);
+
+    const bbMat = mob
+      ? new THREE.MeshStandardMaterial({ color: 0x00b37a, emissive: 0x00b37a, emissiveIntensity: 0.45, metalness: 0.25, roughness: 0.2 })
+      : new THREE.MeshPhysicalMaterial({ color: 0x00b37a, emissive: 0x00b37a, emissiveIntensity: 0.45, metalness: 0.25, roughness: 0.18, clearcoat: 1.0, clearcoatRoughness: 0.1 });
+    const bb1 = new THREE.Mesh(new THREE.TubeGeometry(ctx.c1, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
+    const bb2 = new THREE.Mesh(new THREE.TubeGeometry(ctx.c2, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
+    if (!mob) { bb1.castShadow = true; bb1.receiveShadow = true; bb2.castShadow = true; bb2.receiveShadow = true; }
+    dnaGroup.add(bb1, bb2);
+  });
+
+  // Steps 2+: rungs in batches
+  const palette = [{ c: 0x00b37a, e: 0x00b37a }, { c: 0x0090b0, e: 0x0090b0 }];
+  for (let batch = 0; batch < RUNG_COUNT; batch += RUNGS_PER_FRAME) {
+    const start = batch, end = Math.min(batch + RUNGS_PER_FRAME, RUNG_COUNT);
+    buildQueue.push(() => {
+      const nodeGeo = new THREE.SphereGeometry(0.15, mob ? 8 : 16, mob ? 8 : 16);
+      const up = new THREE.Vector3(0, 1, 0);
+      const rungMats = palette.map(pal => new THREE.MeshStandardMaterial({ color: 0x161b24, emissive: pal.e, emissiveIntensity: 0.12, metalness: 0.6, roughness: 0.3 }));
+      const nodeMats = palette.map(pal =>
+        mob
+          ? new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.5, metalness: 0.15, roughness: 0.15 })
+          : new THREE.MeshPhysicalMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.5, metalness: 0.15, roughness: 0.15, clearcoat: 0.6, clearcoatRoughness: 0.2 })
+      );
+      const glowGeo = mob ? null : new THREE.SphereGeometry(0.35, 12, 12);
+      const glowMats = mob ? null : palette.map(pal => new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.1 }));
+
+      for (let i = start; i < end; i++) {
+        const t = i / RUNG_COUNT;
+        const p1 = ctx.c1.getPoint(t), p2 = ctx.c2.getPoint(t);
+        const dist = p1.distanceTo(p2);
+        const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+        const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
+        const pi = i % 2;
+
+        const rung = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, dist, mob ? 4 : 8), rungMats[pi]);
+        rung.position.copy(mid);
+        rung.quaternion.setFromUnitVectors(up, dir);
+        if (!mob) { rung.castShadow = true; rung.receiveShadow = true; }
+        dnaGroup.add(rung);
+
+        const n1 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n1.position.copy(p1); if (!mob) n1.castShadow = true; dnaGroup.add(n1);
+        const n2 = new THREE.Mesh(nodeGeo, nodeMats[pi]); n2.position.copy(p2); if (!mob) n2.castShadow = true; dnaGroup.add(n2);
+
+        if (!mob && i % 3 === 0) {
+          const g1 = new THREE.Mesh(glowGeo, glowMats[pi]); g1.position.copy(p1); dnaGroup.add(g1);
+          const g2 = new THREE.Mesh(glowGeo, glowMats[pi]); g2.position.copy(p2); dnaGroup.add(g2);
+        }
+      }
+    });
+  }
+
+  // Final step: particles + stars
+  buildQueue.push(() => {
+    const P_COUNT = mob ? 150 : 600;
+    const pPos = new Float32Array(P_COUNT * 3);
+    for (let i = 0; i < P_COUNT; i++) {
+      const t = Math.random(), angle = Math.random() * Math.PI * 2;
+      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 8;
+      pPos[i * 3] = Math.cos(angle) * r;
+      pPos[i * 3 + 1] = y;
+      pPos[i * 3 + 2] = Math.sin(angle) * r;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    dnaGroup.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
+      color: 0x00b37a, size: 0.04, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending,
+    })));
+
+    const S_COUNT = mob ? 800 : 3000;
+    const sPos = new Float32Array(S_COUNT * 3);
+    for (let i = 0; i < S_COUNT; i++) {
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      const r = 25 + Math.random() * 40;
+      sPos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+      sPos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
+      sPos[i * 3 + 2] = r * Math.cos(ph);
+    }
+    const sGeo = new THREE.BufferGeometry();
+    sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+    scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0x8a94a9, size: 0.05, transparent: true, opacity: 0.6 })));
+  });
+
+  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue };
 }
 
 /* ═══════════════════════════════════════════════════
@@ -391,116 +366,100 @@ export default function CinematicPage() {
     }
   }, [email, phone]);
 
-  // ── Three.js (deferred init so UI paints first) ──
+  // ── Three.js (progressive loading) ──
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    let fid, onScroll, onResize, renderer;
-    let cancelled = false;
+    const { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
+      createScene(canvas);
 
-    // Defer heavy scene construction so the hero text / UI renders immediately
-    const initId = requestAnimationFrame(() => {
-      if (cancelled) return;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = 0, target = 0;
 
-      const sceneData = createScene(canvas);
-      ({ renderer } = sceneData);
-      const { scene, camera, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat } = sceneData;
+    function onScroll() {
+      const spacer = spacerRef.current;
+      if (!spacer) return;
+      const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
+      const scrollable = spacerBottom - innerHeight;
+      target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
+    }
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
-      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      let current = 0, target = 0;
+    const milestones = [0.10, 0.30, 0.50, 0.72];
+    const panels = panelsRef.current;
 
-      onScroll = () => {
-        const spacer = spacerRef.current;
-        if (!spacer) return;
-        const spacerBottom = spacer.offsetTop + spacer.offsetHeight;
-        const scrollable = spacerBottom - innerHeight;
-        target = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
-      };
-      addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-
-      const milestones = [0.10, 0.30, 0.50, 0.72];
-      const panels = panelsRef.current;
-
-      function updatePanels(p) {
-        for (let i = 0; i < panels.length; i++) {
-          const el = panels[i];
-          if (!el) continue;
-          const start = milestones[i];
-          const end = milestones[i + 1] || 0.94;
-          el.classList.toggle('visible', p >= start && p < end);
-        }
+    function updatePanels(p) {
+      for (let i = 0; i < panels.length; i++) {
+        const el = panels[i];
+        if (!el) continue;
+        const start = milestones[i];
+        const end = milestones[i + 1] || 0.94;
+        el.classList.toggle('visible', p >= start && p < end);
       }
+    }
 
-      function updateHero(p) {
-        const hero = heroRef.current;
-        if (!hero) return;
-        const o = Math.max(0, 1 - p * 7);
-        hero.style.opacity = o;
-        hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
-      }
+    function updateHero(p) {
+      const hero = heroRef.current;
+      if (!hero) return;
+      const o = Math.max(0, 1 - p * 7);
+      hero.style.opacity = o;
+      hero.style.pointerEvents = o > 0.1 ? 'auto' : 'none';
+    }
 
-      onResize = () => {
-        camera.aspect = innerWidth / innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(innerWidth, innerHeight);
-        if (composer) composer.setSize(innerWidth, innerHeight);
-      };
-      addEventListener('resize', onResize);
+    function onResize() {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      if (composer) composer.setSize(innerWidth, innerHeight);
+    }
+    addEventListener('resize', onResize);
 
-      const lookAt = new THREE.Vector3();
+    const lookAt = new THREE.Vector3();
+    let fid;
 
-      function animate() {
-        fid = requestAnimationFrame(animate);
-        if (reducedMotion) current = 0;
-        else current += (target - current) * 0.06;
+    function animate() {
+      fid = requestAnimationFrame(animate);
 
-        const t = Math.max(0, Math.min(1, current));
-        const now = performance.now() * 0.001;
+      // Process one build step per frame (progressive geometry loading)
+      if (buildQueue.length > 0) buildQueue.shift()();
 
-        // Camera
-        camera.position.copy(cameraPath.getPoint(t));
-        lookAt.set(0, t * -15, 0);
-        camera.lookAt(lookAt);
+      if (reducedMotion) current = 0;
+      else current += (target - current) * 0.06;
 
-        // Lights breathe
-        keyLight.position.copy(camera.position).multiplyScalar(0.8);
-        keyLight.intensity = 3 + Math.sin(now * 0.5) * 0.3;
-        fillLight.intensity = 1.5 + Math.sin(now * 0.3 + 1) * 0.2;
-        rimLight.intensity = 1 + Math.sin(now * 0.7 + 2) * 0.15;
+      const t = Math.max(0, Math.min(1, current));
+      const now = performance.now() * 0.001;
 
-        // Shadow light follows camera loosely
-        shadowLight.position.set(
-          camera.position.x + 5,
-          camera.position.y + 6,
-          camera.position.z + 4,
-        );
-        shadowLight.target.position.set(0, camera.position.y - 2, 0);
-        shadowLight.target.updateMatrixWorld();
+      camera.position.copy(cameraPath.getPoint(t));
+      lookAt.set(0, t * -15, 0);
+      camera.lookAt(lookAt);
 
-        // DNA subtle rotation
-        dnaGroup.rotation.y = now * 0.015;
+      keyLight.position.copy(camera.position).multiplyScalar(0.8);
+      keyLight.intensity = 3 + Math.sin(now * 0.5) * 0.3;
+      fillLight.intensity = 1.5 + Math.sin(now * 0.3 + 1) * 0.2;
+      rimLight.intensity = 1 + Math.sin(now * 0.7 + 2) * 0.15;
 
-        // Nebula time
-        nebulaMat.uniforms.uTime.value = now;
+      shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
+      shadowLight.target.position.set(0, camera.position.y - 2, 0);
+      shadowLight.target.updateMatrixWorld();
 
-        updatePanels(t);
-        updateHero(t);
+      dnaGroup.rotation.y = now * 0.015;
+      nebulaMat.uniforms.uTime.value = now;
 
-        if (composer) composer.render();
-        else renderer.render(scene, camera);
-      }
-      animate();
-    });
+      updatePanels(t);
+      updateHero(t);
+
+      if (composer) composer.render();
+      else renderer.render(scene, camera);
+    }
+    animate();
 
     return () => {
-      cancelled = true;
-      cancelAnimationFrame(initId);
-      if (fid) cancelAnimationFrame(fid);
-      if (onScroll) removeEventListener('scroll', onScroll);
-      if (onResize) removeEventListener('resize', onResize);
-      if (renderer) renderer.dispose();
+      cancelAnimationFrame(fid);
+      removeEventListener('scroll', onScroll);
+      removeEventListener('resize', onResize);
+      renderer.dispose();
     };
   }, []);
 
