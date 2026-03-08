@@ -1240,12 +1240,14 @@ export default function CinematicPage() {
           Build protocols, track doses, and let AI surface the insights
           that show exactly how your stack is performing.
         </p>
-        <div className="hero-scroll-cue">
-          <span>Scroll to explore</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M12 5v14M5 12l7 7 7-7" />
-          </svg>
-        </div>
+      </div>
+
+      {/* ── Scroll cue (outside hero so position:fixed is relative to viewport, not transformed parent) ── */}
+      <div className="hero-scroll-cue" style={{ opacity: heroRef.current ? undefined : 0 }}>
+        <span>Scroll to explore</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
       </div>
 
       {/* ── Panel 1: Build ── */}
