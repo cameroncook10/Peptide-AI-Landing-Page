@@ -39,16 +39,16 @@ void main(){
   float n2=fbm(vUv*3.5-vec2(t*0.4,t*0.25));
   float n3=fbm(vUv*5.0+vec2(-t*0.2,t*0.4));
   float n4=fbm(vUv*1.8+vec2(t*0.15,-t*0.35));
-  // Pitch-black base with plasma wisps
-  vec3 c=vec3(0.002,0.003,0.008);
-  // Teal-green plasma filaments
-  c+=vec3(0.0,0.045,0.028)*pow(n1,2.2);
-  // Cool blue-violet deep nebula
-  c+=vec3(0.008,0.0,0.022)*pow(n2,1.8);
-  // Hot teal core glow
-  c+=vec3(0.0,0.07,0.05)*pow(max(n3-0.3,0.0),2.0)*1.4;
-  // Subtle aurora-green rim
-  c+=vec3(0.0,0.025,0.012)*n4*n1;
+  // Near-black base
+  vec3 c=vec3(0.001,0.001,0.003);
+  // Very faint teal wisps
+  c+=vec3(0.0,0.012,0.008)*pow(n1,3.0);
+  // Deep blue-violet
+  c+=vec3(0.003,0.0,0.008)*pow(n2,2.5);
+  // Faint teal core
+  c+=vec3(0.0,0.018,0.012)*pow(max(n3-0.4,0.0),2.5)*0.8;
+  // Barely-there aurora
+  c+=vec3(0.0,0.006,0.003)*n4*n1;
   gl_FragColor=vec4(c,1.0);
 }`;
 
@@ -66,7 +66,7 @@ function createScene(canvas) {
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x000002);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.4;
+  renderer.toneMappingExposure = 0.65;
   if (!mob) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -87,11 +87,11 @@ function createScene(canvas) {
   scene.add(dnaGroup);
 
   // ── Lights (cheap, create immediately) ──
-  scene.add(new THREE.AmbientLight(0x001a0a, 2.0));
-  const keyLight = new THREE.PointLight(0x00ffaa, 6, 40);
-  const fillLight = new THREE.PointLight(0x00d4ff, 3, 30);
+  scene.add(new THREE.AmbientLight(0x000a06, 1.0));
+  const keyLight = new THREE.PointLight(0x00dd88, 2.5, 35);
+  const fillLight = new THREE.PointLight(0x0088bb, 1.2, 25);
   fillLight.position.set(-5, 0, -5);
-  const rimLight = new THREE.PointLight(0x00ffaa, 2, 25);
+  const rimLight = new THREE.PointLight(0x00dd88, 0.8, 20);
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
 
@@ -131,7 +131,7 @@ function createScene(canvas) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
     composer.addPass(new UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight), 1.4, 0.7, 0.08,
+      new THREE.Vector2(innerWidth, innerHeight), 0.55, 0.6, 0.15,
     ));
   }
 
@@ -160,8 +160,8 @@ function createScene(canvas) {
     ctx.c2 = new THREE.CatmullRomCurve3(pts2);
 
     const bbMat = mob
-      ? new THREE.MeshStandardMaterial({ color: 0x00ffaa, emissive: 0x00e890, emissiveIntensity: 1.2, metalness: 0.1, roughness: 0.15 })
-      : new THREE.MeshPhysicalMaterial({ color: 0x00ffaa, emissive: 0x00e890, emissiveIntensity: 1.2, metalness: 0.1, roughness: 0.12, clearcoat: 1.0, clearcoatRoughness: 0.05 });
+      ? new THREE.MeshStandardMaterial({ color: 0x00cc88, emissive: 0x007755, emissiveIntensity: 0.45, metalness: 0.2, roughness: 0.3 })
+      : new THREE.MeshPhysicalMaterial({ color: 0x00cc88, emissive: 0x007755, emissiveIntensity: 0.45, metalness: 0.2, roughness: 0.25, clearcoat: 1.0, clearcoatRoughness: 0.1 });
     const bb1 = new THREE.Mesh(new THREE.TubeGeometry(ctx.c1, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
     const bb2 = new THREE.Mesh(new THREE.TubeGeometry(ctx.c2, SEGMENTS, 0.12, TUBE_RADIAL, false), bbMat);
     if (!mob) { bb1.castShadow = true; bb1.receiveShadow = true; bb2.castShadow = true; bb2.receiveShadow = true; }
@@ -169,20 +169,20 @@ function createScene(canvas) {
   });
 
   // Steps 2+: rungs in batches
-  const palette = [{ c: 0x00ffaa, e: 0x00e890 }, { c: 0x00d4ff, e: 0x00b8f0 }];
+  const palette = [{ c: 0x00bb77, e: 0x006644 }, { c: 0x0099cc, e: 0x005577 }];
   for (let batch = 0; batch < RUNG_COUNT; batch += RUNGS_PER_FRAME) {
     const start = batch, end = Math.min(batch + RUNGS_PER_FRAME, RUNG_COUNT);
     buildQueue.push(() => {
       const nodeGeo = new THREE.SphereGeometry(0.15, mob ? 8 : 16, mob ? 8 : 16);
       const up = new THREE.Vector3(0, 1, 0);
-      const rungMats = palette.map(pal => new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.55, metalness: 0.2, roughness: 0.25 }));
+      const rungMats = palette.map(pal => new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.2, metalness: 0.3, roughness: 0.4 }));
       const nodeMats = palette.map(pal =>
         mob
-          ? new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 1.1, metalness: 0.05, roughness: 0.1 })
-          : new THREE.MeshPhysicalMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 1.1, metalness: 0.05, roughness: 0.08, clearcoat: 1.0, clearcoatRoughness: 0.05 })
+          ? new THREE.MeshStandardMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.45, metalness: 0.15, roughness: 0.2 })
+          : new THREE.MeshPhysicalMaterial({ color: pal.c, emissive: pal.e, emissiveIntensity: 0.45, metalness: 0.15, roughness: 0.18, clearcoat: 0.8, clearcoatRoughness: 0.15 })
       );
       const glowGeo = mob ? null : new THREE.SphereGeometry(0.42, 12, 12);
-      const glowMats = mob ? null : palette.map(pal => new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.18 }));
+      const glowMats = mob ? null : palette.map(pal => new THREE.MeshBasicMaterial({ color: pal.c, transparent: true, opacity: 0.06 }));
 
       for (let i = start; i < end; i++) {
         const t = i / RUNG_COUNT;
@@ -223,7 +223,7 @@ function createScene(canvas) {
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
     dnaGroup.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-      color: 0x00ffaa, size: 0.06, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending,
+      color: 0x00aa66, size: 0.04, transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending,
     })));
 
     const S_COUNT = mob ? 800 : 3000;
@@ -444,9 +444,9 @@ export default function CinematicPage() {
       camera.lookAt(lookAt);
 
       keyLight.position.copy(camera.position).multiplyScalar(0.8);
-      keyLight.intensity = 6 + Math.sin(now * 0.4) * 1.2;
-      fillLight.intensity = 3 + Math.sin(now * 0.25 + 1) * 0.6;
-      rimLight.intensity = 2 + Math.sin(now * 0.55 + 2) * 0.4;
+      keyLight.intensity = 2.5 + Math.sin(now * 0.4) * 0.3;
+      fillLight.intensity = 1.2 + Math.sin(now * 0.25 + 1) * 0.15;
+      rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.1;
 
       shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
       shadowLight.target.position.set(0, camera.position.y - 2, 0);
