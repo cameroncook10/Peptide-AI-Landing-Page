@@ -141,13 +141,13 @@ function createScene(canvas, THREE, postFx) {
 
   // ── Camera path ──
   const cameraPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 10, mob ? 32 : 26),
-    new THREE.Vector3(4, 7, mob ? 26 : 22),
-    new THREE.Vector3(7, 4, mob ? 22 : 18),
-    new THREE.Vector3(-5, 1, mob ? 16 : 12),
-    new THREE.Vector3(-6, -2, mob ? 12 : 8),
-    new THREE.Vector3(4, -5, mob ? 8 : 6),
-    new THREE.Vector3(2, -8, mob ? 5 : 3),
+    new THREE.Vector3(0, 10, mob ? 18 : 26),
+    new THREE.Vector3(3, 7, mob ? 13 : 22),
+    new THREE.Vector3(5, 4, mob ? 9 : 18),
+    new THREE.Vector3(-3, 1, mob ? 6.5 : 12),
+    new THREE.Vector3(-4, -2, mob ? 5 : 8),
+    new THREE.Vector3(3, -5, mob ? 4.5 : 6),
+    new THREE.Vector3(2, -8, mob ? 3.5 : 3),
     new THREE.Vector3(0, -12, mob ? 2 : 1),
     new THREE.Vector3(0, -15, mob ? 1 : 0.5),
   ]);
@@ -172,6 +172,8 @@ function createScene(canvas, THREE, postFx) {
 
   const buildQueue = [];
   const ctx = { c1: null, c2: null, starMat: null };
+  const hotspotMats = [];
+  const hotspotYs = [];
 
   // Step 1: helix backbone strands
   buildQueue.push(() => {
@@ -327,7 +329,59 @@ function createScene(canvas, THREE, postFx) {
     scene.add(new THREE.Points(sGeo, starMat));
   });
 
-  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx };
+  // Step 4: hotspot glow clusters at each panel's DNA section
+  buildQueue.push(() => {
+    // DNA t-values that place hotspots where the camera looks during each panel
+    const HOTSPOT_T = [0.44, 0.38, 0.32, 0.25];
+    for (let h = 0; h < HOTSPOT_T.length; h++) {
+      const ht = HOTSPOT_T[h];
+      const p1 = ctx.c1.getPoint(ht);
+      const p2 = ctx.c2.getPoint(ht);
+      const cx = (p1.x + p2.x) * 0.5;
+      const cy = (p1.y + p2.y) * 0.5;
+      const cz = (p1.z + p2.z) * 0.5;
+      hotspotYs.push(cy);
+
+      const CLUSTER = mob ? 18 : 45;
+      const cPos = new Float32Array(CLUSTER * 3);
+      const cSizes = new Float32Array(CLUSTER);
+      const cBrights = new Float32Array(CLUSTER);
+
+      for (let i = 0; i < CLUSTER; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const r = Math.random() * 1.2;
+        cPos[i * 3] = cx + Math.cos(angle) * r;
+        cPos[i * 3 + 1] = cy + (Math.random() - 0.5) * 0.8;
+        cPos[i * 3 + 2] = cz + Math.sin(angle) * r;
+        // Mix of large ring particles and tight core particles
+        cSizes[i] = i < CLUSTER * 0.3
+          ? 0.25 + Math.random() * 0.35   // large outer glow
+          : 0.1 + Math.random() * 0.15;   // tight core
+        cBrights[i] = 0.6 + Math.random() * 0.4;
+      }
+
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: GLOW_POINT_VERT,
+        fragmentShader: GLOW_POINT_FRAG,
+        uniforms: {
+          uColor: { value: new THREE.Color(0x00ffdd) },
+          uOpacity: { value: 0.0 },
+        },
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+      hotspotMats.push(mat);
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(cPos, 3));
+      geo.setAttribute('aSize', new THREE.BufferAttribute(cSizes, 1));
+      geo.setAttribute('aBright', new THREE.BufferAttribute(cBrights, 1));
+      dnaGroup.add(new THREE.Points(geo, mat));
+    }
+  });
+
+  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx, hotspotMats, hotspotYs };
 }
 
 /* ═══════════════════════════════════════════════════
@@ -817,7 +871,7 @@ export default function CinematicPage() {
           UnrealBloomPass: postMods[2].UnrealBloomPass,
         };
 
-        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx } =
+        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx, hotspotMats, hotspotYs } =
           createScene(canvas, THREE, postFx);
         renderer = r;
 
@@ -851,17 +905,45 @@ export default function CinematicPage() {
 
           camera.position.copy(cameraPath.getPoint(t));
           lookAt.set(0, t * -15, 0);
+
+          // Detect active panel for hotspot + zoom effects
+          let activePanel = -1;
+          for (let i = 0; i < milestones.length; i++) {
+            const end = milestones[i + 1] || 0.94;
+            if (t >= milestones[i] && t < end) { activePanel = i; break; }
+          }
+
+          // Shift lookAt toward active hotspot Y for focused framing
+          if (activePanel >= 0 && hotspotYs[activePanel] !== undefined) {
+            const hy = hotspotYs[activePanel];
+            lookAt.y = lookAt.y * 0.6 + hy * 0.4;
+          }
           camera.lookAt(lookAt);
+
+          // Dynamic FOV zoom when panel is active (cinematic close-up)
+          const targetFov = activePanel >= 0 ? (mob ? 40 : 50) : 60;
+          camera.fov += (targetFov - camera.fov) * 0.04;
+          camera.updateProjectionMatrix();
 
           keyLight.position.copy(camera.position).multiplyScalar(0.8);
           keyLight.intensity = 2.0 + Math.sin(now * 0.4) * 0.4;
           fillLight.intensity = 1.0 + Math.sin(now * 0.25 + 1) * 0.2;
           rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.15;
 
-          dnaGroup.rotation.y = now * 0.025;
+          // Scroll-driven rotation — scrolling physically spins the helix
+          dnaGroup.rotation.y = now * 0.025 + t * Math.PI * 1.5;
           nebulaMat.uniforms.uTime.value = now;
 
           if (sceneCtx.starMat) sceneCtx.starMat.uniforms.uTime.value = now;
+
+          // Pulse hotspot glow clusters for the active panel
+          for (let i = 0; i < hotspotMats.length; i++) {
+            const isActive = i === activePanel;
+            const targetOp = isActive ? 1.4 + Math.sin(now * 3.0) * 0.4 : 0.05;
+            const mat = hotspotMats[i];
+            mat.uniforms.uOpacity.value += (targetOp - mat.uniforms.uOpacity.value) * 0.08;
+            mat.uniforms.uColor.value.setHex(isActive ? 0x00ffdd : 0x00ff99);
+          }
 
           updatePanels(t);
           updateHero(t);
