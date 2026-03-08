@@ -218,6 +218,162 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
+   ZONE BASE
+   ═══════════════════════════════════════════════════ */
+.zone {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Hero zone layout ─── */
+.zone-hero {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ─── Hero pin — centres all content ─── */
+.hero-pin {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 1.5rem 6rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Ambient green glow blob ─── */
+.hero-glow {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(900px, 120vw);
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,
+    rgba(0,229,160,0.22) 0%,
+    rgba(0,179,255,0.10) 40%,
+    transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Atmosphere gradient overlay ─── */
+.atmos-grad {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 0%,   rgba(0,229,160,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 80%  50% at 85% 100%,  rgba(0,179,255,0.07) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ─── Dot grid pattern ─── */
+.hero-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,229,160,0.13) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Hero content wrapper ─── */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 72rem;
+  width: 100%;
+}
+
+/* ─── HERO HEADLINE ─── */
+.hero-h1 {
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.06em;
+  align-items: center;
+  text-shadow:
+    0 2px 12px rgba(0,0,0,0.7),
+    0 0 80px rgba(0,229,160,0.18);
+}
+
+/* Spans inside hero headline — white by default */
+.hero-h1 .clip-reveal {
+  display: block;
+  color: #ffffff;
+}
+
+/* Accent spans stay teal with a glow */
+.hero-h1 .accent-text {
+  color: var(--accent) !important;
+  -webkit-text-fill-color: var(--accent) !important;
+  filter: drop-shadow(0 0 18px rgba(0,229,160,0.55));
+}
+
+/* ─── HERO SUBTITLE ─── */
+.hero-sub {
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  color: var(--text-secondary, #C0CBDF);
+  font-weight: 400;
+  line-height: 1.75;
+  max-width: 44rem;
+  text-shadow: 0 2px 24px rgba(0,0,0,0.9);
+  margin: 0 0 2.5rem;
+}
+
+/* ─── HERO ACTIONS ─── */
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+/* ─── Scroll cue ─── */
+.scroll-cue {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(192,203,223,0.45);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  z-index: 11;
+  transition: color 0.2s;
+}
+.scroll-cue:hover { color: rgba(192,203,223,0.8); }
+.scroll-cue svg { animation: bounce 2.5s ease-in-out infinite; }
+
+/* ─── Hero trigger spacer ─── */
+.hero-trigger { height: 0; }
+
+/* ═══════════════════════════════════════════════════
    HERO ZONE — inline content over shader bg
    ═══════════════════════════════════════════════════ */
 .zone-hero-content {
