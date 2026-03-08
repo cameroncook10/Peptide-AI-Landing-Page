@@ -33,6 +33,14 @@
   height: 100%;
   display: block;
 }
+/* ── Connector Canvas (particle-to-panel lines) ── */
+.connector-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
 .cinematic-noise {
   position: absolute;
   inset: 0;
@@ -1215,8 +1223,9 @@
    MOBILE
    ═══════════════════════════════════════════════════ */
 @media (max-width: 780px) {
-  /* Hide cursor trail on mobile */
-  .cursor-trail-canvas {
+  /* Hide cursor trail + connector lines on mobile */
+  .cursor-trail-canvas,
+  .connector-canvas {
     display: none;
   }
 
@@ -1236,6 +1245,15 @@
   }
   .hero-sub {
     font-size: 0.9rem;
+  }
+
+  .hero-scroll-cue {
+    margin-top: 1.5rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    text-align: center;
   }
 
   .cinematic-panel {
@@ -1375,7 +1393,8 @@
   .glow-border {
     animation: none;
   }
-  .cursor-trail-canvas {
+  .cursor-trail-canvas,
+  .connector-canvas {
     display: none;
   }
 }

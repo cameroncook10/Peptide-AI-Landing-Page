@@ -204,6 +204,7 @@ function createScene(canvas, THREE, postFx) {
   const ctx = { c1: null, c2: null, starMat: null };
   const hotspotMats = [];
   const hotspotYs = [];
+  const connectorData = [];
 
   // Step 1: helix backbone strands
   buildQueue.push(() => {
@@ -427,7 +428,75 @@ function createScene(canvas, THREE, postFx) {
     }
   });
 
-  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx, hotspotMats, hotspotYs };
+  // Step 5: connector particles — one per panel, floats freely then pulls to hotspot
+  buildQueue.push(() => {
+    const HOTSPOT_T = [0.44, 0.38, 0.32, 0.25];
+    for (let h = 0; h < HOTSPOT_T.length; h++) {
+      const ht = HOTSPOT_T[h];
+      const p1 = ctx.c1.getPoint(ht);
+      const p2 = ctx.c2.getPoint(ht);
+      const targetPos = new THREE.Vector3(
+        (p1.x + p2.x) * 0.5,
+        (p1.y + p2.y) * 0.5,
+        (p1.z + p2.z) * 0.5,
+      );
+
+      // Random rest position floating away from the DNA
+      const restAngle = Math.random() * Math.PI * 2;
+      const restR = RADIUS + 3 + Math.random() * 5;
+      const restPos = new THREE.Vector3(
+        Math.cos(restAngle) * restR,
+        targetPos.y + (Math.random() - 0.5) * 10,
+        Math.sin(restAngle) * restR,
+      );
+
+      // Small cluster of bright particles
+      const N = mob ? 5 : 8;
+      const offsets = new Float32Array(N * 3);
+      const cPos = new Float32Array(N * 3);
+      const cSizes = new Float32Array(N);
+      const cBrights = new Float32Array(N);
+      for (let i = 0; i < N; i++) {
+        offsets[i * 3] = (Math.random() - 0.5) * 0.5;
+        offsets[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
+        offsets[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
+        cPos[i * 3] = restPos.x + offsets[i * 3];
+        cPos[i * 3 + 1] = restPos.y + offsets[i * 3 + 1];
+        cPos[i * 3 + 2] = restPos.z + offsets[i * 3 + 2];
+        cSizes[i] = i === 0 ? 0.4 : 0.15 + Math.random() * 0.2;
+        cBrights[i] = 0.7 + Math.random() * 0.3;
+      }
+
+      const mat = new THREE.ShaderMaterial({
+        vertexShader: GLOW_POINT_VERT,
+        fragmentShader: GLOW_POINT_FRAG,
+        uniforms: {
+          uColor: { value: new THREE.Color(0x66ffee) },
+          uOpacity: { value: 0.3 },
+        },
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(cPos, 3));
+      geo.setAttribute('aSize', new THREE.BufferAttribute(cSizes, 1));
+      geo.setAttribute('aBright', new THREE.BufferAttribute(cBrights, 1));
+
+      const points = new THREE.Points(geo, mat);
+      dnaGroup.add(points);
+
+      connectorData.push({
+        points, mat, geo, offsets,
+        restPos: restPos.clone(),
+        targetPos: targetPos.clone(),
+        currentPos: restPos.clone(),
+      });
+    }
+  });
+
+  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx, hotspotMats, hotspotYs, connectorData };
 }
 
 /* ═══════════════════════════════════════════════════
@@ -767,6 +836,7 @@ function CursorTrail() {
    ═══════════════════════════════════════════════════ */
 export default function CinematicPage() {
   const canvasRef = useRef(null);
+  const connectorCanvasRef = useRef(null);
   const spacerRef = useRef(null);
   const panelsRef = useRef([]);
   const heroRef = useRef(null);
@@ -848,7 +918,16 @@ export default function CinematicPage() {
     const mob = innerWidth < 780;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let current = 0, target = 0;
+    // Set up 2D connector canvas for particle-to-panel lines
+    const connCanvas = connectorCanvasRef.current;
+    let connCtx = null;
+    if (connCanvas) {
+      connCanvas.width = innerWidth;
+      connCanvas.height = innerHeight;
+      connCtx = connCanvas.getContext('2d');
+    }
+
+    let current = 0, target = 0, velocity = 0;
     onScroll = () => {
       const spacer = spacerRef.current;
       if (!spacer) return;
@@ -884,9 +963,14 @@ export default function CinematicPage() {
     if (mob) {
       function lightLoop() {
         lightFid = requestAnimationFrame(lightLoop);
-        if (reducedMotion) current = 0;
-        else current += (target - current) * 0.06;
-        const t = Math.max(0, Math.min(1, current));
+        if (reducedMotion) { current = 0; velocity = 0; }
+        else {
+          velocity += (target - current) * 0.025;
+          velocity *= 0.80;
+          current += velocity;
+          current = Math.max(0, Math.min(1, current));
+        }
+        const t = current;
         updatePanels(t);
         updateHero(t);
       }
@@ -917,7 +1001,7 @@ export default function CinematicPage() {
           UnrealBloomPass: postMods[2].UnrealBloomPass,
         };
 
-        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx, hotspotMats, hotspotYs } =
+        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx, hotspotMats, hotspotYs, connectorData } =
           createScene(canvas, THREE, postFx);
         renderer = r;
 
@@ -932,21 +1016,26 @@ export default function CinematicPage() {
           camera.updateProjectionMatrix();
           renderer.setSize(innerWidth, innerHeight);
           if (composer) composer.setSize(innerWidth, innerHeight);
+          if (connCanvas) { connCanvas.width = innerWidth; connCanvas.height = innerHeight; }
         };
         addEventListener('resize', onResize);
 
         const lookAt = new THREE.Vector3();
-        const lerpSpeed = mob ? 0.08 : 0.055;
 
         function animate() {
           fid = requestAnimationFrame(animate);
 
           if (buildQueue.length > 0) buildQueue.shift()();
 
-          if (reducedMotion) current = 0;
-          else current += (target - current) * lerpSpeed;
+          if (reducedMotion) { current = 0; velocity = 0; }
+          else {
+            velocity += (target - current) * (mob ? 0.025 : 0.015);
+            velocity *= 0.80;
+            current += velocity;
+            current = Math.max(0, Math.min(1, current));
+          }
 
-          const t = Math.max(0, Math.min(1, current));
+          const t = current;
           const now = performance.now() * 0.001;
 
           camera.position.copy(cameraPath.getPoint(t));
@@ -991,11 +1080,119 @@ export default function CinematicPage() {
             mat.uniforms.uColor.value.setHex(isActive ? 0x00ffdd : 0x00ff99);
           }
 
+          // ── Connector particles: pull toward hotspot when panel is active ──
+          for (let h = 0; h < connectorData.length; h++) {
+            const cd = connectorData[h];
+            const isActive = h === activePanel;
+
+            // Drifting rest position (gentle oscillation so it looks alive)
+            const rx = cd.restPos.x + Math.sin(now * 0.3 + h * 2.0) * 1.5;
+            const ry = cd.restPos.y + Math.cos(now * 0.2 + h * 1.5) * 1.0;
+            const rz = cd.restPos.z + Math.sin(now * 0.25 + h * 3.0) * 1.5;
+
+            // Lerp toward hotspot when active, back to floating rest when not
+            const gx = isActive ? cd.targetPos.x : rx;
+            const gy = isActive ? cd.targetPos.y : ry;
+            const gz = isActive ? cd.targetPos.z : rz;
+            const speed = isActive ? 0.035 : 0.018;
+            cd.currentPos.x += (gx - cd.currentPos.x) * speed;
+            cd.currentPos.y += (gy - cd.currentPos.y) * speed;
+            cd.currentPos.z += (gz - cd.currentPos.z) * speed;
+
+            // Update particle cluster positions
+            const posAttr = cd.geo.getAttribute('position');
+            for (let i = 0; i < posAttr.count; i++) {
+              posAttr.setXYZ(i,
+                cd.currentPos.x + cd.offsets[i * 3],
+                cd.currentPos.y + cd.offsets[i * 3 + 1],
+                cd.currentPos.z + cd.offsets[i * 3 + 2],
+              );
+            }
+            posAttr.needsUpdate = true;
+
+            // Brightness pulse
+            const tOp = isActive ? 2.5 + Math.sin(now * 2.5) * 0.5 : 0.3;
+            cd.mat.uniforms.uOpacity.value += (tOp - cd.mat.uniforms.uOpacity.value) * 0.06;
+            cd.mat.uniforms.uColor.value.setHex(isActive ? 0x88ffee : 0x44ffbb);
+          }
+
           updatePanels(t);
           updateHero(t);
 
           if (composer) composer.render();
           else renderer.render(scene, camera);
+
+          // ── Draw 2D connector lines from particles to panels ──
+          if (connCtx && connectorData.length > 0) {
+            connCtx.clearRect(0, 0, innerWidth, innerHeight);
+            scene.updateMatrixWorld();
+            const _proj = new THREE.Vector3();
+
+            for (let h = 0; h < connectorData.length; h++) {
+              const cd = connectorData[h];
+              const panel = panels[h];
+              if (!panel || !panel.classList.contains('visible')) continue;
+
+              const op = Math.max(0, (cd.mat.uniforms.uOpacity.value - 0.4) / 2.5);
+              if (op < 0.01) continue;
+
+              // Project 3D position → screen coords
+              _proj.copy(cd.currentPos).applyMatrix4(dnaGroup.matrixWorld).project(camera);
+              const sx = (_proj.x * 0.5 + 0.5) * innerWidth;
+              const sy = (-_proj.y * 0.5 + 0.5) * innerHeight;
+
+              // Panel edge position
+              const rect = panel.getBoundingClientRect();
+              const px = rect.left + 4;
+              const py = rect.top + rect.height * 0.3;
+
+              // Bezier control point for organic curve
+              const cpx = sx + (px - sx) * 0.5;
+              const cpy = Math.min(sy, py) - 40;
+
+              // Outer glow
+              connCtx.beginPath();
+              connCtx.moveTo(sx, sy);
+              connCtx.quadraticCurveTo(cpx, cpy, px, py);
+              connCtx.strokeStyle = `rgba(0,255,221,${op * 0.06})`;
+              connCtx.lineWidth = 20;
+              connCtx.lineCap = 'round';
+              connCtx.stroke();
+
+              // Mid glow
+              connCtx.beginPath();
+              connCtx.moveTo(sx, sy);
+              connCtx.quadraticCurveTo(cpx, cpy, px, py);
+              connCtx.strokeStyle = `rgba(0,255,221,${op * 0.15})`;
+              connCtx.lineWidth = 4;
+              connCtx.stroke();
+
+              // Core line with gradient
+              const grad = connCtx.createLinearGradient(sx, sy, px, py);
+              grad.addColorStop(0, `rgba(0,255,221,${op * 0.5})`);
+              grad.addColorStop(0.6, `rgba(0,255,221,${op * 0.18})`);
+              grad.addColorStop(1, `rgba(0,229,160,${op * 0.04})`);
+              connCtx.beginPath();
+              connCtx.moveTo(sx, sy);
+              connCtx.quadraticCurveTo(cpx, cpy, px, py);
+              connCtx.strokeStyle = grad;
+              connCtx.lineWidth = 1.5;
+              connCtx.stroke();
+
+              // Bright pulsing dot at particle
+              const pulseR = 4 + Math.sin(now * 3) * 2;
+              connCtx.beginPath();
+              connCtx.arc(sx, sy, pulseR, 0, Math.PI * 2);
+              connCtx.fillStyle = `rgba(100,255,238,${op * 0.7})`;
+              connCtx.fill();
+
+              // Soft glow ring
+              connCtx.beginPath();
+              connCtx.arc(sx, sy, 14, 0, Math.PI * 2);
+              connCtx.fillStyle = `rgba(0,255,221,${op * 0.08})`;
+              connCtx.fill();
+            }
+          }
         }
         animate();
       });
@@ -1027,6 +1224,7 @@ export default function CinematicPage() {
         <canvas ref={canvasRef} />
         <div className="cinematic-noise" />
       </div>
+      <canvas ref={connectorCanvasRef} className="connector-canvas" />
 
       {/* ── Hero Overlay ── */}
       <div className="cinematic-hero" ref={heroRef}>
