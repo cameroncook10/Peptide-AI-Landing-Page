@@ -35,17 +35,68 @@ void main(){
   float n2=fbm(vUv*3.5-vec2(t*0.4,t*0.25));
   float n3=fbm(vUv*5.0+vec2(-t*0.2,t*0.4));
   float n4=fbm(vUv*1.8+vec2(t*0.15,-t*0.35));
-  // Near-black green base
-  vec3 c=vec3(0.002,0.005,0.002);
-  // Green wisps
-  c+=vec3(0.0,0.025,0.008)*pow(n1,3.0);
-  // Deep green layer
-  c+=vec3(0.0,0.015,0.005)*pow(n2,2.5);
-  // Bright green core
-  c+=vec3(0.0,0.03,0.01)*pow(max(n3-0.4,0.0),2.5)*0.8;
-  // Green aurora
-  c+=vec3(0.0,0.012,0.004)*n4*n1;
+  vec3 c=vec3(0.001,0.004,0.002);
+  c+=vec3(0.0,0.03,0.012)*pow(n1,2.5);
+  c+=vec3(0.0,0.02,0.008)*pow(n2,2.0);
+  c+=vec3(0.0,0.04,0.015)*pow(max(n3-0.3,0.0),2.0)*0.9;
+  c+=vec3(0.0,0.015,0.006)*n4*n1;
   gl_FragColor=vec4(c,1.0);
+}`;
+
+// Custom glow point shader — circular soft glow with per-particle size
+const GLOW_POINT_VERT = `
+attribute float aSize;
+attribute float aBright;
+varying float vBright;
+void main(){
+  vBright=aBright;
+  vec4 mv=modelViewMatrix*vec4(position,1.0);
+  gl_PointSize=aSize*(300.0/(-mv.z));
+  gl_Position=projectionMatrix*mv;
+}`;
+
+const GLOW_POINT_FRAG = `
+uniform vec3 uColor;
+uniform float uOpacity;
+varying float vBright;
+void main(){
+  float d=length(gl_PointCoord-0.5)*2.0;
+  if(d>1.0) discard;
+  float glow=exp(-d*d*3.0);
+  float core=smoothstep(0.4,0.0,d);
+  float alpha=(glow*0.6+core*0.8)*vBright*uOpacity;
+  vec3 c=uColor*(0.7+core*0.5);
+  gl_FragColor=vec4(c*alpha,alpha);
+}`;
+
+// Animated flying star shader
+const STAR_VERT = `
+attribute float aSize;
+attribute float aSpeed;
+attribute float aPhase;
+uniform float uTime;
+varying float vAlpha;
+void main(){
+  vec3 p=position;
+  // Orbit slowly
+  float angle=uTime*aSpeed+aPhase;
+  float ca=cos(angle),sa=sin(angle);
+  p=vec3(p.x*ca-p.z*sa, p.y+sin(uTime*aSpeed*0.5+aPhase)*2.0, p.x*sa+p.z*ca);
+  // Twinkle
+  vAlpha=0.3+0.7*pow(sin(uTime*aSpeed*3.0+aPhase)*0.5+0.5,2.0);
+  vec4 mv=modelViewMatrix*vec4(p,1.0);
+  gl_PointSize=aSize*(200.0/(-mv.z));
+  gl_Position=projectionMatrix*mv;
+}`;
+
+const STAR_FRAG = `
+uniform vec3 uColor;
+varying float vAlpha;
+void main(){
+  float d=length(gl_PointCoord-0.5)*2.0;
+  if(d>1.0) discard;
+  float glow=exp(-d*d*4.0);
+  gl_FragColor=vec4(uColor*glow*vAlpha,glow*vAlpha);
 }`;
 
 /* ═══════════════════════════════════════════════════
@@ -63,10 +114,7 @@ function createScene(canvas, THREE, postFx) {
   renderer.setClearColor(0x000800);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.85;
-  if (!mob) {
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  }
+  // No shadow maps needed — fully particle-based scene
 
   // ── Nebula sky-dome (lightweight — renders immediately) ──
   const nebulaMat = new THREE.ShaderMaterial({
@@ -83,30 +131,15 @@ function createScene(canvas, THREE, postFx) {
   scene.add(dnaGroup);
 
   // ── Lights (cheap, create immediately) ──
-  scene.add(new THREE.AmbientLight(0x001a08, 0.8));
-  const keyLight = new THREE.PointLight(0x00ff66, 3.5, 35);
-  const fillLight = new THREE.PointLight(0x00cc55, 1.5, 25);
+  // Minimal lighting — particles are self-illuminated via additive blending + shaders
+  scene.add(new THREE.AmbientLight(0x001a08, 0.5));
+  const keyLight = new THREE.PointLight(0x00ff88, 2.0, 40);
+  const fillLight = new THREE.PointLight(0x00cc66, 1.0, 30);
   fillLight.position.set(-5, 0, -5);
-  const rimLight = new THREE.PointLight(0x00ff88, 1.2, 20);
+  const rimLight = new THREE.PointLight(0x00ffaa, 0.8, 25);
   rimLight.position.set(0, -10, 5);
   scene.add(keyLight, fillLight, rimLight);
-
-  const shadowLight = new THREE.DirectionalLight(0xffffff, 0.2);
-  shadowLight.position.set(5, 10, 8);
-  if (!mob) {
-    shadowLight.castShadow = true;
-    shadowLight.shadow.mapSize.width = 1024;
-    shadowLight.shadow.mapSize.height = 1024;
-    shadowLight.shadow.camera.near = 0.1;
-    shadowLight.shadow.camera.far = 80;
-    shadowLight.shadow.camera.left = -10;
-    shadowLight.shadow.camera.right = 10;
-    shadowLight.shadow.camera.top = 30;
-    shadowLight.shadow.camera.bottom = -30;
-    shadowLight.shadow.bias = -0.002;
-    shadowLight.shadow.radius = 4;
-  }
-  scene.add(shadowLight);
+  const shadowLight = { position: keyLight.position, target: { position: new THREE.Vector3(), updateMatrixWorld(){} } };
 
   // ── Camera path ──
   const cameraPath = new THREE.CatmullRomCurve3([
@@ -131,18 +164,18 @@ function createScene(canvas, THREE, postFx) {
     ));
   }
 
-  // ── Build queue: particle-cloud DNA spread across frames ──
+  // ── Build queue: neon particle-cloud DNA + flying stars ──
   const TURNS = 8, HEIGHT = 50, RADIUS = 2.8;
-  const SEGMENTS = mob ? 150 : 500;
-  const RUNG_COUNT = mob ? 40 : 100;
-  const STRAND_PTS = mob ? 800 : 3000;
-  const HALO_PTS = mob ? 400 : 1500;
-  const RUNG_INTERP = mob ? 10 : 18;
+  const SEGMENTS = mob ? 200 : 500;
+  const RUNG_COUNT = mob ? 50 : 120;
+  const STRAND_PTS = mob ? 1200 : 5000;
+  const HALO_PTS = mob ? 600 : 2000;
+  const RUNG_INTERP = mob ? 12 : 22;
 
   const buildQueue = [];
-  const ctx = { c1: null, c2: null };
+  const ctx = { c1: null, c2: null, starMat: null };
 
-  // Step 1: backbone particle strands + glow halo
+  // Step 1: helix backbone strands with custom glow shader
   buildQueue.push(() => {
     const pts1 = [], pts2 = [];
     for (let i = 0; i <= SEGMENTS; i++) {
@@ -155,131 +188,153 @@ function createScene(canvas, THREE, postFx) {
     ctx.c1 = new THREE.CatmullRomCurve3(pts1);
     ctx.c2 = new THREE.CatmullRomCurve3(pts2);
 
-    // Helper: sample points along curve with gaussian noise for cloud thickness
-    function sampleStrand(curve, count, noiseR) {
+    function makeStrand(curve, count, noiseR, baseSize, sizeVar) {
       const pos = new Float32Array(count * 3);
+      const sizes = new Float32Array(count);
+      const brights = new Float32Array(count);
       for (let i = 0; i < count; i++) {
         const t = i / count;
         const p = curve.getPoint(t);
-        // Box-Muller approximation for gaussian scatter
         const u1 = Math.random() || 0.001, u2 = Math.random();
         const g = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2) * noiseR;
         const angle = Math.random() * Math.PI * 2;
         pos[i * 3] = p.x + Math.cos(angle) * g;
-        pos[i * 3 + 1] = p.y + (Math.random() - 0.5) * noiseR * 0.5;
+        pos[i * 3 + 1] = p.y + (Math.random() - 0.5) * noiseR * 0.4;
         pos[i * 3 + 2] = p.z + Math.sin(angle) * g;
+        sizes[i] = baseSize + Math.random() * sizeVar;
+        brights[i] = 0.5 + Math.random() * 0.5;
       }
-      return pos;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+      geo.setAttribute('aBright', new THREE.BufferAttribute(brights, 1));
+      return geo;
     }
 
-    // Main backbone strands (dense, bright)
-    const strandMat = new THREE.PointsMaterial({
-      color: 0x00ff88, size: mob ? 0.06 : 0.08, transparent: true,
-      opacity: 0.7, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    // Core strands — bright neon green, tight cluster
+    const coreMat = new THREE.ShaderMaterial({
+      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
+      uniforms: { uColor: { value: new THREE.Color(0x00ffaa) }, uOpacity: { value: 0.9 } },
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
-    for (const curve of [ctx.c1, ctx.c2]) {
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(sampleStrand(curve, STRAND_PTS, 0.15), 3));
-      dnaGroup.add(new THREE.Points(geo, strandMat));
+    for (const c of [ctx.c1, ctx.c2]) {
+      dnaGroup.add(new THREE.Points(makeStrand(c, STRAND_PTS, 0.12, 0.06, 0.08), coreMat));
     }
 
-    // Glow halo (sparser, larger, softer)
-    const haloMat = new THREE.PointsMaterial({
-      color: 0x00ff88, size: mob ? 0.15 : 0.22, transparent: true,
-      opacity: 0.12, blending: THREE.AdditiveBlending, sizeAttenuation: true,
+    // Outer glow halo — softer, wider, larger particles
+    const haloMat = new THREE.ShaderMaterial({
+      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
+      uniforms: { uColor: { value: new THREE.Color(0x00ff88) }, uOpacity: { value: 0.25 } },
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     });
-    for (const curve of [ctx.c1, ctx.c2]) {
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(sampleStrand(curve, HALO_PTS, 0.4), 3));
-      dnaGroup.add(new THREE.Points(geo, haloMat));
+    for (const c of [ctx.c1, ctx.c2]) {
+      dnaGroup.add(new THREE.Points(makeStrand(c, HALO_PTS, 0.45, 0.15, 0.2), haloMat));
     }
   });
 
-  // Step 2: rung connections as point clouds + bright junction nodes
+  // Step 2: neon rung connections + bright junction nodes
   buildQueue.push(() => {
-    const rungPositions = [];
-    const nodePositions = [];
+    const rPos = [], rSizes = [], rBrights = [];
+    const nPos = [], nSizes = [], nBrights = [];
     for (let i = 0; i < RUNG_COUNT; i++) {
       const t = i / RUNG_COUNT;
       const p1 = ctx.c1.getPoint(t), p2 = ctx.c2.getPoint(t);
-      // Interpolated points along the rung
       for (let j = 0; j <= RUNG_INTERP; j++) {
         const f = j / RUNG_INTERP;
-        const x = p1.x + (p2.x - p1.x) * f + (Math.random() - 0.5) * 0.08;
-        const y = p1.y + (p2.y - p1.y) * f + (Math.random() - 0.5) * 0.08;
-        const z = p1.z + (p2.z - p1.z) * f + (Math.random() - 0.5) * 0.08;
-        rungPositions.push(x, y, z);
+        rPos.push(
+          p1.x + (p2.x - p1.x) * f + (Math.random() - 0.5) * 0.06,
+          p1.y + (p2.y - p1.y) * f + (Math.random() - 0.5) * 0.06,
+          p1.z + (p2.z - p1.z) * f + (Math.random() - 0.5) * 0.06,
+        );
+        rSizes.push(0.03 + Math.random() * 0.04);
+        rBrights.push(0.4 + Math.random() * 0.4);
       }
-      // Bright junction nodes at endpoints
-      nodePositions.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+      // Bright junction nodes
+      for (const p of [p1, p2]) {
+        nPos.push(p.x, p.y, p.z);
+        nSizes.push(0.12 + Math.random() * 0.1);
+        nBrights.push(0.8 + Math.random() * 0.2);
+      }
     }
 
-    const rungGeo = new THREE.BufferGeometry();
-    rungGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(rungPositions), 3));
-    dnaGroup.add(new THREE.Points(rungGeo, new THREE.PointsMaterial({
-      color: 0x00dd66, size: mob ? 0.05 : 0.06, transparent: true,
-      opacity: 0.5, blending: THREE.AdditiveBlending, sizeAttenuation: true,
-    })));
+    const rungMat = new THREE.ShaderMaterial({
+      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
+      uniforms: { uColor: { value: new THREE.Color(0x00ee77) }, uOpacity: { value: 0.6 } },
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const rGeo = new THREE.BufferGeometry();
+    rGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(rPos), 3));
+    rGeo.setAttribute('aSize', new THREE.BufferAttribute(new Float32Array(rSizes), 1));
+    rGeo.setAttribute('aBright', new THREE.BufferAttribute(new Float32Array(rBrights), 1));
+    dnaGroup.add(new THREE.Points(rGeo, rungMat));
 
-    const nodeGeo = new THREE.BufferGeometry();
-    nodeGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nodePositions), 3));
-    dnaGroup.add(new THREE.Points(nodeGeo, new THREE.PointsMaterial({
-      color: 0x00ffaa, size: mob ? 0.12 : 0.15, transparent: true,
-      opacity: 0.9, blending: THREE.AdditiveBlending, sizeAttenuation: true,
-    })));
+    const nodeMat = new THREE.ShaderMaterial({
+      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
+      uniforms: { uColor: { value: new THREE.Color(0x00ffcc) }, uOpacity: { value: 1.0 } },
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    const nGeo = new THREE.BufferGeometry();
+    nGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nPos), 3));
+    nGeo.setAttribute('aSize', new THREE.BufferAttribute(new Float32Array(nSizes), 1));
+    nGeo.setAttribute('aBright', new THREE.BufferAttribute(new Float32Array(nBrights), 1));
+    dnaGroup.add(new THREE.Points(nGeo, nodeMat));
   });
 
-  // Step 3: surrounding particles + fog + stars
+  // Step 3: floating particles around helix + flying animated stars
   buildQueue.push(() => {
-    // Surrounding particle cloud (hugs the helix)
-    const P_COUNT = mob ? 600 : 3000;
-    const pPos = new Float32Array(P_COUNT * 3);
+    // Surrounding particle mist
+    const P_COUNT = mob ? 800 : 4000;
+    const pPos = [], pSizes = [], pBrights = [];
     for (let i = 0; i < P_COUNT; i++) {
       const t = Math.random(), angle = Math.random() * Math.PI * 2;
-      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 5;
-      pPos[i * 3] = Math.cos(angle) * r;
-      pPos[i * 3 + 1] = y;
-      pPos[i * 3 + 2] = Math.sin(angle) * r;
+      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 6;
+      pPos.push(Math.cos(angle) * r, y, Math.sin(angle) * r);
+      pSizes.push(0.03 + Math.random() * 0.06);
+      pBrights.push(0.2 + Math.random() * 0.5);
     }
+    const mistMat = new THREE.ShaderMaterial({
+      vertexShader: GLOW_POINT_VERT, fragmentShader: GLOW_POINT_FRAG,
+      uniforms: { uColor: { value: new THREE.Color(0x00ff99) }, uOpacity: { value: 0.4 } },
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    });
     const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    dnaGroup.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-      color: 0x00ff77, size: 0.06, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending,
-    })));
+    pGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pPos), 3));
+    pGeo.setAttribute('aSize', new THREE.BufferAttribute(new Float32Array(pSizes), 1));
+    pGeo.setAttribute('aBright', new THREE.BufferAttribute(new Float32Array(pBrights), 1));
+    dnaGroup.add(new THREE.Points(pGeo, mistMat));
 
-    // Ambient green fog (large faint particles)
-    const FOG_COUNT = mob ? 300 : 1000;
-    const fogPos = new Float32Array(FOG_COUNT * 3);
-    for (let i = 0; i < FOG_COUNT; i++) {
-      const t = Math.random(), angle = Math.random() * Math.PI * 2;
-      const y = (t - 0.5) * HEIGHT, r = RADIUS + (Math.random() - 0.5) * 12;
-      fogPos[i * 3] = Math.cos(angle) * r;
-      fogPos[i * 3 + 1] = y;
-      fogPos[i * 3 + 2] = Math.sin(angle) * r;
-    }
-    const fogGeo = new THREE.BufferGeometry();
-    fogGeo.setAttribute('position', new THREE.BufferAttribute(fogPos, 3));
-    dnaGroup.add(new THREE.Points(fogGeo, new THREE.PointsMaterial({
-      color: 0x00ff88, size: 0.15, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending,
-    })));
-
-    // Star field (green-tinted)
-    const S_COUNT = mob ? 800 : 3000;
+    // Flying animated stars — these orbit and twinkle
+    const S_COUNT = mob ? 1500 : 5000;
     const sPos = new Float32Array(S_COUNT * 3);
+    const sSizes = new Float32Array(S_COUNT);
+    const sSpeeds = new Float32Array(S_COUNT);
+    const sPhases = new Float32Array(S_COUNT);
     for (let i = 0; i < S_COUNT; i++) {
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
-      const r = 25 + Math.random() * 40;
+      const r = 15 + Math.random() * 50;
       sPos[i * 3] = r * Math.sin(ph) * Math.cos(th);
       sPos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
       sPos[i * 3 + 2] = r * Math.cos(ph);
+      sSizes[i] = 0.04 + Math.random() * 0.12;
+      sSpeeds[i] = 0.02 + Math.random() * 0.08;
+      sPhases[i] = Math.random() * Math.PI * 2;
     }
+    const starMat = new THREE.ShaderMaterial({
+      vertexShader: STAR_VERT, fragmentShader: STAR_FRAG,
+      uniforms: { uColor: { value: new THREE.Color(0x88ffcc) }, uTime: { value: 0 } },
+      transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    });
+    ctx.starMat = starMat;
     const sGeo = new THREE.BufferGeometry();
     sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
-    scene.add(new THREE.Points(sGeo, new THREE.PointsMaterial({ color: 0x88ffbb, size: 0.06, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending })));
+    sGeo.setAttribute('aSize', new THREE.BufferAttribute(sSizes, 1));
+    sGeo.setAttribute('aSpeed', new THREE.BufferAttribute(sSpeeds, 1));
+    sGeo.setAttribute('aPhase', new THREE.BufferAttribute(sPhases, 1));
+    scene.add(new THREE.Points(sGeo, starMat));
   });
 
-  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue };
+  return { scene, camera, renderer, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx };
 }
 
 /* ═══════════════════════════════════════════════════
@@ -497,7 +552,7 @@ export default function CinematicPage() {
           UnrealBloomPass: postMods[2].UnrealBloomPass,
         };
 
-        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue } =
+        const { scene, camera, renderer: r, composer, keyLight, fillLight, rimLight, shadowLight, cameraPath, dnaGroup, nebulaMat, buildQueue, ctx: sceneCtx } =
           createScene(canvas, THREE, postFx);
         renderer = r;
 
@@ -535,16 +590,16 @@ export default function CinematicPage() {
           camera.lookAt(lookAt);
 
           keyLight.position.copy(camera.position).multiplyScalar(0.8);
-          keyLight.intensity = 2.5 + Math.sin(now * 0.4) * 0.3;
-          fillLight.intensity = 1.2 + Math.sin(now * 0.25 + 1) * 0.15;
-          rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.1;
+          keyLight.intensity = 2.0 + Math.sin(now * 0.4) * 0.4;
+          fillLight.intensity = 1.0 + Math.sin(now * 0.25 + 1) * 0.2;
+          rimLight.intensity = 0.8 + Math.sin(now * 0.55 + 2) * 0.15;
 
-          shadowLight.position.set(camera.position.x + 5, camera.position.y + 6, camera.position.z + 4);
-          shadowLight.target.position.set(0, camera.position.y - 2, 0);
-          shadowLight.target.updateMatrixWorld();
-
-          dnaGroup.rotation.y = now * 0.01;
+          // Smooth organic rotation
+          dnaGroup.rotation.y = now * 0.04;
           nebulaMat.uniforms.uTime.value = now;
+
+          // Animate flying stars
+          if (sceneCtx.starMat) sceneCtx.starMat.uniforms.uTime.value = now;
 
           updatePanels(t);
           updateHero(t);
