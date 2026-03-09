@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import './CinematicPage.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
@@ -1553,6 +1554,14 @@ export default function CinematicPage() {
             </div>
 
             <a className="cine-backtop" href="#top">&#8593; Back to top</a>
+
+            <div className="cine-legal-links">
+              <Link to="/terms" className="cine-legal-link">Terms of Service</Link>
+              <span className="cine-legal-sep">·</span>
+              <Link to="/privacy" className="cine-legal-link">Privacy Policy</Link>
+              <span className="cine-legal-sep">·</span>
+              <Link to="/ccpa" className="cine-legal-link">CCPA Notice</Link>
+            </div>
           </div>
         </section>
       </div>
