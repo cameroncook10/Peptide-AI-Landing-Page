@@ -1229,6 +1229,9 @@ export default function CinematicPage() {
 
       {/* ── Hero Overlay ── */}
       <div className="cinematic-hero" ref={heroRef}>
+        <div className="hero-sweep-line" />
+        <div className="hero-sweep-line" />
+        <div className="hero-sweep-line" />
         <div className="hero-badge">AI-Powered Peptide Tracking</div>
         <h1 className="hero-headline">
           <span className="hw" style={{ animationDelay: '0.2s' }}>Optimize</span>{' '}
