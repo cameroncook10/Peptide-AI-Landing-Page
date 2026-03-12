@@ -1,0 +1,1 @@
+Analyze the current codebase thoroughly. Then suggest 3-5 prioritized feature ideas with effort/impact scores (1-5 each). Format as a table with columns: Feature, Description, Effort, Impact, Priority. Focus on features that would most benefit the Peptide AI landing page and user experience.

@@ -1,0 +1,1 @@
+Stage all changes, create a descriptive commit message based on the diff, commit, and push to the current branch. Ask for confirmation before pushing.
