@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Privacy Policy - Peptide AI</title>
+<meta name="description" content="Peptide AI Privacy Policy. Learn how we collect, use, and protect your data." />
+<meta property="og:title" content="Privacy Policy - Peptide AI" />
+<meta property="og:description" content="Peptide AI Privacy Policy. Learn how we collect, use, and protect your data." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://peptideai.co/privacy" />
+<meta name="theme-color" content="#00E5A0" />
+<link rel="canonical" href="https://peptideai.co/privacy" />
+<link rel="icon" type="image/png" href="assets/app-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+:root {
+  --layer-0: #070910; --layer-1: #0A0C10; --layer-2: #111419; --layer-3: #1A1E26; --layer-4: #222834;
+  --accent: #00E5A0; --accent-dim: #00E5A015; --accent-dark: #00B37A; --accent-cyan: #00C9D4;
+  --text-primary: #F0F4FF; --text-secondary: #C8D0E0; --text-muted: #8A94A6; --text-disabled: #3D4455;
+  --border: #252B38; --border-subtle: rgba(255,255,255,0.06);
+  --font-display: 'DM Serif Display', serif; --font-mono: 'JetBrains Mono', monospace; --font-body: 'Inter', sans-serif;
+  --shadow-med: 0 4px 24px rgba(0,0,0,0.3);
+}
+body { font-family: var(--font-body); background: var(--layer-1); color: var(--text-primary); overflow-x: hidden; }
+
+/* Nav */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px; background: rgba(10,12,16,0.75);
+  backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon { width: 32px; height: 32px; border-radius: 9px; }
+.brand-name { font-family: var(--font-display); font-size: 18px; color: var(--text-primary); text-decoration: none; }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.pill {
+  text-decoration: none; color: var(--text-muted); padding: 8px 16px; border-radius: 9999px;
+  font-family: var(--font-body); font-weight: 500; font-size: 13px;
+  border: 1px solid var(--border); transition: color 0.2s, border-color 0.2s;
+}
+.pill:hover { color: var(--text-primary); border-color: #3D4455; }
+.pill.primary { background: var(--accent); color: var(--layer-0); border-color: transparent; font-weight: 600; }
+.pill.primary:hover { background: var(--accent-dark); }
+
+/* Legal layout */
+.legal-hero {
+  padding: 140px 24px 60px;
+  text-align: center;
+  background: var(--layer-0);
+  position: relative;
+}
+.legal-hero h1 {
+  font-family: var(--font-display); font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400; color: var(--text-primary); margin-bottom: 12px;
+}
+.legal-updated {
+  font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+.legal-body {
+  max-width: 760px; margin: 0 auto; padding: 60px 24px 100px;
+}
+.legal-section { margin-bottom: 48px; }
+.legal-section h2 {
+  font-family: var(--font-display); font-size: 24px; font-weight: 400;
+  color: var(--text-primary); margin-bottom: 20px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+}
+.legal-section h3 {
+  font-family: var(--font-body); font-size: 16px; font-weight: 600;
+  color: var(--text-secondary); margin: 24px 0 12px;
+}
+.legal-section p {
+  font-family: var(--font-body); font-size: 15px; line-height: 1.8;
+  color: var(--text-muted); margin-bottom: 16px;
+}
+.legal-section ul {
+  list-style: none; padding: 0; margin-bottom: 16px;
+}
+.legal-section ul li {
+  font-family: var(--font-body); font-size: 14px; line-height: 1.8;
+  color: var(--text-muted); padding-left: 20px; position: relative; margin-bottom: 8px;
+}
+.legal-section ul li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+}
+.legal-section a { color: var(--accent); text-decoration: none; }
+.legal-section a:hover { text-decoration: underline; }
+.legal-warn {
+  background: rgba(0,229,160,0.05); border: 1px solid rgba(0,229,160,0.15);
+  border-radius: 12px; padding: 20px 24px; margin-bottom: 20px;
+  font-family: var(--font-body); font-size: 14px; line-height: 1.7; color: var(--text-secondary);
+}
+
+/* Footer */
+.site-footer {
+  background: var(--layer-0); border-top: 1px solid var(--border);
+  padding: 40px 24px; text-align: center;
+}
+.footer-copy { font-family: var(--font-body); font-size: 12px; color: var(--text-disabled); }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
+.footer-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.footer-links a:hover { color: var(--accent); }
+
+@media (max-width: 760px) {
+  .topbar { padding: 12px 20px; }
+  .topbar-actions .pill:not(.primary) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">
+    <img src="assets/app-icon.png" alt="Peptide AI" class="brand-icon" />
+    <a href="index.html" class="brand-name">peptide.ai</a>
+  </div>
+  <div class="topbar-actions">
+    <a class="pill" href="index.html">Home</a>
+    <a class="pill" href="terms.html">Terms</a>
+    <a class="pill primary" href="index.html#waitlist">Get Early Access</a>
+  </div>
+</nav>
+
+<div class="legal-hero">
+  <h1>Privacy Policy</h1>
+  <p class="legal-updated">Last updated: March 2025</p>
+</div>
+
+<div class="legal-body">
+
+  <div class="legal-section">
+    <h2>1. Introduction</h2>
+    <p>PeptideAI LLC ("Peptide AI," "we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use the Peptide AI mobile application, website, and related services (collectively, the "Service").</p>
+    <p>By using the Service, you agree to the collection and use of information in accordance with this policy. If you do not agree, please discontinue use of the Service.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>2. Information We Collect</h2>
+    <h3>2.1 Information You Provide</h3>
+    <ul>
+      <li><strong>Account information:</strong> name, email address, username, and password when you register for an account.</li>
+      <li><strong>Profile information:</strong> age, gender, health and wellness goals, and other optional details you choose to share.</li>
+      <li><strong>Health and wellness queries:</strong> questions, prompts, and information you submit to our AI consulting tools regarding peptides and wellness topics.</li>
+      <li><strong>Payment information:</strong> billing name and address. Payment card details are processed exclusively by our third-party payment processor and are never stored on our servers.</li>
+      <li><strong>Communications:</strong> messages, feedback, support requests, and survey responses you send to us.</li>
+    </ul>
+    <h3>2.2 Information Collected Automatically</h3>
+    <ul>
+      <li><strong>Device identifiers:</strong> device type, operating system, unique device identifiers (IDFA/GAID), hardware model, and app version.</li>
+      <li><strong>Usage analytics:</strong> features accessed, screens viewed, AI queries submitted, session duration, tap and scroll interactions, and in-app navigation paths.</li>
+      <li><strong>Log data:</strong> IP address, access timestamps, referring URLs, and error logs.</li>
+      <li><strong>Location data:</strong> approximate geographic location inferred from your IP address. We do not collect precise GPS location.</li>
+    </ul>
+    <h3>2.3 Information from Third Parties</h3>
+    <ul>
+      <li><strong>Social login providers:</strong> if you sign in via Apple, Google, or another provider, we receive basic profile information per your settings with that provider.</li>
+      <li><strong>Analytics providers:</strong> aggregated data about user interactions from our analytics partners.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>3. How We Use Your Information</h2>
+    <p>We use the information we collect for the following purposes:</p>
+    <ul>
+      <li>To create, maintain, and secure your account.</li>
+      <li>To provide, personalize, and improve the Service, including AI-generated peptide insights.</li>
+      <li>To process transactions and send related information (receipts, confirmations).</li>
+      <li>To communicate with you about updates, security alerts, and support.</li>
+      <li>To conduct analytics and research to improve user experience and develop new features.</li>
+      <li>To train, evaluate, and improve our AI models (using de-identified and aggregated data where possible).</li>
+      <li>To send promotional communications where you have opted in or where permitted by law.</li>
+      <li>To comply with legal obligations, enforce our terms, and protect rights and safety.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>4. Third-Party Services</h2>
+    <p>We may share your information with the following categories of third-party service providers:</p>
+    <ul>
+      <li><strong>Cloud infrastructure:</strong> hosting, storage, and computing services (e.g., AWS, Google Cloud).</li>
+      <li><strong>Analytics providers:</strong> services that help us understand usage patterns (e.g., Google Analytics, Mixpanel).</li>
+      <li><strong>Payment processors:</strong> third-party services that securely process your payment information.</li>
+      <li><strong>Communication tools:</strong> email delivery and push notification services.</li>
+      <li><strong>Customer support:</strong> tools that help us provide responsive support.</li>
+    </ul>
+    <p>These providers process your data only on our behalf under contractual data protection obligations. We do not sell your personal information to third parties.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>5. Data Retention</h2>
+    <p>We retain your personal information for as long as your account is active and as needed to provide the Service. Specifically:</p>
+    <ul>
+      <li>Active account data is retained for the life of your account plus 30 days after deletion.</li>
+      <li>Anonymized and aggregated analytics data may be retained indefinitely.</li>
+      <li>Backup copies may persist for up to 90 days after deletion from active systems.</li>
+      <li>We retain certain data as required by law for compliance, dispute resolution, or fraud prevention.</li>
+    </ul>
+    <p>To request deletion of your account and data, email <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a>.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>6. California Consumer Privacy Act (CCPA)</h2>
+    <div class="legal-warn">If you are a California resident, you have specific rights under the California Consumer Privacy Act (CCPA) and the California Privacy Rights Act (CPRA).</div>
+    <h3>Your Rights</h3>
+    <ul>
+      <li><strong>Right to Know:</strong> You may request disclosure of the categories and specific pieces of personal information we have collected about you.</li>
+      <li><strong>Right to Delete:</strong> You may request that we delete your personal information, subject to certain legal exceptions.</li>
+      <li><strong>Right to Correct:</strong> You may request correction of inaccurate personal information.</li>
+      <li><strong>Right to Opt Out of Sale/Sharing:</strong> We do not sell your personal information. If this changes, we will provide a "Do Not Sell or Share My Personal Information" mechanism.</li>
+      <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your CCPA rights.</li>
+    </ul>
+    <h3>Do Not Sell My Personal Information</h3>
+    <p>Peptide AI does not sell your personal information as defined under the CCPA. If our practices change, we will update this policy and provide opt-out mechanisms before any sale occurs. To submit a request or inquiry, contact <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a> with the subject line "CCPA Request."</p>
+    <p>We will verify your identity before processing any request and respond within 45 days as required by law.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>7. GDPR &amp; International Data Subject Rights</h2>
+    <p>If you are located in the European Economic Area (EEA), United Kingdom, or another jurisdiction with applicable data protection laws, you may have the following rights:</p>
+    <ul>
+      <li><strong>Right of Access:</strong> Request a copy of the personal data we hold about you.</li>
+      <li><strong>Right to Rectification:</strong> Request correction of inaccurate or incomplete data.</li>
+      <li><strong>Right to Erasure ("Right to be Forgotten"):</strong> Request deletion of your personal data, subject to legal retention requirements.</li>
+      <li><strong>Right to Data Portability:</strong> Request your data in a structured, commonly used, machine-readable format (e.g., JSON or CSV).</li>
+      <li><strong>Right to Restrict Processing:</strong> Request that we limit the processing of your data in certain circumstances.</li>
+      <li><strong>Right to Object:</strong> Object to processing based on legitimate interests or for direct marketing purposes.</li>
+      <li><strong>Right to Withdraw Consent:</strong> Where processing is based on consent, you may withdraw consent at any time.</li>
+    </ul>
+    <p>To exercise any of these rights, contact <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a>. We will respond within 30 days.</p>
+    <p>Our legal bases for processing include: contract performance (to provide the Service), legitimate interests (analytics, security, improvement), consent (marketing), and legal obligations.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>8. Children's Privacy</h2>
+    <p>The Service is not directed to children under the age of 13. We do not knowingly collect personal information from children under 13. If we discover that we have inadvertently collected data from a child under 13, we will promptly delete that information.</p>
+    <p>If you are a parent or guardian and believe your child has provided us with personal information, please contact us at <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a> and we will take steps to delete it.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>9. Cookies &amp; Tracking Technologies</h2>
+    <p>We use cookies and similar tracking technologies on our website and within the app for the following purposes:</p>
+    <ul>
+      <li><strong>Essential cookies:</strong> Required for core functionality such as authentication, session management, and security.</li>
+      <li><strong>Analytics cookies:</strong> Help us understand how users interact with the Service, measure feature performance, and identify improvements.</li>
+      <li><strong>Preference cookies:</strong> Remember your settings and personalize your experience.</li>
+    </ul>
+    <p>You can manage cookie preferences through your browser or device settings. Disabling certain cookies may affect Service functionality. We do not use cookies for third-party advertising.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>10. Data Security</h2>
+    <p>We implement commercially reasonable technical and organizational security measures to protect your information, including:</p>
+    <ul>
+      <li>Encryption of data in transit using TLS 1.2+.</li>
+      <li>Encryption of sensitive data at rest using AES-256.</li>
+      <li>Role-based access controls limiting data access to authorized personnel.</li>
+      <li>Regular security assessments and vulnerability testing.</li>
+    </ul>
+    <p>No security system is impenetrable. While we strive to protect your data, we cannot guarantee absolute security. In the event of a data breach requiring notification under applicable law, we will notify affected users as required.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>11. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. We will post the revised policy on the Service and update the "Last updated" date. For material changes, we will provide additional notice via email or in-app notification. Your continued use after the effective date constitutes acceptance of the updated policy.</p>
+  </div>
+
+  <div class="legal-section">
+    <h2>12. Contact Us</h2>
+    <p>For privacy-related questions, data requests, or concerns, contact us at:</p>
+    <p><strong>Email:</strong> <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a></p>
+    <p><strong>Company:</strong> PeptideAI LLC</p>
+    <p><strong>Website:</strong> <a href="https://peptideai.co">peptideai.co</a></p>
+    <p>We will respond to all requests within 30-45 days as required by applicable law.</p>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+  <div class="footer-copy">&copy; 2025 Peptide AI. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
