@@ -232,11 +232,12 @@ body {
   width: 72px; height: 8px; background: var(--layer-0); border-radius: 9999px; z-index: 10;
 }
 
-.phone-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.3s ease; }
+/* phone-img sized by iPhone 15 Pro override below */
 .phone-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to bottom, transparent 75%, rgba(7,9,16,0.4) 100%);
+  background: linear-gradient(to bottom, transparent 80%, rgba(7,9,16,0.35) 100%);
   pointer-events: none;
+  z-index: 3;
 }
 
 .dots { display: flex; gap: 8px; align-items: center; }
@@ -433,6 +434,7 @@ body {
 
 .phone-frame {
   position: relative;
+  width: min(286px, calc(85vw + 16px));
   padding: 8px;
   background: linear-gradient(145deg, #1c1c1e, #2c2c2e);
   border-radius: 3rem;
@@ -443,7 +445,6 @@ body {
     inset 0 1px 0 rgba(255,255,255,0.06);
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
   display: block;
-  gap: 0;
 }
 .phone-frame:hover {
   transform: perspective(1200px) rotateY(-5deg) rotateX(3deg);
@@ -455,15 +456,29 @@ body {
 }
 
 .phone-screen {
-  width: min(270px, 85vw);
-  aspect-ratio: 9/19.5;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9/19;
   border-radius: calc(3rem - 8px);
   border: none;
   box-shadow: none;
   background: #000;
+  overflow: hidden;
 }
 .phone-screen:hover {
   box-shadow: none;
+}
+
+/* Screenshot fills screen exactly */
+.phone-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: opacity 0.3s ease;
 }
 
 /* Gloss overlay */
@@ -479,11 +494,15 @@ body {
 
 /* Dynamic Island */
 .phone-notch {
-  width: 96px;
-  height: 28px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 24px;
   top: 10px;
   background: #000;
   border-radius: 9999px;
+  z-index: 10;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.04);
 }
 
@@ -494,10 +513,10 @@ body {
   border-radius: 2px;
   z-index: 5;
 }
-.hw-silent { left: -3px; top: 100px; width: 3px; height: 22px; }
-.hw-vol-up { left: -3px; top: 140px; width: 3px; height: 38px; }
-.hw-vol-down { left: -3px; top: 188px; width: 3px; height: 38px; }
-.hw-power { right: -3px; top: 155px; width: 3px; height: 48px; }
+.hw-silent { left: -3px; top: 18%; width: 3px; height: 4%; }
+.hw-vol-up { left: -3px; top: 25%; width: 3px; height: 7%; }
+.hw-vol-down { left: -3px; top: 34%; width: 3px; height: 7%; }
+.hw-power { right: -3px; top: 28%; width: 3px; height: 9%; }
 
 /* ── Section header (shared) ── */
 .section-header {
@@ -780,6 +799,7 @@ body {
 
 /* ── Responsive additions ── */
 @media (max-width: 760px) {
+  .phone-frame { width: min(286px, 85vw); }
   .hiw-grid { grid-template-columns: 1fr; gap: 16px; }
   .footer-top { flex-direction: column; text-align: center; }
   .footer-badges { flex-direction: column; align-items: center; }
