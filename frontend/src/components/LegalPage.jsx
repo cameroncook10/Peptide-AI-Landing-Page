@@ -61,6 +61,7 @@ export default function LegalPage({ title, subtitle, effectiveDate, sections }) 
               <Link to="/terms" className={`legal-toc-item ${location.pathname === '/terms' ? 'current' : ''}`}>Terms of Service</Link>
               <Link to="/privacy" className={`legal-toc-item ${location.pathname === '/privacy' ? 'current' : ''}`}>Privacy Policy</Link>
               <Link to="/ccpa" className={`legal-toc-item ${location.pathname === '/ccpa' ? 'current' : ''}`}>CCPA Notice</Link>
+              <Link to="/support" className={`legal-toc-item ${location.pathname === '/support' ? 'current' : ''}`}>Support</Link>
             </div>
           </div>
         </aside>
@@ -78,6 +79,7 @@ export default function LegalPage({ title, subtitle, effectiveDate, sections }) 
             <Link to="/terms" className="legal-toc-item" onClick={() => setMenuOpen(false)}>Terms of Service</Link>
             <Link to="/privacy" className="legal-toc-item" onClick={() => setMenuOpen(false)}>Privacy Policy</Link>
             <Link to="/ccpa" className="legal-toc-item" onClick={() => setMenuOpen(false)}>CCPA Notice</Link>
+            <Link to="/support" className="legal-toc-item" onClick={() => setMenuOpen(false)}>Support</Link>
           </div>
         )}
 
@@ -112,6 +114,8 @@ export default function LegalPage({ title, subtitle, effectiveDate, sections }) 
               <Link to="/privacy">Privacy Policy</Link>
               <span>·</span>
               <Link to="/ccpa">CCPA Notice</Link>
+              <span>·</span>
+              <Link to="/support">Support</Link>
             </div>
             <p>© 2026 PeptideAI LLC · <a href="mailto:legal@peptideai.co">legal@peptideai.co</a></p>
           </footer>
