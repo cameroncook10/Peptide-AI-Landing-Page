@@ -92,7 +92,7 @@ export default function LegalPage({ title, subtitle, effectiveDate, sections }) 
             <div className="legal-meta">
               <span>Effective: {effectiveDate}</span>
               <span className="legal-meta-sep">·</span>
-              <span>PeptideAI LLC</span>
+              <span>Peptide AI LLC</span>
               <span className="legal-meta-sep">·</span>
               <a href="mailto:legal@peptideai.co" className="legal-meta-link">legal@peptideai.co</a>
             </div>
@@ -117,7 +117,7 @@ export default function LegalPage({ title, subtitle, effectiveDate, sections }) 
               <span>·</span>
               <Link to="/support">Support</Link>
             </div>
-            <p>© 2026 PeptideAI LLC · <a href="mailto:legal@peptideai.co">legal@peptideai.co</a></p>
+            <p>© 2026 Peptide AI LLC · <a href="mailto:legal@peptideai.co">legal@peptideai.co</a></p>
           </footer>
         </main>
       </div>

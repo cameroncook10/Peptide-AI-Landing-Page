@@ -64,7 +64,7 @@ const sections = [
     title: '1. Introduction & Scope',
     content: (
       <>
-        <P>This California Consumer Privacy Act (CCPA) Notice, as amended by the California Privacy Rights Act (CPRA), is provided by PeptideAI LLC ("PeptideAI," "we," "us," or "our") to California residents who use the PeptideAI mobile application, website, and related services (collectively, the "Platform").</P>
+        <P>This California Consumer Privacy Act (CCPA) Notice, as amended by the California Privacy Rights Act (CPRA), is provided by Peptide AI LLC ("PeptideAI," "we," "us," or "our") to California residents who use the PeptideAI mobile application, website, and related services (collectively, the "Platform").</P>
         <P>This Notice supplements our Privacy Policy and Terms of Service and describes your rights as a California resident under the CCPA/CPRA (California Civil Code § 1798.100 et seq.), how we collect, use, and disclose your personal information, and how to exercise your rights.</P>
         <P>This Notice applies to personal information we collect online and offline in the context of our consumer Platform. It does not apply to information collected in the context of employment.</P>
       </>
@@ -265,7 +265,7 @@ const sections = [
         <Table
           headers={['', '']}
           rows={[
-            ['Company', 'PeptideAI LLC'],
+            ['Company', 'Peptide AI LLC'],
             ['Email', 'legal@peptideai.co'],
             ['CCPA Opt-Out', 'legal@peptideai.co — Subject: "CCPA Opt-Out — Sale/Sharing"'],
             ['Deletion Requests', 'legal@peptideai.co — Subject: "CCPA Right to Delete"'],
