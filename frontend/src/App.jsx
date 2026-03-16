@@ -4,6 +4,7 @@ import CinematicPage from './components/CinematicPage';
 import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CCPA from './components/CCPA';
+import Support from './components/Support';
 
 function HomePage() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/ccpa" element={<CCPA />} />
+        <Route path="/support" element={<Support />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support - Peptide AI</title>
+<meta name="description" content="Get help and support for Peptide AI. Contact our team for questions, feedback, or assistance." />
+<meta property="og:title" content="Support - Peptide AI" />
+<meta property="og:description" content="Get help and support for Peptide AI. Contact our team for questions, feedback, or assistance." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://peptideai.co/support" />
+<meta name="theme-color" content="#00E5A0" />
+<link rel="canonical" href="https://peptideai.co/support" />
+<link rel="icon" type="image/png" href="assets/app-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+:root {
+  --layer-0: #070910; --layer-1: #0A0C10; --layer-2: #111419; --layer-3: #1A1E26; --layer-4: #222834;
+  --accent: #00E5A0; --accent-dim: #00E5A015; --accent-dark: #00B37A; --accent-cyan: #00C9D4;
+  --text-primary: #F0F4FF; --text-secondary: #C8D0E0; --text-muted: #8A94A6; --text-disabled: #3D4455;
+  --border: #252B38; --border-subtle: rgba(255,255,255,0.06);
+  --font-display: 'DM Serif Display', serif; --font-mono: 'JetBrains Mono', monospace; --font-body: 'Inter', sans-serif;
+  --shadow-med: 0 4px 24px rgba(0,0,0,0.3);
+}
+body { font-family: var(--font-body); background: var(--layer-1); color: var(--text-primary); overflow-x: hidden; }
+
+/* Nav */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px; background: rgba(10,12,16,0.75);
+  backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle);
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-icon { width: 32px; height: 32px; border-radius: 9px; }
+.brand-name { font-family: var(--font-display); font-size: 18px; color: var(--text-primary); text-decoration: none; }
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.pill {
+  text-decoration: none; color: var(--text-muted); padding: 8px 16px; border-radius: 9999px;
+  font-family: var(--font-body); font-weight: 500; font-size: 13px;
+  border: 1px solid var(--border); transition: color 0.2s, border-color 0.2s;
+}
+.pill:hover { color: var(--text-primary); border-color: #3D4455; }
+.pill.primary { background: var(--accent); color: var(--layer-0); border-color: transparent; font-weight: 600; }
+.pill.primary:hover { background: var(--accent-dark); }
+
+/* Legal layout */
+.legal-hero {
+  padding: 140px 24px 60px;
+  text-align: center;
+  background: var(--layer-0);
+  position: relative;
+}
+.legal-hero h1 {
+  font-family: var(--font-display); font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400; color: var(--text-primary); margin-bottom: 12px;
+}
+.legal-hero p {
+  font-family: var(--font-body); font-size: 16px; color: var(--text-muted);
+  max-width: 520px; margin: 0 auto; line-height: 1.6;
+}
+.legal-body {
+  max-width: 760px; margin: 0 auto; padding: 60px 24px 100px;
+}
+.legal-section { margin-bottom: 48px; }
+.legal-section h2 {
+  font-family: var(--font-display); font-size: 24px; font-weight: 400;
+  color: var(--text-primary); margin-bottom: 20px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);
+}
+.legal-section h3 {
+  font-family: var(--font-body); font-size: 16px; font-weight: 600;
+  color: var(--text-secondary); margin: 24px 0 12px;
+}
+.legal-section p {
+  font-family: var(--font-body); font-size: 15px; line-height: 1.8;
+  color: var(--text-muted); margin-bottom: 16px;
+}
+.legal-section ul {
+  list-style: none; padding: 0; margin-bottom: 16px;
+}
+.legal-section ul li {
+  font-family: var(--font-body); font-size: 14px; line-height: 1.8;
+  color: var(--text-muted); padding-left: 20px; position: relative; margin-bottom: 8px;
+}
+.legal-section ul li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+}
+.legal-section a { color: var(--accent); text-decoration: none; }
+.legal-section a:hover { text-decoration: underline; }
+
+/* Support card */
+.support-card {
+  background: var(--layer-2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px; margin-bottom: 24px;
+  transition: border-color 0.2s;
+}
+.support-card:hover { border-color: var(--accent); }
+.support-card h3 {
+  font-family: var(--font-display); font-size: 20px; font-weight: 400;
+  color: var(--text-primary); margin-bottom: 12px;
+}
+.support-card p {
+  font-family: var(--font-body); font-size: 14px; line-height: 1.7;
+  color: var(--text-muted); margin-bottom: 16px;
+}
+.support-card .email-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--accent); font-family: var(--font-mono); font-size: 14px;
+  text-decoration: none; font-weight: 600;
+}
+.support-card .email-link:hover { text-decoration: underline; }
+
+/* Footer */
+.site-footer {
+  background: var(--layer-0); border-top: 1px solid var(--border);
+  padding: 40px 24px; text-align: center;
+}
+.footer-copy { font-family: var(--font-body); font-size: 12px; color: var(--text-disabled); }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
+.footer-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500; }
+.footer-links a:hover { color: var(--accent); }
+
+@media (max-width: 760px) {
+  .topbar { padding: 12px 20px; }
+  .topbar-actions .pill:not(.primary) { display: none; }
+  .support-card { padding: 24px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="brand">
+    <img src="assets/app-icon.png" alt="Peptide AI" class="brand-icon" />
+    <a href="index.html" class="brand-name">peptide.ai</a>
+  </div>
+  <div class="topbar-actions">
+    <a class="pill" href="index.html">Home</a>
+    <a class="pill" href="terms.html">Terms</a>
+    <a class="pill primary" href="index.html#waitlist">Get Early Access</a>
+  </div>
+</nav>
+
+<div class="legal-hero">
+  <h1>Support</h1>
+  <p>We're here to help. Reach out to our team and we'll get back to you as soon as possible.</p>
+</div>
+
+<div class="legal-body">
+
+  <div class="support-card">
+    <h3>Email Support</h3>
+    <p>For general inquiries, account help, bug reports, or feedback — send us an email and our team will respond within 24-48 hours.</p>
+    <a class="email-link" href="mailto:info@peptideai.co">info@peptideai.co</a>
+  </div>
+
+  <div class="legal-section">
+    <h2>Common Topics</h2>
+    <ul>
+      <li><strong>Account issues:</strong> trouble signing in, resetting your password, or managing your subscription.</li>
+      <li><strong>App feedback:</strong> feature requests, bug reports, or suggestions to improve Peptide AI.</li>
+      <li><strong>Billing questions:</strong> charges, refunds, or payment method updates.</li>
+      <li><strong>Privacy requests:</strong> data access, deletion, or other privacy-related inquiries.</li>
+      <li><strong>General questions:</strong> anything else about Peptide AI — we're happy to help.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>Privacy & Legal</h2>
+    <p>For privacy-specific requests (data deletion, CCPA/GDPR inquiries), you can also reach us at <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a>. Review our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Service</a> for more details.</p>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="support.html">Support</a>
+  </div>
+  <div class="footer-copy">&copy; 2025 Peptide AI. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
