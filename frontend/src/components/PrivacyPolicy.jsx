@@ -33,7 +33,7 @@ const sections = [
     content: (
       <>
         <SummaryBox />
-        <P>PeptideAI LLC ("PeptideAI," "we," "us," or "our") is committed to being transparent about how we collect, use, share, and monetize information about you. This Privacy Policy applies to all information collected through the PeptideAI platform, including our website, mobile application, AI consulting tools, and all related services (collectively, the "Platform").</P>
+        <P>Peptide AI LLC ("PeptideAI," "we," "us," or "our") is committed to being transparent about how we collect, use, share, and monetize information about you. This Privacy Policy applies to all information collected through the PeptideAI platform, including our website, mobile application, AI consulting tools, and all related services (collectively, the "Platform").</P>
         <P>By using the Platform, you agree to the data practices described in this Privacy Policy. If you do not agree, please discontinue use of the Platform immediately. This Policy is incorporated into and forms part of our Terms of Service.</P>
         <P>We update this Policy from time to time. The current version is always available at www.peptideai.co/privacy. Material updates will be communicated via email or in-app notice, and your continued use after the effective date constitutes acceptance.</P>
         <div className="legal-info-box">
@@ -278,7 +278,7 @@ const sections = [
         <Table
           headers={['', '']}
           rows={[
-            ['Company', 'PeptideAI LLC'],
+            ['Company', 'Peptide AI LLC'],
             ['Privacy inquiries', 'legal@peptideai.co'],
             ['Opt-out requests', 'legal@peptideai.co (subject: "Privacy Opt-Out")'],
             ['Data deletion requests', 'legal@peptideai.co (subject: "Data Deletion Request")'],

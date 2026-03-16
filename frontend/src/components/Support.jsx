@@ -64,7 +64,7 @@ export default function Support() {
               <span>·</span>
               <Link to="/support">Support</Link>
             </div>
-            <p>© 2026 PeptideAI LLC · <a href="mailto:info@peptideai.co">info@peptideai.co</a></p>
+            <p>© 2026 Peptide AI LLC · <a href="mailto:info@peptideai.co">info@peptideai.co</a></p>
           </footer>
         </main>
       </div>

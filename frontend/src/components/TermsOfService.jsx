@@ -19,7 +19,7 @@ const sections = [
     title: '1. Acceptance of Terms',
     content: (
       <>
-        <P>These Terms of Service ("Terms") constitute a legally binding agreement between you ("User," "you," or "your") and PeptideAI LLC, a limited liability company ("PeptideAI," "Company," "we," "us," or "our"), governing your access to and use of the PeptideAI platform, website, mobile application, application programming interfaces, content, tools, and all related services (collectively, the "Platform" or "Service").</P>
+        <P>These Terms of Service ("Terms") constitute a legally binding agreement between you ("User," "you," or "your") and Peptide AI LLC, a limited liability company ("PeptideAI," "Company," "we," "us," or "our"), governing your access to and use of the PeptideAI platform, website, mobile application, application programming interfaces, content, tools, and all related services (collectively, the "Platform" or "Service").</P>
         <P>By creating an account, accessing any content, submitting any data, or using any feature of the Platform, you represent and warrant that: (a) you are at least 18 years of age; (b) you have the legal capacity to enter into a binding contract; (c) you are not prohibited from accessing or using the Platform under applicable law; and (d) you have read, understood, and agree to be bound by these Terms and our Privacy Policy, which is incorporated herein by reference.</P>
         <Warn>IF YOU ARE USING THE PLATFORM ON BEHALF OF AN ORGANIZATION, YOU REPRESENT AND WARRANT THAT YOU HAVE THE AUTHORITY TO BIND THAT ORGANIZATION TO THESE TERMS, AND ALL REFERENCES TO "YOU" SHALL REFER TO THAT ORGANIZATION.</Warn>
       </>
@@ -118,7 +118,7 @@ const sections = [
     title: '7. Intellectual Property Rights',
     content: (
       <>
-        <P><strong>7.1 PeptideAI Ownership.</strong> The Platform and all of its content, features, functionality, design, code, trademarks, logos, and trade names — including but not limited to the PeptideAI name, the peptide education library, AI systems, and all associated intellectual property — are owned by PeptideAI LLC or its licensors and are protected by U.S. and international intellectual property laws.</P>
+        <P><strong>7.1 PeptideAI Ownership.</strong> The Platform and all of its content, features, functionality, design, code, trademarks, logos, and trade names — including but not limited to the PeptideAI name, the peptide education library, AI systems, and all associated intellectual property — are owned by Peptide AI LLC or its licensors and are protected by U.S. and international intellectual property laws.</P>
         <P><strong>7.2 Limited License to Users.</strong> Subject to your compliance with these Terms, PeptideAI grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Platform for personal, non-commercial research, educational, and consulting purposes only.</P>
         <P><strong>7.3 Restrictions.</strong> You may not copy, reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, transmit, sell, or sublicense any portion of the Platform or its content without PeptideAI's prior written consent.</P>
         <P><strong>7.4 User-Submitted Content.</strong> By submitting any data, content, or materials to the Platform, you grant PeptideAI a worldwide, royalty-free, irrevocable, perpetual, sublicensable license to use, reproduce, process, adapt, modify, publish, transmit, display, and distribute such content for any purpose, including commercial purposes, in connection with the operation of the Platform and as further described in our Privacy Policy.</P>
@@ -170,7 +170,7 @@ const sections = [
     label: '10. Indemnification',
     title: '10. Indemnification',
     content: (
-      <P>You agree to defend, indemnify, and hold harmless PeptideAI LLC and its officers, directors, members, employees, agents, contractors, partners, licensors, and affiliates from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to: (a) your use of or access to the Platform; (b) your violation of these Terms; (c) your violation of any applicable law, regulation, or third-party right; (d) your reliance on any Platform content or AI Output; (e) any User Data you submit to the Platform; or (f) any claim that your User Data infringes the rights of a third party.</P>
+      <P>You agree to defend, indemnify, and hold harmless Peptide AI LLC and its officers, directors, members, employees, agents, contractors, partners, licensors, and affiliates from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to: (a) your use of or access to the Platform; (b) your violation of these Terms; (c) your violation of any applicable law, regulation, or third-party right; (d) your reliance on any Platform content or AI Output; (e) any User Data you submit to the Platform; or (f) any claim that your User Data infringes the rights of a third party.</P>
     ),
   },
   {
