@@ -617,7 +617,7 @@ const FAQS = [
   { q: 'What peptides does the app support?', a: 'We currently catalog 50+ peptides including BPC-157, TB-500, Semax, CJC-1295, Ipamorelin, PT-141, AOD-9604, DSIP, Epitalon, and many more. New peptides are added regularly.' },
   { q: 'How does the AI analysis work?', a: 'Our machine learning models analyze your biometric data (HRV, sleep, recovery) alongside your dosing logs to identify correlations, surface optimization opportunities, and provide personalized recommendations.' },
   { q: 'What wearables are supported?', a: 'We integrate with Apple Health, Oura Ring, Whoop, Garmin, and other popular health platforms. More integrations are being added before launch.' },
-  { q: 'Is my data secure?', a: 'Yes. All data is encrypted end-to-end. We never sell your data. Your health information stays private and is only used to generate your personal insights.' },
+  { q: 'Is my data secure?', a: 'Yes. All data is encrypted in transit and at rest using industry-standard protocols. We may share, license, or sell certain data with third-party research and commercial partners as described in our Privacy Policy. California residents and users in certain other jurisdictions can opt out of data sales. See our Privacy Policy for full details.' },
 ];
 
 /* ═══════════════════════════════════════════════════
