@@ -875,6 +875,8 @@ export default function CinematicPage() {
   const faqInView = useInView(faqRef, { once: true, margin: '-80px' });
   const testimonialRef = useRef(null);
   const testimonialInView = useInView(testimonialRef, { once: true, margin: '-80px' });
+  const pricingRef = useRef(null);
+  const pricingInView = useInView(pricingRef, { once: true, margin: '-80px' });
 
   useEffect(() => {
     fetch(`${API_BASE}/api/waitlist/count`)
@@ -1379,6 +1381,67 @@ export default function CinematicPage() {
                   </motion.div>
                 </SpotlightCard>
               </TiltCard>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Pricing ── */}
+        <section id="pricing" className="cine-pricing" ref={pricingRef}>
+          <FloatingParticles count={12} color="rgba(0,229,160,0.08)" />
+          <div className="cine-section-header">
+            <div className="cine-eyebrow">Pricing</div>
+            <h2>Simple, transparent <span className="accent">pricing.</span></h2>
+          </div>
+          <div className="cine-pricing-grid">
+            {[
+              {
+                name: 'Weekly',
+                price: '7.99',
+                period: '/week',
+                features: ['Full peptide tracking', 'AI insights', 'Protocol builder'],
+                featured: false,
+                badge: null,
+              },
+              {
+                name: 'Monthly',
+                price: '9.99',
+                period: '/month',
+                features: ['Everything in Weekly', 'Priority support', 'Advanced analytics'],
+                featured: true,
+                badge: 'Most Popular',
+              },
+              {
+                name: 'Yearly',
+                price: '39.99',
+                period: '/year',
+                features: ['Everything in Monthly', 'Save 67%', 'Early access to new features'],
+                featured: false,
+                badge: 'Best Value',
+              },
+            ].map((plan, i) => (
+              <motion.div
+                key={plan.name}
+                className={`cine-pricing-card${plan.featured ? ' featured' : ''}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={pricingInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {plan.badge && <div className="cine-pricing-badge">{plan.badge}</div>}
+                <div className="cine-pricing-name">{plan.name}</div>
+                <div className="cine-pricing-price">
+                  <span className="currency">$</span>{plan.price}
+                </div>
+                <div className="cine-pricing-period">{plan.period}</div>
+                <ul className="cine-pricing-features">
+                  {plan.features.map((feat, fi) => (
+                    <li key={fi}>
+                      <svg className="cine-pricing-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <a className="cine-pricing-cta" href="#waitlist">Get Started</a>
+              </motion.div>
             ))}
           </div>
         </section>

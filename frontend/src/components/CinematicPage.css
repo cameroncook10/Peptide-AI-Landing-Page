@@ -261,14 +261,19 @@
 /* Panel preview image */
 .panel-preview {
   display: block;
-  width: 150px;
-  max-height: 200px;
+  width: 180px;
+  max-height: 240px;
   object-fit: cover;
   object-position: top;
-  border-radius: 12px;
-  border: 1px solid rgba(0,229,160,0.12);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,160,0.06);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 24px rgba(0,229,160,0.06);
   margin-top: 1.25rem;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.panel-preview:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(0,229,160,0.1);
 }
 
 /* Panel CTA button */
@@ -608,18 +613,33 @@
   position: relative;
   z-index: 1;
 }
+.cine-showcase-screens::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 340px;
+  height: 500px;
+  background: radial-gradient(ellipse, rgba(0,229,160,0.08) 0%, rgba(0,229,160,0.03) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(20px);
+}
 /* iPhone 15 Pro style frame */
 .cine-phone {
-  width: 200px;
+  width: 240px;
   flex-shrink: 0;
   background: #1a1a1a;
-  border-radius: 40px;
-  border: 3px solid #2a2a2a;
-  padding: 10px;
+  border-radius: 47px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 8px;
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.6),
-    inset 0 0 0 1px rgba(255,255,255,0.05);
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+    0 20px 60px rgba(0,0,0,0.5),
+    0 8px 24px rgba(0,0,0,0.3),
+    inset 0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
   position: relative;
   aspect-ratio: auto;
 }
@@ -627,57 +647,70 @@
   /* Dynamic Island */
   content: '';
   position: absolute;
-  top: 14px;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  width: 72px;
-  height: 22px;
+  width: 80px;
+  height: 24px;
   background: #000;
   border-radius: 20px;
   z-index: 3;
+  box-shadow: 0 0 0 2px rgba(30,30,30,0.5);
 }
 .cine-phone::after {
-  /* Side button accent */
+  /* Screen edge reflection */
   content: '';
   position: absolute;
-  right: -5px;
-  top: 100px;
-  width: 3px;
-  height: 40px;
-  background: #333;
-  border-radius: 0 2px 2px 0;
+  inset: 8px;
+  border-radius: 39px;
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255,255,255,0.08),
+    inset 0 1px 1px rgba(255,255,255,0.04);
+  pointer-events: none;
+  z-index: 2;
 }
 .cine-phone:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   box-shadow:
-    0 30px 80px rgba(0,0,0,0.7),
-    0 0 30px rgba(0,229,160,0.06),
-    inset 0 0 0 1px rgba(255,255,255,0.08);
+    0 30px 80px rgba(0,0,0,0.6),
+    0 12px 32px rgba(0,0,0,0.4),
+    0 0 40px rgba(0,229,160,0.06),
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.06);
 }
 .cine-phone img {
   width: 100%;
   aspect-ratio: 9 / 19.5;
   object-fit: cover;
   object-position: top;
-  border-radius: 30px;
+  border-radius: 39px;
   display: block;
 }
 .cine-phone-center {
-  width: 240px;
+  width: 280px;
   z-index: 2;
   border-color: rgba(0,229,160,0.15);
   box-shadow:
     0 30px 80px rgba(0,0,0,0.7),
-    0 0 50px rgba(0,229,160,0.1),
-    inset 0 0 0 1px rgba(0,229,160,0.1);
-  transform: scale(1.08);
+    0 12px 40px rgba(0,0,0,0.4),
+    0 0 60px rgba(0,229,160,0.1),
+    inset 0 0 0 1px rgba(0,229,160,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  transform: scale(1.06);
 }
 .cine-phone-center::before {
-  width: 84px;
-  height: 24px;
+  width: 92px;
+  height: 26px;
+  top: 18px;
 }
 .cine-phone-center:hover {
-  transform: scale(1.08) translateY(-6px);
+  transform: scale(1.06) translateY(-8px);
+  box-shadow:
+    0 40px 100px rgba(0,0,0,0.7),
+    0 16px 48px rgba(0,0,0,0.4),
+    0 0 80px rgba(0,229,160,0.15),
+    inset 0 0 0 1px rgba(0,229,160,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -746,6 +779,157 @@
   color: #7a8499;
   text-transform: uppercase;
   margin-top: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════
+   PRICING
+   ═══════════════════════════════════════════════════ */
+.cine-pricing {
+  position: relative;
+  padding: 6rem 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.cine-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.cine-pricing-card {
+  background: rgba(15, 19, 24, 0.8);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cine-pricing-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,229,160,0.15);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(0,229,160,0.05);
+}
+
+.cine-pricing-card.featured {
+  border-color: rgba(0,229,160,0.25);
+  background: rgba(0,229,160,0.04);
+  transform: scale(1.04);
+  box-shadow: 0 0 40px rgba(0,229,160,0.08);
+}
+
+.cine-pricing-card.featured:hover {
+  transform: scale(1.04) translateY(-4px);
+}
+
+.cine-pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #060810;
+  background: #00e5a0;
+  padding: 0.3rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cine-pricing-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7A8499;
+  margin-bottom: 1rem;
+}
+
+.cine-pricing-price {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3rem;
+  color: #EEF2FF;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.cine-pricing-price .currency {
+  font-size: 1.5rem;
+  vertical-align: super;
+  margin-right: 2px;
+}
+
+.cine-pricing-period {
+  font-size: 0.8rem;
+  color: #7A8499;
+  margin-bottom: 2rem;
+}
+
+.cine-pricing-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  text-align: left;
+}
+
+.cine-pricing-features li {
+  padding: 0.5rem 0;
+  color: #C0CBDF;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.cine-pricing-features li:last-child {
+  border-bottom: none;
+}
+
+.cine-pricing-check {
+  color: #00e5a0;
+  flex-shrink: 0;
+}
+
+.cine-pricing-cta {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,229,160,0.2);
+  color: #00e5a0;
+  background: transparent;
+}
+
+.cine-pricing-cta:hover {
+  background: rgba(0,229,160,0.1);
+  border-color: rgba(0,229,160,0.4);
+  box-shadow: 0 0 20px rgba(0,229,160,0.1);
+}
+
+.cine-pricing-card.featured .cine-pricing-cta {
+  background: #00e5a0;
+  color: #060810;
+  border-color: #00e5a0;
+  font-weight: 600;
+}
+
+.cine-pricing-card.featured .cine-pricing-cta:hover {
+  background: #00ffb4;
+  box-shadow: 0 0 30px rgba(0,229,160,0.25);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1293,9 +1477,20 @@
     flex-direction: column;
     gap: 1.5rem;
   }
+  .cine-showcase-screens::before {
+    width: 250px;
+    height: 400px;
+  }
   .cine-phone {
     width: 60vw;
     max-width: 240px;
+    border-radius: 40px;
+  }
+  .cine-phone img {
+    border-radius: 33px;
+  }
+  .cine-phone::after {
+    border-radius: 33px;
   }
   .cine-phone-center {
     width: 70vw;
@@ -1313,6 +1508,19 @@
   }
   .cine-stat-num {
     font-size: 2.5rem;
+  }
+
+  /* Pricing */
+  .cine-pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 380px;
+  }
+  .cine-pricing-card.featured {
+    transform: none;
+    order: -1;
+  }
+  .cine-pricing-card.featured:hover {
+    transform: translateY(-4px);
   }
 
   /* Research */
@@ -1355,6 +1563,7 @@
   }
   .cine-showcase,
   .cine-stats,
+  .cine-pricing,
   .cine-research,
   .cine-testimonials,
   .cine-faq,

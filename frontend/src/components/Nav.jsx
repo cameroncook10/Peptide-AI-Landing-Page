@@ -7,6 +7,7 @@ export default function Nav() {
       </div>
       <div className="topbar-actions">
         <a className="pill" href="#features">Features</a>
+        <a className="pill" href="#pricing">Pricing</a>
         <a className="pill" href="#waitlist">Waitlist</a>
         <a className="pill primary" href="#waitlist">Join Waitlist</a>
       </div>
