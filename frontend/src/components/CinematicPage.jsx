@@ -1624,6 +1624,8 @@ export default function CinematicPage() {
               <Link to="/privacy" className="cine-legal-link">Privacy Policy</Link>
               <span className="cine-legal-sep">·</span>
               <Link to="/ccpa" className="cine-legal-link">CCPA Notice</Link>
+              <span className="cine-legal-sep">·</span>
+              <Link to="/deleteaccount" className="cine-legal-link">Delete Account</Link>
             </div>
           </div>
         </section>
