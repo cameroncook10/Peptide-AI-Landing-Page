@@ -980,7 +980,7 @@ export default function CinematicPage() {
       lightLoop();
     }
 
-    const deferMs = mob ? 1500 : 0;
+    const deferMs = mob ? 1500 : 300;
     const deferTimer = setTimeout(() => {
       if (cancelled) return;
 
@@ -1310,7 +1310,7 @@ export default function CinematicPage() {
 
         {/* ── How It Works ── */}
         <section className="cine-steps" ref={stepsRef}>
-          <FloatingParticles count={15} />
+          <FloatingParticles count={8} />
           <div className="cine-section-header">
             <div className="cine-eyebrow">How It Works</div>
             <h2>Four steps to a <span className="accent">smarter protocol.</span></h2>
@@ -1336,7 +1336,7 @@ export default function CinematicPage() {
 
         {/* ── App Showcase ── */}
         <section className="cine-showcase" ref={showcaseRef}>
-          <FloatingParticles count={10} color="rgba(0,180,216,0.12)" />
+          <FloatingParticles count={6} color="rgba(0,180,216,0.12)" />
           <div className="cine-section-header">
             <div className="cine-eyebrow">See It In Action</div>
             <h2>Track every metric. <span className="accent">See real results.</span></h2>
@@ -1361,7 +1361,7 @@ export default function CinematicPage() {
 
         {/* ── Stats ── */}
         <section className="cine-stats" ref={statsRef}>
-          <FloatingParticles count={12} />
+          <FloatingParticles count={6} />
           <div className="cine-section-header">
             <div className="cine-eyebrow">By The Numbers</div>
             <h2>Grounded in <span className="accent">real research.</span></h2>
@@ -1387,7 +1387,7 @@ export default function CinematicPage() {
 
         {/* ── Pricing ── */}
         <section id="pricing" className="cine-pricing" ref={pricingRef}>
-          <FloatingParticles count={12} color="rgba(0,229,160,0.08)" />
+          <FloatingParticles count={6} color="rgba(0,229,160,0.08)" />
           <div className="cine-section-header">
             <div className="cine-eyebrow">Pricing</div>
             <h2>Simple, transparent <span className="accent">pricing.</span></h2>
@@ -1448,7 +1448,7 @@ export default function CinematicPage() {
 
         {/* ── Research / Science ── */}
         <section className="cine-research" ref={researchRef}>
-          <FloatingParticles count={12} color="rgba(0,229,160,0.1)" />
+          <FloatingParticles count={6} color="rgba(0,229,160,0.1)" />
           <div className="cine-section-header">
             <div className="cine-eyebrow">Backed By Science</div>
             <h2>Research-grade <span className="accent">protocol intelligence.</span></h2>
@@ -1475,7 +1475,7 @@ export default function CinematicPage() {
 
         {/* ── Testimonials ── */}
         <section className="cine-testimonials" ref={testimonialRef}>
-          <FloatingParticles count={10} color="rgba(0,229,160,0.08)" />
+          <FloatingParticles count={5} color="rgba(0,229,160,0.08)" />
           <div className="cine-section-header">
             <div className="cine-eyebrow">What People Are Saying</div>
             <h2>Trusted by <span className="accent">health optimizers.</span></h2>
@@ -1543,7 +1543,7 @@ export default function CinematicPage() {
         {/* ── Final CTA / Waitlist ── */}
         <section className="cine-final" id="waitlist">
           <div className="cine-final-glow" />
-          <FloatingParticles count={18} />
+          <FloatingParticles count={8} />
           <div className="cine-final-inner">
             <div className="cine-eyebrow">Launching Soon</div>
             <h2>The smarter way to run your <span className="accent">protocol.</span></h2>

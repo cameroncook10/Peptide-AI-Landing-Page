@@ -262,9 +262,6 @@
 .panel-preview {
   display: block;
   width: 180px;
-  max-height: 240px;
-  object-fit: cover;
-  object-position: top;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.06);
   box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 24px rgba(0,229,160,0.06);
@@ -515,6 +512,8 @@
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 .cine-steps-grid {
   display: grid;
@@ -603,6 +602,8 @@
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
 }
 .cine-showcase-screens {
   display: flex;
@@ -680,11 +681,9 @@
 }
 .cine-phone img {
   width: 100%;
-  aspect-ratio: 9 / 19.5;
-  object-fit: cover;
-  object-position: top;
-  border-radius: 39px;
   display: block;
+  border-radius: 39px;
+  object-fit: contain;
 }
 .cine-phone-center {
   width: 280px;
@@ -721,6 +720,8 @@
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 .cine-stats-grid {
   display: grid;
@@ -788,6 +789,8 @@
   position: relative;
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 .cine-pricing-grid {
@@ -940,6 +943,8 @@
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 .cine-research-grid {
   display: grid;
@@ -1005,6 +1010,8 @@
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 .cine-testimonial-carousel {
   max-width: 640px;
@@ -1100,6 +1107,8 @@
 .cine-faq {
   padding: 6rem 2rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 .cine-faq-list {
   max-width: 680px;
