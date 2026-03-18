@@ -76,7 +76,7 @@ const sections = [
           headers={['Data Category', 'What We Collect', 'Who May Receive It']}
           rows={[
             ['Identifiers', 'Name, email, username, device ID, IP address', 'Service providers, analytics partners, marketing platforms'],
-            ['Consulting Data', 'AI queries, research topics, consulting interactions', 'Research institutions, commercial data partners (de-identified or identifiable per Section 5)'],
+            ['Consulting Data', 'AI queries, research topics, consulting interactions, peptide-related inquiries', 'Research institutions, commercial data partners (de-identified or identifiable per Section 5)'],
             ['Usage & Behavioral', 'Pages visited, features used, AI queries, click patterns, session duration', 'Analytics providers, advertising platforms, commercial partners'],
             ['Account & Profile', 'Professional background, interests, organization, subscription tier', 'Service providers, commercial data partners'],
             ['Device & Technical', 'Device type, OS, browser, crash logs, performance data', 'Cloud providers, analytics services'],
