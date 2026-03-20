@@ -59,7 +59,7 @@ module.exports = async function handler(req, res) {
           from: `"Peptide AI" <${process.env.SMTP_USER}>`,
           to: email,
           subject: "You're on the Peptide AI waitlist!",
-          html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#060810;color:#EEF2FF;border-radius:20px;"><h2 style="color:#00E5A0;margin-bottom:12px;">You're on the list.</h2><p style="color:#7A8499;line-height:1.7;">We'll notify you the moment <strong style="color:#EEF2FF;">Peptide AI</strong> drops on the App Store and Google Play.</p><p style="color:#343D50;font-size:13px;margin-top:28px;">— The Peptide AI team</p></div>`,
+          html: `<div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#060810;color:#EEF2FF;border-radius:20px;"><h2 style="color:#00E5A0;margin-bottom:12px;">You're on the list.</h2><p style="color:#7A8499;line-height:1.7;">We'll notify you the moment <strong style="color:#EEF2FF;">Peptide AI</strong> drops on the App Store.</p><p style="color:#343D50;font-size:13px;margin-top:28px;">— The Peptide AI team</p></div>`,
         });
       } catch (e) { console.error('Confirm email error:', e.message); }
     } catch (err) { console.error('Email error:', err.message); }

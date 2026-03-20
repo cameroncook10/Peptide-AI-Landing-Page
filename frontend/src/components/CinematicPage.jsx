@@ -558,8 +558,8 @@ const RESEARCH = [
     ),
   },
   {
-    title: 'Biometric Integration',
-    desc: 'Real-time HRV, sleep quality, and recovery data synced from Apple Health, Oura Ring, and compatible wearables.',
+    title: 'Apple Health Integration',
+    desc: 'Sync HRV, sleep quality, and recovery data from Apple Health (HealthKit) and compatible wearables like Oura Ring. Data is used to correlate peptide protocol outcomes with your biometric trends.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
@@ -591,7 +591,7 @@ const STEPS = [
   {
     num: '02',
     title: 'Log & Sync Data',
-    desc: 'Track doses manually or sync biometrics from Apple Health, Oura, Whoop, and other wearables automatically.',
+    desc: 'Track doses manually or sync biometrics (HRV, sleep, recovery) from Apple Health (HealthKit), Oura, Whoop, and other wearables automatically.',
     icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>,
   },
   {
@@ -615,9 +615,9 @@ const FAQS = [
   { q: 'What is Peptide AI?', a: 'Peptide AI is an all-in-one app for building peptide protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights to optimize your stack.' },
   { q: 'Is it free to join the waitlist?', a: 'Absolutely. Joining the waitlist is 100% free and gives you early access when we launch, along with exclusive pricing and features.' },
   { q: 'What peptides does the app support?', a: 'We currently catalog 50+ peptides including BPC-157, TB-500, Semax, CJC-1295, Ipamorelin, PT-141, AOD-9604, DSIP, Epitalon, and many more. New peptides are added regularly.' },
-  { q: 'How does the AI analysis work?', a: 'Our machine learning models analyze your biometric data (HRV, sleep, recovery) alongside your dosing logs to identify correlations, surface optimization opportunities, and provide personalized recommendations.' },
-  { q: 'What wearables are supported?', a: 'We integrate with Apple Health, Oura Ring, Whoop, Garmin, and other popular health platforms. More integrations are being added before launch.' },
-  { q: 'Is my data secure?', a: 'Yes. All data is encrypted in transit and at rest using industry-standard protocols. We may share, license, or sell certain data with third-party research and commercial partners as described in our Privacy Policy. California residents and users in certain other jurisdictions can opt out of data sales. See our Privacy Policy for full details.' },
+  { q: 'How does the AI analysis work?', a: 'Our machine learning models analyze your biometric data (HRV, sleep, recovery) from Apple Health (HealthKit) alongside your dosing logs to identify correlations, surface optimization opportunities, and provide personalized recommendations. Your data is processed on our servers — see our Privacy Policy for full details.' },
+  { q: 'What wearables are supported?', a: 'We integrate with Apple Health (HealthKit) for HRV, sleep, and recovery data, plus Oura Ring, Whoop, Garmin, and other popular health platforms. The app reads HealthKit data you authorize to correlate with your peptide protocol outcomes. More integrations are being added before launch.' },
+  { q: 'Is my data secure?', a: 'Yes. All data is encrypted in transit and at rest using industry-standard protocols. When you use our AI consulting features, your queries are sent to our third-party AI processing partners to generate responses — these partners are contractually prohibited from using your data for their own purposes. We may also share, license, or sell certain data with third-party research and commercial partners as described in our Privacy Policy. California residents and users in certain other jurisdictions can opt out of data sales. See our Privacy Policy for full details.' },
 ];
 
 /* ═══════════════════════════════════════════════════
@@ -1397,26 +1397,33 @@ export default function CinematicPage() {
               {
                 name: 'Weekly',
                 price: '7.99',
+                billedAmount: '$7.99 billed weekly',
                 period: '/week',
                 features: ['Full peptide tracking', 'AI insights', 'Protocol builder'],
                 featured: false,
                 badge: null,
+                renewal: 'Auto-renews at $7.99/week.',
               },
               {
                 name: 'Monthly',
                 price: '9.99',
+                billedAmount: '$9.99 billed monthly',
                 period: '/month',
                 features: ['Everything in Weekly', 'Priority support', 'Advanced analytics'],
                 featured: true,
                 badge: 'Most Popular',
+                renewal: 'Auto-renews at $9.99/month.',
               },
               {
                 name: 'Yearly',
                 price: '39.99',
+                billedAmount: '$39.99 billed annually',
                 period: '/year',
+                sub: '$3.33/month',
                 features: ['Everything in Monthly', 'Save 67%', 'Early access to new features'],
                 featured: false,
                 badge: 'Best Value',
+                renewal: 'Auto-renews at $39.99/year.',
               },
             ].map((plan, i) => (
               <motion.div
@@ -1431,7 +1438,8 @@ export default function CinematicPage() {
                 <div className="cine-pricing-price">
                   <span className="currency">$</span>{plan.price}
                 </div>
-                <div className="cine-pricing-period">{plan.period}</div>
+                <div className="cine-pricing-billed">{plan.billedAmount}</div>
+                {plan.sub && <div className="cine-pricing-sub">{plan.sub}</div>}
                 <ul className="cine-pricing-features">
                   {plan.features.map((feat, fi) => (
                     <li key={fi}>
@@ -1441,8 +1449,17 @@ export default function CinematicPage() {
                   ))}
                 </ul>
                 <a className="cine-pricing-cta" href="#waitlist">Get Started</a>
+                <div className="cine-pricing-renewal">{plan.renewal} Cancel anytime.</div>
               </motion.div>
             ))}
+            <div className="cine-pricing-legal">
+              <p>Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current period. Payment will be charged to your Apple ID account at confirmation of purchase. You can manage and cancel subscriptions in your Account Settings.</p>
+              <p>
+                <Link to="/terms" className="cine-pricing-legal-link">Terms of Use (EULA)</Link>
+                <span className="cine-legal-sep"> · </span>
+                <Link to="/privacy" className="cine-pricing-legal-link">Privacy Policy</Link>
+              </p>
+            </div>
           </div>
         </section>
 

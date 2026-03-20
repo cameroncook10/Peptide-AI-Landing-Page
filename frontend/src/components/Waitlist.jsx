@@ -192,7 +192,7 @@ export default function Waitlist() {
           </motion.h2>
 
           <motion.p className="waitlist-desc" variants={fadeUp}>
-            Get notified the moment Peptide AI drops on the App Store and Google Play.
+            Get notified the moment Peptide AI drops on the App Store.
             Enter your email and phone for SMS alerts.
           </motion.p>
 

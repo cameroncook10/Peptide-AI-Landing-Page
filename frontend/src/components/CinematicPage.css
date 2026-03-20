@@ -869,10 +869,54 @@
   margin-right: 2px;
 }
 
-.cine-pricing-period {
-  font-size: 0.8rem;
+.cine-pricing-billed {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #EEF2FF;
+  margin-bottom: 0.25rem;
+}
+
+.cine-pricing-sub {
+  font-size: 0.75rem;
   color: #7A8499;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.cine-pricing-billed:not(+ .cine-pricing-sub) {
+  margin-bottom: 1.5rem;
+}
+
+.cine-pricing-renewal {
+  font-size: 0.7rem;
+  color: #7A8499;
+  margin-top: 0.75rem;
+  line-height: 1.4;
+}
+
+.cine-pricing-legal {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding-top: 1.5rem;
+  font-size: 0.72rem;
+  color: #7A8499;
+  line-height: 1.6;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.cine-pricing-legal p + p {
+  margin-top: 0.75rem;
+}
+
+.cine-pricing-legal-link {
+  color: #00e5a0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cine-pricing-legal-link:hover {
+  color: #00ffb4;
+  text-decoration: underline;
 }
 
 .cine-pricing-features {

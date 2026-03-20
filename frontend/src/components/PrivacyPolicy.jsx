@@ -104,6 +104,17 @@ const sections = [
           'Commercial data activities: to aggregate, de-identify, package, license and monetize data for commercial purposes as described in Section 5;',
           'Legal and safety: to comply with applicable laws, enforce our Terms of Service, prevent fraud, and protect the rights and safety of PeptideAI, our users, and others.',
         ]} />
+        <P><strong>3.1 Third-Party AI Processing Disclosure</strong></P>
+        <P>When you submit consulting queries, research topics, or other inputs through the Platform, your data may be sent to third-party artificial intelligence service providers to generate responses and insights. This section explains what data is sent, who receives it, and how it is used:</P>
+        <UL items={[
+          'What data is sent: Your consulting queries, prompts, and contextual information you provide (such as peptide names, dosing information, and research topics) may be transmitted to our AI processing partners to generate AI Output.',
+          'Who receives the data: PeptideAI uses third-party AI infrastructure providers (including cloud-hosted large language model services) to process your queries. These providers process data on our behalf under strict contractual data protection obligations.',
+          'How it is used: Your data is used solely to generate the AI-powered consulting responses, educational content, and personalized insights you request through the Platform. Our AI processing partners are contractually prohibited from using your data for their own purposes, including training their own models, except as necessary to provide the service to PeptideAI.',
+          'Your permission: By using the AI consulting features of the Platform, you consent to your query data being transmitted to our AI processing partners as described above. You may withdraw this consent at any time by discontinuing use of the AI consulting features.',
+        ]} />
+        <div className="legal-info-box" style={{ marginTop: '1rem' }}>
+          <strong>Note:</strong> PeptideAI will always ask for your explicit permission before sending personal data to any third-party AI service. You can review and manage your data sharing preferences in Account Settings &gt; Privacy.
+        </div>
       </>
     ),
   },

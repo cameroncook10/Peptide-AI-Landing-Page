@@ -48,6 +48,19 @@ export default function Support() {
               </ul>
             </div>
 
+            <div className="legal-section" id="delete-account">
+              <h2 className="legal-section-title">Delete Your Account</h2>
+              <p className="legal-p">You can permanently delete your PeptideAI account and all associated personal data at any time. Account deletion is irreversible.</p>
+              <div className="legal-warn" style={{ textAlign: 'left', padding: '1.5rem' }}>
+                <p style={{ fontWeight: 600, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>How to Delete Your Account</p>
+                <ul className="legal-ul">
+                  <li><strong>In the app:</strong> Go to <strong>Account Settings → Delete Account</strong>. Follow the confirmation prompts to permanently delete your account.</li>
+                  <li><strong>By email:</strong> Send a request to <a href="mailto:legal@peptideai.co" style={{ color: 'var(--accent)' }}>legal@peptideai.co</a> with subject line <strong>"Account Deletion Request"</strong>. Include the email address associated with your account.</li>
+                </ul>
+                <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>When you delete your account, we will: permanently delete your profile, consulting data, and usage history; cancel any active subscription; remove your data from active systems within 30 days (backup copies may persist up to 90 days). Data that has been anonymized or aggregated prior to deletion is not subject to deletion. For full details, see our <Link to="/privacy" style={{ color: 'var(--accent)' }}>Privacy Policy</Link>.</p>
+              </div>
+            </div>
+
             <div className="legal-section">
               <h2 className="legal-section-title">Privacy & Legal</h2>
               <p className="legal-p">For privacy-specific requests (data deletion, CCPA/GDPR inquiries), you can also reach us at <a href="mailto:privacy@peptideai.co">privacy@peptideai.co</a>. Review our <Link to="/privacy">Privacy Policy</Link> and <Link to="/terms">Terms of Service</Link> for more details.</p>

@@ -221,7 +221,7 @@ const sections = [
     content: (
       <>
         <P><strong>12.1 PeptideAI's Right to Terminate.</strong> PeptideAI reserves the right to suspend or terminate your access to the Platform at any time, with or without notice, for any reason, including but not limited to: (a) breach of these Terms; (b) conduct that PeptideAI believes harms the Platform, other users, or PeptideAI; (c) failure to pay applicable fees; or (d) any conduct that violates applicable law.</P>
-        <P><strong>12.2 Your Right to Terminate.</strong> You may terminate your account at any time by contacting us or through your account settings. Termination does not entitle you to any refund of fees paid.</P>
+        <P><strong>12.2 Your Right to Terminate.</strong> You may terminate and permanently delete your account at any time through Account Settings or by emailing <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a> with the subject line "Account Deletion Request." Termination does not entitle you to any refund of fees paid. For step-by-step instructions, visit our <a className="legal-link" href="/support#delete-account">Support page</a>.</P>
         <P><strong>12.3 Effect of Termination.</strong> Upon termination, your right to use the Platform ceases immediately. Provisions of these Terms that by their nature should survive termination shall survive, including but not limited to: Disclaimer of Warranties, Limitation of Liability, Indemnification, Governing Law, and any licenses granted by you to PeptideAI with respect to User Data.</P>
         <P><strong>12.4 Data Following Termination.</strong> Following account termination, PeptideAI may retain your User Data as described in the Privacy Policy and as permitted by applicable law. Anonymized and aggregated data derived from your use of the Platform may be retained indefinitely.</P>
       </>
@@ -258,10 +258,10 @@ const sections = [
     title: '15. App Store Terms',
     content: (
       <>
-        <P>If you access the Platform through a mobile application distributed via Apple App Store or Google Play:</P>
+        <P>If you access the Platform through a mobile application distributed via the Apple App Store:</P>
         <UL items={[
-          'Apple and Google are not responsible for the Platform and have no obligation to provide maintenance or support services.',
-          'Apple and Google are third-party beneficiaries of these Terms and may enforce them against you.',
+          'Apple is not responsible for the Platform and has no obligation to provide maintenance or support services.',
+          'Apple is a third-party beneficiary of these Terms and may enforce them against you.',
           'You agree to comply with all applicable third-party terms when using the Platform.',
           'Apple shall have no responsibility for any claims relating to the Platform, including but not limited to product liability claims, any claim that the Platform fails to conform to any applicable legal or regulatory requirement, and claims arising under consumer protection, privacy, or similar legislation.',
           'To the maximum extent permitted by applicable law, Apple shall not be responsible for the investigation, defense, settlement, or discharge of any third-party intellectual property infringement claim.',
