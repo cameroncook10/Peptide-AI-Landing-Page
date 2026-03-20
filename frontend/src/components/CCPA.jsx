@@ -256,22 +256,40 @@ const sections = [
     ),
   },
   {
+    id: 'children',
+    label: '12. Children',
+    title: '12. Children',
+    content: (
+      <P>PeptideAI is intended for users who are 18 years of age or older. We do not knowingly collect personal information from anyone under the age of 18. If we discover that we have collected personal information from a person under 18, we will delete that information immediately. If you believe we have collected information from a minor, please contact us immediately at <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a>.</P>
+    ),
+  },
+  {
+    id: 'changes',
+    label: '13. Changes to This Notice',
+    title: '13. Changes to This Notice',
+    content: (
+      <P>We may update this CCPA Notice from time to time to reflect changes in our data practices or applicable law. When we make material changes, we will notify you by posting the updated Notice on the Platform and updating the Effective Date. For significant changes, we will provide at least 30 days' advance notice by email or prominent in-app notification where required by law. Your continued use of the Platform after the effective date of any update constitutes your acceptance of the updated Notice.</P>
+    ),
+  },
+  {
     id: 'contact',
-    label: '12. Contact Us',
-    title: '12. Contact Information',
+    label: '14. Contact Us',
+    title: '14. Contact & Data Controller Information',
     content: (
       <>
-        <P>For questions about this CCPA Notice or to exercise your California privacy rights, contact PeptideAI's Privacy Team:</P>
+        <P>For questions about this CCPA Notice or to exercise your California privacy rights, contact PeptideAI:</P>
         <Table
-          headers={['', '']}
+          headers={['Contact Type', 'Details']}
           rows={[
             ['Company', 'PeptideAI LLC'],
-            ['Email', 'legal@peptideai.co'],
-            ['CCPA Opt-Out', 'legal@peptideai.co — Subject: "CCPA Opt-Out — Sale/Sharing"'],
-            ['Deletion Requests', 'legal@peptideai.co — Subject: "CCPA Right to Delete"'],
-            ['Correction Requests', 'legal@peptideai.co — Subject: "CCPA Right to Correct"'],
-            ['Acknowledgment', 'Within 10 business days'],
-            ['Full response', 'Within 45 calendar days'],
+            ['Privacy & CCPA Inquiries', 'legal@peptideai.co'],
+            ['Opt-Out of Sale/Sharing', 'legal@peptideai.co — Subject: "CCPA Opt-Out — Sale/Sharing"'],
+            ['Right to Know / Delete / Correct', 'legal@peptideai.co — Subject: "CCPA [Right Name] Request"'],
+            ['Sensitive Data Limit Request', 'legal@peptideai.co — Subject: "CCPA Sensitive Data Limit Request"'],
+            ['Nevada Privacy Opt-Out', 'legal@peptideai.co — Subject: "Nevada Privacy Opt-Out"'],
+            ['Website', 'www.peptideai.co'],
+            ['In-App Privacy Portal', 'Account Settings > Privacy Rights'],
+            ['Response Time', 'Acknowledgment within 10 business days; response within 45 calendar days'],
           ]}
         />
       </>
