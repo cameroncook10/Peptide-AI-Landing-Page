@@ -19,7 +19,7 @@ const SummaryBox = () => (
       <li><span className="legal-check">✓</span> We use that data to run the platform, improve our AI, and personalize your consulting experience.</li>
       <li><span className="legal-check">✓</span> We may share, license, or sell your data with third-party research and commercial partners.</li>
       <li><span className="legal-check">✓</span> We maintain HIPAA-compliant data handling practices for any protected health information.</li>
-      <li><span className="legal-check">✓</span> California and other state residents have opt-out rights. See Section 10.</li>
+      <li><span className="legal-check">✓</span> California and other state residents have opt-out rights. See Section 12.</li>
       <li><span className="legal-check">✓</span> You can request access, correction, or deletion of your data at any time.</li>
     </ul>
   </div>
@@ -63,7 +63,7 @@ const sections = [
           'Usage data: features you access, AI queries you submit, content you view, time spent, click patterns, navigation paths, and search terms used within the Platform;',
           'Log data: IP address, access timestamps, referring URLs, pages viewed, and error logs;',
           'Location data: general geographic location inferred from your IP address;',
-          'Cookies and tracking data: as further described in Section 7.',
+          'Cookies and tracking data: as further described in Section 9.',
         ]} />
         <P><strong>2.3 Information from Third Parties</strong></P>
         <UL items={[
@@ -76,7 +76,7 @@ const sections = [
           headers={['Data Category', 'What We Collect', 'Who May Receive It']}
           rows={[
             ['Identifiers', 'Name, email, username, device ID, IP address', 'Service providers, analytics partners, marketing platforms'],
-            ['Consulting Data', 'AI queries, research topics, consulting interactions, peptide-related inquiries', 'Research institutions, commercial data partners (de-identified or identifiable per Section 5)'],
+            ['Consulting Data', 'AI queries, research topics, consulting interactions, peptide-related inquiries', 'Research institutions, commercial data partners (de-identified or identifiable per Section 7)'],
             ['Usage & Behavioral', 'Pages visited, features used, AI queries, click patterns, session duration', 'Analytics providers, advertising platforms, commercial partners'],
             ['Account & Profile', 'Professional background, interests, organization, subscription tier', 'Service providers, commercial data partners'],
             ['Device & Technical', 'Device type, OS, browser, crash logs, performance data', 'Cloud providers, analytics services'],
@@ -101,7 +101,7 @@ const sections = [
           'Research and product development: to conduct internal research, analyze usage trends, develop new features, and improve the Platform;',
           'Analytics: to understand how users interact with the Platform, measure performance, and identify areas for improvement;',
           'Marketing and communications: to send you promotional content, product updates, and newsletters where you have opted in or where permitted by law;',
-          'Commercial data activities: to aggregate, de-identify, package, license and monetize data for commercial purposes as described in Section 5;',
+          'Commercial data activities: to aggregate, de-identify, package, license and monetize data for commercial purposes as described in Section 7;',
           'Legal and safety: to comply with applicable laws, enforce our Terms of Service, prevent fraud, and protect the rights and safety of PeptideAI, our users, and others.',
         ]} />
       </>
@@ -120,17 +120,70 @@ const sections = [
           'Consent: where we have obtained your explicit consent — including for direct marketing communications;',
           'Legal obligation: processing required to comply with applicable law.',
         ]} />
-        <P>For California residents, the relevant legal framework is the CCPA/CPRA, described in Section 11. For users in other jurisdictions, we comply with applicable local law.</P>
+        <P>For California residents, the relevant legal framework is the CCPA/CPRA, described in Section 12. For users in other jurisdictions, we comply with applicable local law.</P>
+      </>
+    ),
+  },
+  {
+    id: 'ai-services',
+    label: '5. Third-Party AI Services',
+    title: '5. Third-Party AI Service Data Sharing',
+    content: (
+      <>
+        <Warn>IMPORTANT: Peptide AI uses third-party artificial intelligence services to power the AI consulting features of the platform. By using the Platform, you acknowledge and consent to the sharing of certain data with these third-party AI providers as described below.</Warn>
+        <P><strong>5.1 AI Service Providers.</strong> PeptideAI sends certain user data to third-party AI service providers (such as OpenAI, L.L.C.) to generate AI-powered responses, educational content, and consulting insights.</P>
+        <P><strong>5.2 Data Transmitted to AI Services.</strong> The following data may be sent to third-party AI services when you use AI-powered features:</P>
+        <UL items={[
+          'Consulting queries: The questions, prompts, and text you submit to the AI consulting features.',
+          'Contextual profile data: Relevant portions of your profile information (such as wellness goals or areas of interest) used to personalize AI responses.',
+          'Conversation history: Prior messages within a consulting session to maintain context and continuity.',
+        ]} />
+        <P><strong>5.3 Who Receives This Data.</strong> Your data is sent to OpenAI, L.L.C. ("OpenAI"), which processes it to generate AI responses. OpenAI processes this data under a data processing agreement with PeptideAI that restricts their use of your data. OpenAI's use of data is further governed by their own usage policies.</P>
+        <P><strong>5.4 User Consent and Control.</strong> Before any data is shared with third-party AI services, the app will request your explicit consent. You may withdraw consent at any time through your account settings. Withdrawing consent will disable AI-powered features but will not affect other Platform functionality. Data previously processed by the AI service prior to consent withdrawal cannot be retroactively removed from the AI provider's systems, though contractual protections continue to apply.</P>
+        <P><strong>5.5 Data Protection.</strong> We require third-party AI providers to implement appropriate technical and organizational measures to protect your data, including encryption in transit, restricted data access, and contractual limitations on data use.</P>
+      </>
+    ),
+  },
+  {
+    id: 'healthkit',
+    label: '6. HealthKit & CareKit',
+    title: '6. Apple HealthKit & CareKit Data',
+    content: (
+      <>
+        <Warn>Peptide AI integrates with Apple HealthKit and CareKit to provide health and wellness tracking features. This section describes how we handle data obtained through these frameworks.</Warn>
+        <P><strong>6.1 What HealthKit & CareKit Data We Access.</strong> With your explicit permission, PeptideAI may read and/or write the following types of health data through Apple HealthKit:</P>
+        <UL items={[
+          'Body measurements: weight, height, body mass index (BMI), and body composition data.',
+          'Activity data: steps, active energy burned, exercise minutes, and workout data.',
+          'Vitals: heart rate, resting heart rate, and blood pressure (if available).',
+          'Sleep analysis: sleep duration and sleep stage data.',
+          'Nutrition data: dietary intake information you choose to log.',
+        ]} />
+        <P><strong>6.2 How We Use HealthKit & CareKit Data.</strong> HealthKit and CareKit data is used exclusively to:</P>
+        <UL items={[
+          'Display your health metrics within the Peptide AI app to help you track wellness goals.',
+          'Provide personalized AI consulting insights based on your health trends (with your consent).',
+          'Power CareKit-based care plans and health tracking features within the app.',
+        ]} />
+        <P><strong>6.3 HealthKit & CareKit Data Restrictions.</strong> In compliance with Apple's requirements, we commit to the following:</P>
+        <UL items={[
+          'HealthKit and CareKit data will NOT be sold to advertising platforms, data brokers, or any third parties.',
+          'HealthKit and CareKit data will NOT be used for advertising, marketing, or other use-based data mining purposes.',
+          'HealthKit and CareKit data will NOT be shared with third parties without your explicit consent, and only with parties who provide health services to you.',
+          'HealthKit and CareKit data will NOT be disclosed to any third party for purposes unrelated to providing health or fitness services to you.',
+          'We will only request access to HealthKit data types that are relevant to the functionality of the app.',
+        ]} />
+        <P><strong>6.4 Your Control Over HealthKit Data.</strong> You may revoke PeptideAI's access to HealthKit data at any time through the Apple Health app settings on your device (Settings &gt; Health &gt; Data Access & Devices &gt; Peptide AI). Revoking access will not delete data already stored within the PeptideAI app, but you may request deletion by contacting <a className="legal-link" href="mailto:privacy@peptideai.co">privacy@peptideai.co</a>.</P>
       </>
     ),
   },
   {
     id: 'sharing',
-    label: '5. How We Share Your Data',
-    title: '5. How We Share, License, and Sell Your Data',
+    label: '7. How We Share Your Data',
+    title: '7. How We Share, License, and Sell Your Data',
     content: (
       <>
-        <Warn>⚠ WE MAY SELL AND SHARE YOUR DATA — READ THIS SECTION CAREFULLY. PeptideAI engages in data monetization activities, including selling and sharing personal information with third parties for research and commercial purposes. By using the Platform, you consent to these practices. California and other state residents have opt-out rights described in Section 10.</Warn>
+        <Warn>⚠ WE MAY SELL AND SHARE YOUR DATA — READ THIS SECTION CAREFULLY. PeptideAI engages in data monetization activities, including selling and sharing personal information with third parties for research and commercial purposes. By using the Platform, you consent to these practices. California and other state residents have opt-out rights described in Section 12.</Warn>
         <P><strong>5.1 Service Providers.</strong> We share your information with vendors and service providers who help us operate the Platform, including cloud infrastructure providers, payment processors, analytics services, email platforms, and customer support tools. These providers process your data only on our behalf and under contractual data protection obligations.</P>
         <P><strong>5.2 Research and Commercial Data Partners — Including Data Sales.</strong> PeptideAI may sell, license, transfer, or otherwise share your personal information — including consulting interaction data and behavioral data — with third-party partners for research and commercial purposes. This is a core part of our business model.</P>
         <P>Partners who may purchase or receive your data include:</P>
@@ -143,7 +196,7 @@ const sections = [
           'Advertising technology platforms and marketing data companies.',
         ]} />
         <div className="legal-info-box" style={{ marginTop: '1rem' }}>
-          <strong>Your Control:</strong> California residents and users in certain other jurisdictions may opt out of the sale or sharing of their personal information. See Section 10 for how to exercise this right. Opting out may limit certain features of the Platform.
+          <strong>Your Control:</strong> California residents and users in certain other jurisdictions may opt out of the sale or sharing of their personal information. See Section 12 for how to exercise this right. Opting out may limit certain features of the Platform.
         </div>
         <P><strong>5.3 Business Transfers and Acquisitions.</strong> In the event of a merger, acquisition, asset sale, reorganization, bankruptcy, or similar transaction, your personal information may be transferred to the acquiring or successor entity as a business asset.</P>
         <P><strong>5.4 Legal Compliance and Protection.</strong> We may disclose your information to law enforcement, government authorities, or other parties as required by applicable law, court order, or legal process.</P>
@@ -153,8 +206,8 @@ const sections = [
   },
   {
     id: 'retention',
-    label: '6. Data Retention',
-    title: '6. Data Retention',
+    label: '8. Data Retention',
+    title: '8. Data Retention',
     content: (
       <>
         <P>We retain your personal information for as long as your account remains active, as needed to provide the Platform, and as required or permitted by applicable law. The following retention practices apply:</P>
@@ -171,8 +224,8 @@ const sections = [
   },
   {
     id: 'cookies',
-    label: '7. Cookies & Tracking',
-    title: '7. Cookies and Tracking Technologies',
+    label: '9. Cookies & Tracking',
+    title: '9. Cookies and Tracking Technologies',
     content: (
       <>
         <P>We and our third-party partners use cookies, pixel tags, web beacons, SDKs, and similar tracking technologies on the Platform for the following purposes:</P>
@@ -189,8 +242,8 @@ const sections = [
   },
   {
     id: 'security',
-    label: '8. Data Security',
-    title: '8. Data Security',
+    label: '10. Data Security',
+    title: '10. Data Security',
     content: (
       <>
         <P>We implement commercially reasonable technical and organizational security measures designed to protect your information from unauthorized access, disclosure, alteration, and destruction. These measures include encryption of data in transit using TLS, encryption of sensitive data at rest, role-based access controls, regular security assessments.</P>
@@ -200,16 +253,16 @@ const sections = [
   },
   {
     id: 'children',
-    label: "9. Children's Privacy",
-    title: "9. Children's Privacy",
+    label: "11. Children's Privacy",
+    title: "11. Children's Privacy",
     content: (
       <P>PeptideAI is intended for users who are 18 years of age or older. We do not knowingly collect personal information from anyone under the age of 18. If we learn that we have collected information from a person under 18, we will delete that information immediately. If you believe we have collected information from a child under 18, please contact us at <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a>.</P>
     ),
   },
   {
     id: 'rights',
-    label: '10. Your Privacy Rights',
-    title: '10. Your Privacy Rights',
+    label: '12. Your Privacy Rights',
+    title: '12. Your Privacy Rights',
     content: (
       <>
         <P><strong>10.1 General Rights.</strong> Depending on where you live, you may have certain rights regarding your personal information. To exercise any of the rights described in this section, contact us at <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a> or through the Privacy Rights section of your account settings.</P>
@@ -229,32 +282,32 @@ const sections = [
   },
   {
     id: 'international',
-    label: '11. International Transfers',
-    title: '11. International Data Transfers',
+    label: '13. International Transfers',
+    title: '13. International Data Transfers',
     content: (
       <P>PeptideAI is based in the United States. If you access the Platform from outside the United States, your information will be transferred to, stored in, and processed in the United States, where data protection laws may differ from those in your home country. By using the Platform, you consent to the transfer of your information to the United States and other countries where our service providers operate.</P>
     ),
   },
   {
     id: 'third-party',
-    label: '12. Third-Party Links',
-    title: '12. Third-Party Links and Services',
+    label: '14. Third-Party Links',
+    title: '14. Third-Party Links and Services',
     content: (
       <P>The Platform may contain links to third-party websites, affiliate services, and external content. This Privacy Policy applies only to the PeptideAI Platform. We are not responsible for the privacy practices of any third party. We encourage you to review the privacy policies of any third-party services you access in connection with the Platform.</P>
     ),
   },
   {
     id: 'changes',
-    label: '13. Changes to This Policy',
-    title: '13. Changes to This Privacy Policy',
+    label: '15. Changes to This Policy',
+    title: '15. Changes to This Privacy Policy',
     content: (
       <P>We may update this Privacy Policy at any time. We will post the revised Policy on the Platform and update the Effective Date. For material changes, we will provide notice via email or prominent in-app notification at least 30 days before the change takes effect, where required by law. Your continued use of the Platform after the effective date of any change constitutes your acceptance of the updated Policy.</P>
     ),
   },
   {
     id: 'contact',
-    label: '14. Contact Us',
-    title: '14. How to Contact Us',
+    label: '16. Contact Us',
+    title: '16. How to Contact Us',
     content: (
       <>
         <P>For privacy-related questions, requests, or concerns — including to exercise any rights described in this Policy — please contact us:</P>
