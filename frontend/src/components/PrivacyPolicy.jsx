@@ -127,20 +127,22 @@ const sections = [
   {
     id: 'ai-services',
     label: '5. Third-Party AI Services',
-    title: '5. Third-Party AI Service Data Sharing',
+    title: '5. AI-Powered Features & Third-Party AI Processing',
     content: (
       <>
         <Warn>IMPORTANT: Peptide AI uses third-party artificial intelligence services to power the AI consulting features of the platform. By using the Platform, you acknowledge and consent to the sharing of certain data with these third-party AI providers as described below.</Warn>
-        <P><strong>5.1 AI Service Providers.</strong> PeptideAI sends certain user data to third-party AI service providers (such as OpenAI, L.L.C.) to generate AI-powered responses, educational content, and consulting insights.</P>
-        <P><strong>5.2 Data Transmitted to AI Services.</strong> The following data may be sent to third-party AI services when you use AI-powered features:</P>
+        <P><strong>5.1 AI Service Provider.</strong> Our App includes an AI-powered chatbot that provides research-based information about peptides. This feature is powered by <strong>Anthropic's Claude API</strong> ("Anthropic"), a third-party artificial intelligence service. For more information about how Anthropic handles data, see <a className="legal-link" href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer">Anthropic's Privacy Policy</a>.</P>
+        <P><strong>5.2 Data Transmitted to Anthropic.</strong> When you use the AI chatbot, the following data may be transmitted to Anthropic for processing:</P>
         <UL items={[
-          'Consulting queries: The questions, prompts, and text you submit to the AI consulting features.',
-          'Contextual profile data: Relevant portions of your profile information (such as wellness goals or areas of interest) used to personalize AI responses.',
+          'Chat messages and queries: The questions, prompts, and free-text you submit to the AI chatbot.',
+          'Body metrics: Body metrics you have voluntarily provided (such as age, height, weight, sex, body fat percentage, activity level, and sleep data), when relevant to your query or included in a chatbot conversation for personalized responses.',
+          'Peptide protocol and dosing information: Peptide protocol details and dosing logs you include in your conversations when asking the chatbot about them.',
           'Conversation history: Prior messages within a consulting session to maintain context and continuity.',
         ]} />
-        <P><strong>5.3 Who Receives This Data.</strong> Your data is sent to OpenAI, L.L.C. ("OpenAI"), which processes it to generate AI responses. OpenAI processes this data under a data processing agreement with PeptideAI that restricts their use of your data. OpenAI's use of data is further governed by their own usage policies.</P>
-        <P><strong>5.4 User Consent and Control.</strong> Before any data is shared with third-party AI services, the app will request your explicit consent. You may withdraw consent at any time through your account settings. Withdrawing consent will disable AI-powered features but will not affect other Platform functionality. Data previously processed by the AI service prior to consent withdrawal cannot be retroactively removed from the AI provider's systems, though contractual protections continue to apply.</P>
-        <P><strong>5.5 Data Protection.</strong> We require that OpenAI and any other third-party AI service provider that receives your data maintains technical and organizational security measures that provide the same or equal level of data protection as PeptideAI's own standards, including encryption of data in transit and at rest, restricted access controls, contractual limitations on data use and retention, and compliance with applicable data protection laws. We confirm that any third party we share your data with provides the same or equal protection for your personal data as described in this Privacy Policy.</P>
+        <P><strong>5.3 What We Do NOT Share with Anthropic.</strong> We do <strong>not</strong> send your email address, account credentials, or payment information to Anthropic.</P>
+        <P><strong>5.4 How Anthropic Uses Your Data.</strong> Anthropic processes this data solely to generate personalized, research-based responses to your queries within the app. We use Anthropic's API under terms that prevent your data from being used to train Anthropic's AI models (zero-retention API usage). Your data is handled in accordance with <a className="legal-link" href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer">Anthropic's Privacy Policy</a>.</P>
+        <P><strong>5.5 User Consent and Control.</strong> You consent to this data sharing when you use the AI chatbot feature. You may choose not to use the AI chatbot, in which case no personal data will be shared with Anthropic. You may also withdraw consent at any time through your account settings, though this will limit your ability to use AI-powered features. For data deletion requests, see Section 8 of this Privacy Policy.</P>
+        <P><strong>5.6 Data Protection.</strong> We require that Anthropic and any other third-party AI service provider that receives your data maintains technical and organizational security measures that provide the same or equal level of data protection as PeptideAI's own standards, including encryption of data in transit and at rest, restricted access controls, contractual limitations on data use and retention, and compliance with applicable data protection laws. We confirm that any third party we share your data with provides the same or equal protection for your personal data as described in this Privacy Policy.</P>
       </>
     ),
   },
@@ -332,7 +334,7 @@ export default function PrivacyPolicy() {
     <LegalPage
       title="Privacy Policy"
       subtitle="We are committed to transparency about how we collect, use, share, and monetize your information."
-      effectiveDate="March 8, 2026"
+      effectiveDate="March 24, 2026"
       sections={sections}
     />
   );
