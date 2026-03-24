@@ -63,9 +63,71 @@ const sections = [
     ),
   },
   {
+    id: 'ai-services',
+    label: '4. Third-Party AI Services',
+    title: '4. Third-Party AI Services & Data Consent',
+    content: (
+      <>
+        <Warn>IMPORTANT: PEPTIDE AI USES THIRD-PARTY ARTIFICIAL INTELLIGENCE SERVICES. BY USING THE AI-POWERED FEATURES OF THE PLATFORM, YOU CONSENT TO THE TRANSMISSION OF YOUR DATA TO THIRD-PARTY AI PROVIDERS AS DESCRIBED BELOW.</Warn>
+        <P><strong>4.1 AI Service Providers.</strong> PeptideAI uses third-party AI services, including OpenAI, L.L.C. ("OpenAI"), to power the AI consulting and educational features of the Platform. When you use these features, certain data is transmitted to these third-party providers for processing.</P>
+        <P><strong>4.2 Data Transmitted.</strong> The following data may be sent to third-party AI services:</P>
+        <UL items={[
+          'Your consulting queries, prompts, and text inputs submitted to AI features.',
+          'Relevant profile information (such as wellness goals) to personalize AI responses.',
+          'Conversation history within a consulting session to maintain context.',
+        ]} />
+        <P><strong>4.3 Purpose.</strong> Data is transmitted solely to generate AI-powered responses, educational content, and personalized consulting insights within the Platform.</P>
+        <P><strong>4.4 User Consent.</strong> Before any personal data is shared with third-party AI services, the app will present a clear disclosure and request your explicit consent. You may decline or withdraw consent at any time through your account settings. Withdrawing consent will disable AI-powered features but will not affect other Platform functionality.</P>
+        <P><strong>4.5 Data Protection Standards.</strong> We require that all third-party AI providers that receive your data maintain technical and organizational security measures that provide the same or equal level of data protection as PeptideAI's own standards. This includes encryption of data in transit and at rest, restricted access controls, contractual limitations on data use and retention, and compliance with applicable data protection laws. Third-party AI providers process your data under data processing agreements with PeptideAI that enforce these protections. For details, see our <a className="legal-link" href="/privacy">Privacy Policy</a>.</P>
+      </>
+    ),
+  },
+  {
+    id: 'healthkit',
+    label: '5. HealthKit & CareKit',
+    title: '5. Apple HealthKit & CareKit Integration',
+    content: (
+      <>
+        <P><strong>5.1 HealthKit & CareKit Functionality.</strong> The Platform integrates with Apple HealthKit and CareKit frameworks to provide health tracking and wellness monitoring features, including:</P>
+        <UL items={[
+          'Reading body measurements (weight, height, BMI) from HealthKit to track wellness progress.',
+          'Reading activity data (steps, active energy, workouts) to monitor fitness goals.',
+          'Reading vitals (heart rate, blood pressure) to provide health trend insights.',
+          'Reading sleep analysis data to support wellness recommendations.',
+          'Using CareKit to manage personalized care plans and health tracking tasks within the app.',
+        ]} />
+        <P><strong>5.2 Permission Required.</strong> The app will request your explicit permission before accessing any HealthKit or CareKit data. You may grant or revoke access at any time through your device\'s Health app settings.</P>
+        <P><strong>5.3 Data Use Restrictions.</strong> HealthKit and CareKit data accessed by PeptideAI will NOT be:</P>
+        <UL items={[
+          'Sold to advertising platforms, data brokers, or any third parties.',
+          'Used for advertising, marketing, or use-based data mining.',
+          'Shared with third parties without your explicit consent, except as necessary to provide health-related features of the Platform.',
+        ]} />
+        <P><strong>5.4 Not a Medical Device.</strong> HealthKit and CareKit features within PeptideAI are for informational and educational tracking purposes only. They do not constitute medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical decisions.</P>
+      </>
+    ),
+  },
+  {
+    id: 'eula',
+    label: '6. EULA',
+    title: '6. End User License Agreement (EULA)',
+    content: (
+      <>
+        <P><strong>6.1 License Grant.</strong> Subject to your compliance with these Terms, PeptideAI LLC grants you a limited, non-exclusive, non-transferable, revocable license to download, install, and use the PeptideAI application on any Apple-branded device that you own or control, as permitted by the Apple Media Services Terms and Conditions and these Terms.</P>
+        <P><strong>6.2 Scope of License.</strong> This license does not allow you to use the application on any device that you do not own or control, and you may not distribute or make the application available over a network where it could be used by multiple devices at the same time.</P>
+        <P><strong>6.3 License Restrictions.</strong> You may not: (a) copy, modify, or create derivative works of the application; (b) reverse engineer, disassemble, decompile, or attempt to derive the source code of the application; (c) sell, resell, rent, lease, lend, sublicense, or distribute the application; (d) remove, alter, or obscure any proprietary notices on the application; or (e) use the application for any unlawful purpose.</P>
+        <P><strong>6.4 Maintenance and Support.</strong> PeptideAI LLC is solely responsible for providing maintenance and support services for the application. Apple Inc. has no obligation to provide any maintenance or support services.</P>
+        <P><strong>6.5 Warranty.</strong> If the application fails to conform to any applicable warranty, you may notify Apple, and Apple will refund the purchase price (if any) for the application. To the maximum extent permitted by applicable law, Apple has no other warranty obligation with respect to the application.</P>
+        <P><strong>6.6 Product Claims.</strong> PeptideAI LLC, not Apple, is responsible for addressing any claims relating to the application, including: (a) product liability claims; (b) any claim that the application fails to conform to any applicable legal or regulatory requirement; and (c) claims arising under consumer protection, privacy, or similar legislation.</P>
+        <P><strong>6.7 Intellectual Property Claims.</strong> In the event of any third-party claim that the application infringes that third party\'s intellectual property rights, PeptideAI LLC, not Apple, shall be solely responsible for the investigation, defense, settlement, and discharge of any such claim.</P>
+        <P><strong>6.8 Third-Party Beneficiary.</strong> Apple and its subsidiaries are third-party beneficiaries of this EULA. Upon your acceptance of these Terms, Apple will have the right (and will be deemed to have accepted the right) to enforce this EULA against you as a third-party beneficiary.</P>
+      </>
+    ),
+  },
+  {
     id: 'account',
-    label: '4. Account Registration',
-    title: '4. Account Registration and Eligibility',
+    label: '7. Account Registration',
+    title: '7. Account Registration and Eligibility',
     content: (
       <>
         <P><strong>4.1 Age Requirement.</strong> You must be at least 18 years of age to create an account or use the Platform. By registering, you represent and warrant that you meet this age requirement. You represent you are not using this on behalf of minors or submitting minor data.</P>
@@ -77,11 +139,11 @@ const sections = [
   },
   {
     id: 'conduct',
-    label: '5. Permitted Use',
-    title: '5. Permitted Use and Prohibited Conduct',
+    label: '8. Permitted Use',
+    title: '8. Permitted Use and Prohibited Conduct',
     content: (
       <>
-        <p className="legal-p"><strong>5.1 Permitted Uses</strong></p>
+        <p className="legal-p"><strong>8.1 Permitted Uses</strong></p>
         <UL items={[
           'Accessing and reviewing educational and consulting content for personal or professional study;',
           'Using the AI consulting tools to research peptide-related topics and access educational information;',
@@ -89,7 +151,7 @@ const sections = [
           'Participating in community features in accordance with our Community Guidelines;',
           'Using the Platform for legitimate research, academic, or professional purposes.',
         ]} />
-        <p className="legal-p" style={{ marginTop: '1.25rem' }}><strong>5.2 Prohibited Conduct — You expressly agree NOT to:</strong></p>
+        <p className="legal-p" style={{ marginTop: '1.25rem' }}><strong>8.2 Prohibited Conduct — You expressly agree NOT to:</strong></p>
         <UL items={[
           'Rely on AI Output as a substitute for professional medical, legal, pharmaceutical, or financial advice;',
           'Use the Platform to facilitate the illegal purchase, sale, distribution, or importation of any substance;',
@@ -112,32 +174,32 @@ const sections = [
   },
   {
     id: 'subscriptions',
-    label: '6. Subscriptions & Payments',
-    title: '6. Subscriptions, Payments, and Refunds',
+    label: '9. Subscriptions & Payments',
+    title: '9. Subscriptions, Payments, and Refunds',
     content: (
       <>
-        <P><strong>6.1 Subscription Plans.</strong> PeptideAI offers various subscription tiers as described on the Platform. Subscription fees are billed in advance on a monthly or annual basis. All fees are in U.S. dollars unless otherwise stated.</P>
-        <P><strong>6.2 Automatic Renewal.</strong> Subscriptions automatically renew at the end of each billing period unless you cancel before the renewal date. By subscribing, you authorize PeptideAI to charge your payment method automatically upon renewal.</P>
-        <P><strong>6.3 Cancellation.</strong> You may cancel your subscription at any time through your account settings or by contacting us. Cancellation takes effect at the end of the current billing period. You will retain access to paid features until that date.</P>
-        <P><strong>6.4 Refunds.</strong> All subscription fees are non-refundable except as required by applicable law or as expressly stated in our refund policy. PeptideAI reserves the right to issue refunds at its sole discretion on a case-by-case basis.</P>
-        <P><strong>6.5 Price Changes.</strong> PeptideAI reserves the right to modify subscription pricing at any time. We will provide at least 30 days' notice of any price increase. Continued use after the effective date of a price change constitutes your acceptance of the new pricing.</P>
-        <P><strong>6.6 Taxes.</strong> You are responsible for all applicable taxes arising from your use of the Platform and your purchase of any subscriptions or products.</P>
+        <P><strong>9.1 Subscription Plans.</strong> PeptideAI offers various subscription tiers as described on the Platform. Subscription fees are billed in advance on a monthly or annual basis. All fees are in U.S. dollars unless otherwise stated.</P>
+        <P><strong>9.2 Automatic Renewal.</strong> Subscriptions automatically renew at the end of each billing period unless you cancel before the renewal date. By subscribing, you authorize PeptideAI to charge your payment method automatically upon renewal.</P>
+        <P><strong>9.3 Cancellation.</strong> You may cancel your subscription at any time through your account settings or by contacting us. Cancellation takes effect at the end of the current billing period. You will retain access to paid features until that date.</P>
+        <P><strong>9.4 Refunds.</strong> All subscription fees are non-refundable except as required by applicable law or as expressly stated in our refund policy. PeptideAI reserves the right to issue refunds at its sole discretion on a case-by-case basis.</P>
+        <P><strong>9.5 Price Changes.</strong> PeptideAI reserves the right to modify subscription pricing at any time. We will provide at least 30 days' notice of any price increase. Continued use after the effective date of a price change constitutes your acceptance of the new pricing.</P>
+        <P><strong>9.6 Taxes.</strong> You are responsible for all applicable taxes arising from your use of the Platform and your purchase of any subscriptions or products.</P>
       </>
     ),
   },
   {
     id: 'ip',
-    label: '7. Intellectual Property',
-    title: '7. Intellectual Property Rights',
+    label: '10. Intellectual Property',
+    title: '10. Intellectual Property Rights',
     content: (
       <>
-        <P><strong>7.1 PeptideAI Ownership.</strong> The Platform and all of its content, features, functionality, design, code, trademarks, logos, and trade names — including but not limited to the PeptideAI name, the peptide education library, AI systems, and all associated intellectual property — are owned by PeptideAI LLC or its licensors and are protected by U.S. and international intellectual property laws.</P>
-        <P><strong>7.2 Limited License to Users.</strong> Subject to your compliance with these Terms, PeptideAI grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Platform for personal, non-commercial research, educational, and consulting purposes only.</P>
-        <P><strong>7.3 Restrictions.</strong> You may not copy, reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, transmit, sell, or sublicense any portion of the Platform or its content without PeptideAI's prior written consent.</P>
-        <P><strong>7.4 User-Submitted Content.</strong> By submitting any data, content, or materials to the Platform, you grant PeptideAI a limited, worldwide, royalty-free, sublicensable license to use, reproduce, process, and display such content solely for the purposes of operating, improving, and providing the Platform and related services, as described in our Privacy Policy. This license terminates when your content is deleted, except to the extent it has been anonymized or aggregated.</P>
-        <P><strong>7.5 Feedback.</strong> Any feedback, suggestions, or ideas you provide to PeptideAI regarding the Platform may be used by PeptideAI freely without any obligation to you.</P>
-        <P><strong>7.6 AI Training and Data Use.</strong> You acknowledge and agree that anonymized and aggregated User Data may be used to improve, train, and enhance PeptideAI's machine learning models, provided such data does not reasonably identify you.</P>
-        <P><strong>7.7 DMCA.</strong> PeptideAI respects the intellectual property rights of others and expects users to do the same. If you believe that any content on the Platform infringes your copyright, you may submit a notification pursuant to the Digital Millennium Copyright Act (DMCA) by contacting us at <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a> with:</P>
+        <P><strong>10.1 PeptideAI Ownership.</strong> The Platform and all of its content, features, functionality, design, code, trademarks, logos, and trade names — including but not limited to the PeptideAI name, the peptide education library, AI systems, and all associated intellectual property — are owned by PeptideAI LLC or its licensors and are protected by U.S. and international intellectual property laws.</P>
+        <P><strong>10.2 Limited License to Users.</strong> Subject to your compliance with these Terms, PeptideAI grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Platform for personal, non-commercial research, educational, and consulting purposes only.</P>
+        <P><strong>10.3 Restrictions.</strong> You may not copy, reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, transmit, sell, or sublicense any portion of the Platform or its content without PeptideAI's prior written consent.</P>
+        <P><strong>10.4 User-Submitted Content.</strong> By submitting any data, content, or materials to the Platform, you grant PeptideAI a limited, worldwide, royalty-free, sublicensable license to use, reproduce, process, and display such content solely for the purposes of operating, improving, and providing the Platform and related services, as described in our Privacy Policy. This license terminates when your content is deleted, except to the extent it has been anonymized or aggregated.</P>
+        <P><strong>10.5 Feedback.</strong> Any feedback, suggestions, or ideas you provide to PeptideAI regarding the Platform may be used by PeptideAI freely without any obligation to you.</P>
+        <P><strong>10.6 AI Training and Data Use.</strong> You acknowledge and agree that anonymized and aggregated User Data may be used to improve, train, and enhance PeptideAI's machine learning models, provided such data does not reasonably identify you.</P>
+        <P><strong>10.7 DMCA.</strong> PeptideAI respects the intellectual property rights of others and expects users to do the same. If you believe that any content on the Platform infringes your copyright, you may submit a notification pursuant to the Digital Millennium Copyright Act (DMCA) by contacting us at <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a> with:</P>
         <UL items={[
           'Identification of the copyrighted work claimed to be infringed;',
           'Identification of the material that is claimed to be infringing;',
@@ -151,8 +213,8 @@ const sections = [
   },
   {
     id: 'warranties',
-    label: '8. Disclaimer of Warranties',
-    title: '8. Disclaimer of Warranties',
+    label: '11. Disclaimer of Warranties',
+    title: '11. Disclaimer of Warranties',
     content: (
       <>
         <Warn>THE PLATFORM, ALL CONTENT, AI OUTPUT, AND ALL SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, PEPTIDEAI EXPRESSLY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE.</Warn>
@@ -171,13 +233,13 @@ const sections = [
   },
   {
     id: 'liability',
-    label: '9. Limitation of Liability',
-    title: '9. Limitation of Liability',
+    label: '12. Limitation of Liability',
+    title: '12. Limitation of Liability',
     content: (
       <>
         <Warn>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL PEPTIDEAI LLC, ITS OFFICERS, DIRECTORS, EMPLOYEES, MEMBERS, AGENTS, CONTRACTORS, LICENSORS, PARTNERS, OR AFFILIATES BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, PUNITIVE, OR EXEMPLARY DAMAGES WHATSOEVER.</Warn>
-        <P><strong>9.1 Scope of Limitation.</strong> This limitation of liability applies to all claims arising out of or related to your use of the Platform, regardless of the legal theory asserted, including but not limited to: contract, tort (including negligence), strict liability, misrepresentation, or any other legal or equitable theory. You expressly acknowledge that you have not relied on any statement, representation, or information provided by PeptideAI as a substitute for professional advice. PeptideAI functions as an informational intermediary that provides access to AI-generated and third-party information. PeptideAI does not independently verify all content and is not responsible for the accuracy, completeness, or reliability of any information provided through the Platform. You acknowledge that the limitations of liability set forth in these Terms are a fundamental basis of the agreement between you and PeptideAI and that the Platform would not be provided without such limitations.</P>
-        <P><strong>9.2 Specific Exclusions.</strong> Without limiting the foregoing, PeptideAI shall not be liable for:</P>
+        <P><strong>12.1 Scope of Limitation.</strong> This limitation of liability applies to all claims arising out of or related to your use of the Platform, regardless of the legal theory asserted, including but not limited to: contract, tort (including negligence), strict liability, misrepresentation, or any other legal or equitable theory. You expressly acknowledge that you have not relied on any statement, representation, or information provided by PeptideAI as a substitute for professional advice. PeptideAI functions as an informational intermediary that provides access to AI-generated and third-party information. PeptideAI does not independently verify all content and is not responsible for the accuracy, completeness, or reliability of any information provided through the Platform. You acknowledge that the limitations of liability set forth in these Terms are a fundamental basis of the agreement between you and PeptideAI and that the Platform would not be provided without such limitations.</P>
+        <P><strong>12.2 Specific Exclusions.</strong> Without limiting the foregoing, PeptideAI shall not be liable for:</P>
         <UL items={[
           'Any damages arising from your reliance on AI Output, educational content, or any other information provided through the Platform;',
           'Any loss of data, profit, revenue, business, goodwill, or opportunity;',
@@ -186,51 +248,51 @@ const sections = [
           'Any interruption or unavailability of the Platform;',
           'Any conduct or content of third parties on or through the Platform.',
         ]} />
-        <P><strong>9.3 Cap on Liability.</strong> To the extent PeptideAI is found liable for any claim, PeptideAI's total cumulative liability to you for all claims arising out of or relating to these Terms or the Platform shall not exceed the greater of: (a) the total amount you paid to PeptideAI in the twelve (12) months immediately preceding the claim; or (b) one hundred U.S. dollars ($100.00).</P>
+        <P><strong>12.3 Cap on Liability.</strong> To the extent PeptideAI is found liable for any claim, PeptideAI's total cumulative liability to you for all claims arising out of or relating to these Terms or the Platform shall not exceed the greater of: (a) the total amount you paid to PeptideAI in the twelve (12) months immediately preceding the claim; or (b) one hundred U.S. dollars ($100.00).</P>
       </>
     ),
   },
   {
     id: 'indemnification',
-    label: '10. Indemnification',
-    title: '10. Indemnification',
+    label: '13. Indemnification',
+    title: '13. Indemnification',
     content: (
       <P>You agree to defend, indemnify, and hold harmless PeptideAI LLC and its officers, directors, members, employees, agents, contractors, partners, licensors, and affiliates from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or relating to: (a) your use of or access to the Platform; (b) your violation of these Terms; (c) your violation of any applicable law, regulation, or third-party right; (d) your reliance on any Platform content or AI Output; (e) any User Data you submit to the Platform; or (f) any claim that your User Data infringes the rights of a third party.</P>
     ),
   },
   {
     id: 'disputes',
-    label: '11. Governing Law & Disputes',
-    title: '11. Governing Law, Dispute Resolution, and Arbitration',
+    label: '14. Governing Law & Disputes',
+    title: '14. Governing Law, Dispute Resolution, and Arbitration',
     content: (
       <>
-        <P><strong>11.1 Governing Law.</strong> These Terms shall be governed by and construed in accordance with the laws of the State of Virginia, without regard to its conflict of laws provisions.</P>
-        <P><strong>11.2 Binding Arbitration.</strong> All disputes shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. Arbitration shall take place virtually or in a mutually agreed location within the United States. The arbitrator's decision shall be final and binding.</P>
-        <P><strong>11.3 Class Action Waiver.</strong> YOU AGREE THAT ANY CLAIMS AGAINST PEPTIDEAI SHALL BE BROUGHT SOLELY IN YOUR INDIVIDUAL CAPACITY AND NOT AS A PLAINTIFF OR CLASS MEMBER IN ANY CLASS, COLLECTIVE, REPRESENTATIVE, OR PRIVATE ATTORNEY GENERAL ACTION.</P>
-        <P><strong>11.4 Jury Trial Waiver.</strong> TO THE EXTENT ARBITRATION DOES NOT APPLY, YOU AND PEPTIDEAI EACH WAIVE ANY RIGHT TO A JURY TRIAL IN ANY COURT PROCEEDING.</P>
-        <P><strong>11.5 Time Limitation.</strong> Any claim arising out of these Terms or the Platform must be brought within one (1) year of the date the cause of action arose, or it is permanently waived and barred.</P>
-        <P><strong>11.6 Arbitration Costs and Opt-Out.</strong> You may opt out of arbitration within 30 days of first accepting these Terms by providing written notice. Each party shall bear its own costs unless otherwise required by applicable arbitration rules.</P>
-        <P><strong>11.7</strong> To the extent any dispute is found not subject to arbitration, such dispute shall be resolved exclusively in the state or federal courts located in the Commonwealth of Virginia, and you consent to the personal jurisdiction of such courts.</P>
+        <P><strong>14.1 Governing Law.</strong> These Terms shall be governed by and construed in accordance with the laws of the State of Virginia, without regard to its conflict of laws provisions.</P>
+        <P><strong>14.2 Binding Arbitration.</strong> All disputes shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. Arbitration shall take place virtually or in a mutually agreed location within the United States. The arbitrator's decision shall be final and binding.</P>
+        <P><strong>14.3 Class Action Waiver.</strong> YOU AGREE THAT ANY CLAIMS AGAINST PEPTIDEAI SHALL BE BROUGHT SOLELY IN YOUR INDIVIDUAL CAPACITY AND NOT AS A PLAINTIFF OR CLASS MEMBER IN ANY CLASS, COLLECTIVE, REPRESENTATIVE, OR PRIVATE ATTORNEY GENERAL ACTION.</P>
+        <P><strong>14.4 Jury Trial Waiver.</strong> TO THE EXTENT ARBITRATION DOES NOT APPLY, YOU AND PEPTIDEAI EACH WAIVE ANY RIGHT TO A JURY TRIAL IN ANY COURT PROCEEDING.</P>
+        <P><strong>14.5 Time Limitation.</strong> Any claim arising out of these Terms or the Platform must be brought within one (1) year of the date the cause of action arose, or it is permanently waived and barred.</P>
+        <P><strong>14.6 Arbitration Costs and Opt-Out.</strong> You may opt out of arbitration within 30 days of first accepting these Terms by providing written notice. Each party shall bear its own costs unless otherwise required by applicable arbitration rules.</P>
+        <P><strong>14.7</strong> To the extent any dispute is found not subject to arbitration, such dispute shall be resolved exclusively in the state or federal courts located in the Commonwealth of Virginia, and you consent to the personal jurisdiction of such courts.</P>
       </>
     ),
   },
   {
     id: 'termination',
-    label: '12. Termination',
-    title: '12. Termination and Suspension',
+    label: '15. Termination',
+    title: '15. Termination and Suspension',
     content: (
       <>
-        <P><strong>12.1 PeptideAI's Right to Terminate.</strong> PeptideAI reserves the right to suspend or terminate your access to the Platform at any time, with or without notice, for any reason, including but not limited to: (a) breach of these Terms; (b) conduct that PeptideAI believes harms the Platform, other users, or PeptideAI; (c) failure to pay applicable fees; or (d) any conduct that violates applicable law.</P>
-        <P><strong>12.2 Your Right to Terminate.</strong> You may terminate your account at any time by contacting us or through your account settings. Termination does not entitle you to any refund of fees paid.</P>
-        <P><strong>12.3 Effect of Termination.</strong> Upon termination, your right to use the Platform ceases immediately. Provisions of these Terms that by their nature should survive termination shall survive, including but not limited to: Disclaimer of Warranties, Limitation of Liability, Indemnification, Governing Law, and any licenses granted by you to PeptideAI with respect to User Data.</P>
-        <P><strong>12.4 Data Following Termination.</strong> Following account termination, PeptideAI may retain your User Data as described in the Privacy Policy and as permitted by applicable law. Anonymized and aggregated data derived from your use of the Platform may be retained indefinitely.</P>
+        <P><strong>15.1 PeptideAI's Right to Terminate.</strong> PeptideAI reserves the right to suspend or terminate your access to the Platform at any time, with or without notice, for any reason, including but not limited to: (a) breach of these Terms; (b) conduct that PeptideAI believes harms the Platform, other users, or PeptideAI; (c) failure to pay applicable fees; or (d) any conduct that violates applicable law.</P>
+        <P><strong>15.2 Your Right to Terminate.</strong> You may terminate your account at any time by contacting us or through your account settings. Termination does not entitle you to any refund of fees paid.</P>
+        <P><strong>15.3 Effect of Termination.</strong> Upon termination, your right to use the Platform ceases immediately. Provisions of these Terms that by their nature should survive termination shall survive, including but not limited to: Disclaimer of Warranties, Limitation of Liability, Indemnification, Governing Law, and any licenses granted by you to PeptideAI with respect to User Data.</P>
+        <P><strong>15.4 Data Following Termination.</strong> Following account termination, PeptideAI may retain your User Data as described in the Privacy Policy and as permitted by applicable law. Anonymized and aggregated data derived from your use of the Platform may be retained indefinitely.</P>
       </>
     ),
   },
   {
     id: 'modifications',
-    label: '13. Modifications',
-    title: '13. Modifications to Terms and Platform',
+    label: '16. Modifications',
+    title: '16. Modifications to Terms and Platform',
     content: (
       <>
         <P>PeptideAI reserves the right to modify these Terms at any time in its sole discretion. We will notify you of material changes by posting the updated Terms on the Platform and updating the "Last Updated" date. For significant changes, we may provide additional notice via email. Your continued use of the Platform after the effective date of any modification constitutes your acceptance of the updated Terms.</P>
@@ -240,22 +302,22 @@ const sections = [
   },
   {
     id: 'general',
-    label: '14. General Provisions',
-    title: '14. General Provisions',
+    label: '17. General Provisions',
+    title: '17. General Provisions',
     content: (
       <>
-        <P><strong>14.1 Entire Agreement.</strong> These Terms, together with the Privacy Policy and any additional terms applicable to specific features or services, constitute the entire agreement between you and PeptideAI regarding the Platform and supersede all prior agreements and understandings.</P>
-        <P><strong>14.2 Severability.</strong> If any provision of these Terms is found to be unenforceable, that provision shall be modified to the minimum extent necessary to make it enforceable, and the remainder of the Terms shall continue in full force and effect.</P>
-        <P><strong>14.3 Waiver.</strong> No failure by PeptideAI to enforce any right or provision of these Terms shall constitute a waiver of that right or provision.</P>
-        <P><strong>14.4 Assignment.</strong> You may not assign or transfer your rights or obligations under these Terms without PeptideAI's prior written consent. PeptideAI may freely assign these Terms in connection with a merger, acquisition, reorganization, or sale of assets.</P>
-        <P><strong>14.5 Contact.</strong> Questions about these Terms should be directed to: <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a></P>
+        <P><strong>17.1 Entire Agreement.</strong> These Terms, together with the Privacy Policy and any additional terms applicable to specific features or services, constitute the entire agreement between you and PeptideAI regarding the Platform and supersede all prior agreements and understandings.</P>
+        <P><strong>17.2 Severability.</strong> If any provision of these Terms is found to be unenforceable, that provision shall be modified to the minimum extent necessary to make it enforceable, and the remainder of the Terms shall continue in full force and effect.</P>
+        <P><strong>17.3 Waiver.</strong> No failure by PeptideAI to enforce any right or provision of these Terms shall constitute a waiver of that right or provision.</P>
+        <P><strong>17.4 Assignment.</strong> You may not assign or transfer your rights or obligations under these Terms without PeptideAI's prior written consent. PeptideAI may freely assign these Terms in connection with a merger, acquisition, reorganization, or sale of assets.</P>
+        <P><strong>17.5 Contact.</strong> Questions about these Terms should be directed to: <a className="legal-link" href="mailto:legal@peptideai.co">legal@peptideai.co</a></P>
       </>
     ),
   },
   {
     id: 'app-store',
-    label: '15. App Store Terms',
-    title: '15. App Store Terms',
+    label: '18. App Store Terms',
+    title: '18. App Store Terms',
     content: (
       <>
         <P>If you access the Platform through a mobile application distributed via Apple App Store or Google Play:</P>
@@ -273,8 +335,8 @@ const sections = [
   },
   {
     id: 'privacy-data',
-    label: '16. Privacy & Data Rights',
-    title: '16. Privacy and Data Rights',
+    label: '19. Privacy & Data Rights',
+    title: '19. Privacy and Data Rights',
     content: (
       <>
         <P>Your use of the Platform is also governed by our <a className="legal-link" href="/privacy">Privacy Policy</a>, which is incorporated into these Terms by reference and forms part of this agreement. Depending on your jurisdiction, you may have rights to access, correct, delete, or restrict the use of your personal data. These rights are described in our Privacy Policy.</P>
@@ -285,32 +347,32 @@ const sections = [
   },
   {
     id: 'export-control',
-    label: '17. Export Control',
-    title: '17. Export Control and Sanctions',
+    label: '20. Export Control',
+    title: '20. Export Control and Sanctions',
     content: (
       <P>You may not use the Platform if you are located in a country subject to U.S. government embargo or if you are on any U.S. government list of prohibited or restricted parties. You agree to comply with all applicable export control laws.</P>
     ),
   },
   {
     id: 'assumption-of-risk',
-    label: '18. Assumption of Risk',
-    title: '18. Assumption of Risk',
+    label: '21. Assumption of Risk',
+    title: '21. Assumption of Risk',
     content: (
       <P>You acknowledge that research, discussion, or consideration of peptides and related compounds may involve unknown risks. You assume full responsibility for any decisions or actions taken based on information obtained through the Platform.</P>
     ),
   },
   {
     id: 'beta-features',
-    label: '19. Beta Features',
-    title: '19. Beta Features',
+    label: '22. Beta Features',
+    title: '22. Beta Features',
     content: (
       <P>Beta or experimental features may be incomplete, contain errors, or produce unreliable results. PeptideAI makes no representations or warranties regarding Beta Features and assumes no liability arising from their use. You use Beta Features at your own risk.</P>
     ),
   },
   {
     id: 'force-majeure',
-    label: '20. Force Majeure',
-    title: '20. Force Majeure',
+    label: '23. Force Majeure',
+    title: '23. Force Majeure',
     content: (
       <P>PeptideAI shall not be liable for any delay or failure to perform resulting from causes outside its reasonable control, including but not limited to acts of God, natural disasters, war, terrorism, labor disputes, internet outages, or governmental actions.</P>
     ),
