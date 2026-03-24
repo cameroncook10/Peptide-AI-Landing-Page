@@ -78,7 +78,7 @@ const sections = [
         ]} />
         <P><strong>4.3 Purpose.</strong> Data is transmitted solely to generate AI-powered responses, educational content, and personalized consulting insights within the Platform.</P>
         <P><strong>4.4 User Consent.</strong> Before any personal data is shared with third-party AI services, the app will present a clear disclosure and request your explicit consent. You may decline or withdraw consent at any time through your account settings. Withdrawing consent will disable AI-powered features but will not affect other Platform functionality.</P>
-        <P><strong>4.5 Third-Party Policies.</strong> Third-party AI providers process your data under their own terms and data processing agreements with PeptideAI. We require contractual protections to safeguard your data. For details, see our <a className="legal-link" href="/privacy">Privacy Policy</a>.</P>
+        <P><strong>4.5 Data Protection Standards.</strong> We require that all third-party AI providers that receive your data maintain technical and organizational security measures that provide the same or equal level of data protection as PeptideAI's own standards. This includes encryption of data in transit and at rest, restricted access controls, contractual limitations on data use and retention, and compliance with applicable data protection laws. Third-party AI providers process your data under data processing agreements with PeptideAI that enforce these protections. For details, see our <a className="legal-link" href="/privacy">Privacy Policy</a>.</P>
       </>
     ),
   },
