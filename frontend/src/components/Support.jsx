@@ -20,8 +20,8 @@ export default function Support() {
         </div>
       </nav>
 
-      <div className="legal-layout">
-        <main className="legal-content" style={{ maxWidth: '760px', margin: '0 auto' }}>
+      <div className="legal-layout" style={{ gridTemplateColumns: '1fr', maxWidth: '100%' }}>
+        <main className="legal-content" style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
           <div className="legal-hero">
             <div className="legal-badge">Help</div>
             <h1 className="legal-title">Support</h1>
