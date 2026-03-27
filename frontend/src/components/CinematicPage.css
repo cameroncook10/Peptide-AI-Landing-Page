@@ -713,6 +713,54 @@
 }
 
 /* ═══════════════════════════════════════════════════
+   STORE DOWNLOAD BUTTONS
+   ═══════════════════════════════════════════════════ */
+.store-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+.store-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.store-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(0,229,160,0.3);
+  transform: translateY(-2px);
+}
+.store-btn-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}
+.store-btn-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.store-btn-small {
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted, #8899aa);
+}
+.store-btn-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════
    STATS
    ═══════════════════════════════════════════════════ */
 .cine-stats {
