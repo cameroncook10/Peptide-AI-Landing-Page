@@ -503,9 +503,9 @@ function createScene(canvas, THREE, postFx) {
 /* ═══════════════════════════════════════════════════
    Ticker Data
    ═══════════════════════════════════════════════════ */
-const TICKER1 = ['AI Insights', 'BPC-157', 'HRV Tracking', 'Sleep Analysis', 'Protocol Builder', 'Dose Schedules', 'TB-500', 'Biometric Data', 'Stack Optimizer', 'Smart Alerts', 'Semax', 'Progress Charts'];
+const TICKER1 = ['AI Insights Chatbot', 'AI Body Scanner', 'BPC-157', 'HRV Tracking', 'Sleep Analysis', 'Protocol Builder', 'Dose Schedules', 'TB-500', 'Biometric Data', 'Stack Optimizer', 'Smart Alerts', 'Semax', 'Progress Charts'];
 const TICKER2 = ['Growth Hormone', 'CJC-1295', 'Recovery Metrics', 'Peptide Logs', 'Custom Protocols', 'IGF-1 Tracking', 'Daily Reports', 'PT-141', 'AOD-9604', 'Ipamorelin', 'DSIP', 'Epitalon'];
-const ACCENTS = new Set(['AI Insights', 'Stack Optimizer', 'Custom Protocols', 'IGF-1 Tracking']);
+const ACCENTS = new Set(['AI Insights Chatbot', 'AI Body Scanner', 'Stack Optimizer', 'Custom Protocols', 'IGF-1 Tracking']);
 
 /* ═══════════════════════════════════════════════════
    Stats
@@ -597,7 +597,7 @@ const STEPS = [
   {
     num: '03',
     title: 'Get AI Insights',
-    desc: 'Our ML models analyze your data to surface correlations, suggest optimizations, and flag potential issues.',
+    desc: 'Chat with our AI Insights Chatbot for instant answers, scan your body with the AI Body Scanner, and get data-backed optimization suggestions.',
     icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>,
   },
   {
@@ -612,10 +612,10 @@ const STEPS = [
    FAQ Data
    ═══════════════════════════════════════════════════ */
 const FAQS = [
-  { q: 'What is Peptide AI?', a: 'Peptide AI is an all-in-one app for building peptide protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights to optimize your stack.' },
+  { q: 'What is Peptide AI?', a: 'Peptide AI is an all-in-one app for building peptide protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights to optimize your stack — featuring an AI Insights Chatbot for instant personalized answers and an AI Body Scanner to track your physical transformation.' },
   { q: 'Is it free to join the waitlist?', a: 'Absolutely. Joining the waitlist is 100% free and gives you early access when we launch, along with exclusive pricing and features.' },
   { q: 'What peptides does the app support?', a: 'We currently catalog 50+ peptides including BPC-157, TB-500, Semax, CJC-1295, Ipamorelin, PT-141, AOD-9604, DSIP, Epitalon, and many more. New peptides are added regularly.' },
-  { q: 'How does the AI analysis work?', a: 'Our machine learning models analyze your biometric data (HRV, sleep, recovery) alongside your dosing logs to identify correlations, surface optimization opportunities, and provide personalized recommendations.' },
+  { q: 'How does the AI analysis work?', a: 'Our AI Insights Chatbot lets you ask questions in plain language and get instant, data-backed answers. The AI Body Scanner uses computer vision to track body composition changes. Both analyze your biometric data, dosing logs, and progress to deliver personalized recommendations.' },
   { q: 'What wearables are supported?', a: 'We integrate with Apple Health, Oura Ring, Whoop, Garmin, and other popular health platforms. More integrations are being added before launch.' },
   { q: 'Is my data secure?', a: 'Yes. All data is encrypted in transit and at rest using industry-standard protocols. We may share, license, or sell certain data with third-party research and commercial partners as described in our Privacy Policy. California residents and users in certain other jurisdictions can opt out of data sales. See our Privacy Policy for full details.' },
 ];
@@ -877,6 +877,8 @@ export default function CinematicPage() {
   const testimonialInView = useInView(testimonialRef, { once: true, margin: '-80px' });
   const pricingRef = useRef(null);
   const pricingInView = useInView(pricingRef, { once: true, margin: '-80px' });
+  const keyFeaturesRef = useRef(null);
+  const keyFeaturesInView = useInView(keyFeaturesRef, { once: true, margin: '-80px' });
 
   useEffect(() => {
     fetch(`${API_BASE}/api/waitlist/count`)
@@ -1240,8 +1242,8 @@ export default function CinematicPage() {
           <span className="hw accent" style={{ animationDelay: '0.65s' }}>Stack</span>
         </h1>
         <p className="hero-sub">
-          Build protocols, track doses, and let AI surface the insights
-          that show exactly how your stack is performing.
+          Build protocols, track doses, scan your body, and chat with AI
+          to see exactly how your stack is performing.
         </p>
         <div className="store-buttons">
           <a href="https://play.google.com/store/apps/details?id=com.peptideai.app&utm_source=na_Med" target="_blank" rel="noopener" className="store-btn">
@@ -1277,20 +1279,20 @@ export default function CinematicPage() {
         <img className="panel-preview" src="/assets/screen1.png" alt="Stack tracking" loading="lazy" />
       </div>
 
-      {/* ── Panel 2: Monitor ── */}
+      {/* ── Panel 2: AI Body Scanner ── */}
       <div className="cinematic-panel" ref={el => (panelsRef.current[1] = el)}>
         <span className="panel-step">02</span>
-        <h2>Monitor your optimization</h2>
-        <p>Watch HRV trends, sleep quality, and recovery metrics evolve as your protocol progresses.</p>
-        <img className="panel-preview" src="/assets/screen2.png" alt="Dashboard" loading="lazy" />
+        <h2>AI Body Scanner</h2>
+        <p>Scan your physique with our AI-powered body scanner to track composition changes over time and see exactly how your protocol is transforming your body.</p>
+        <img className="panel-preview" src="/assets/screen2.png" alt="AI Body Scanner" loading="lazy" />
       </div>
 
-      {/* ── Panel 3: Insights ── */}
+      {/* ── Panel 3: AI Insights Chatbot ── */}
       <div className="cinematic-panel" ref={el => (panelsRef.current[2] = el)}>
         <span className="panel-step">03</span>
-        <h2>AI-powered insights</h2>
-        <p>Get personalized analysis showing exactly how your stack performs — backed entirely by your own biometric data.</p>
-        <img className="panel-preview" src="/assets/screen3.png" alt="AI Insights" loading="lazy" />
+        <h2>AI Insights Chatbot</h2>
+        <p>Ask questions, get instant answers. Our AI chatbot analyzes your biometric data and protocol history to deliver personalized insights and recommendations in real time.</p>
+        <img className="panel-preview" src="/assets/screen3.png" alt="AI Insights Chatbot" loading="lazy" />
       </div>
 
       {/* ── Panel 4: Quick CTA ── */}
@@ -1323,6 +1325,62 @@ export default function CinematicPage() {
             </div>
           </div>
         </div>
+
+        {/* ── Key Features ── */}
+        <section className="cine-key-features" ref={keyFeaturesRef}>
+          <FloatingParticles count={8} />
+          <div className="cine-section-header">
+            <div className="cine-eyebrow">What Sets Us Apart</div>
+            <h2>AI-powered features <span className="accent">no one else has.</span></h2>
+          </div>
+          <div className="cine-key-features-grid">
+            <motion.div
+              className="cine-key-feature-card"
+              initial={{ opacity: 0, y: 40 }}
+              animate={keyFeaturesInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="cine-key-feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  <path d="M8 10h.01" /><path d="M12 10h.01" /><path d="M16 10h.01" />
+                </svg>
+              </div>
+              <div className="cine-key-feature-badge">AI-Powered</div>
+              <h3>AI Insights Chatbot</h3>
+              <p>Your personal peptide advisor. Ask anything about your protocol and get instant, data-backed answers. The chatbot analyzes your biometric trends, dosing history, and recovery data to deliver real-time recommendations tailored to your unique biology.</p>
+              <ul className="cine-key-feature-list">
+                <li>Natural language questions about your stack</li>
+                <li>Personalized recommendations from your data</li>
+                <li>Real-time protocol optimization suggestions</li>
+              </ul>
+            </motion.div>
+            <motion.div
+              className="cine-key-feature-card"
+              initial={{ opacity: 0, y: 40 }}
+              animate={keyFeaturesInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="cine-key-feature-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z" />
+                  <path d="M12 15v7" />
+                  <path d="M8 22h8" />
+                  <path d="M19 10c.6 2.2-.4 5-3 6.5" />
+                  <path d="M5 10c-.6 2.2.4 5 3 6.5" />
+                </svg>
+              </div>
+              <div className="cine-key-feature-badge">AI-Powered</div>
+              <h3>AI Body Scanner</h3>
+              <p>Track your physical transformation with AI-powered body composition analysis. Simply scan your physique and let our models measure changes in muscle mass, body fat distribution, and overall composition — all correlated with your peptide protocol.</p>
+              <ul className="cine-key-feature-list">
+                <li>AI-powered body composition tracking</li>
+                <li>Visual progress over time</li>
+                <li>Correlates physique changes with your protocol</li>
+              </ul>
+            </motion.div>
+          </div>
+        </section>
 
         {/* ── How It Works ── */}
         <section className="cine-steps" ref={stepsRef}>
@@ -1414,7 +1472,7 @@ export default function CinematicPage() {
                 name: 'Weekly',
                 price: '7.99',
                 period: '/week',
-                features: ['Full peptide tracking', 'AI insights', 'Protocol builder'],
+                features: ['Full peptide tracking', 'AI Insights Chatbot', 'AI Body Scanner', 'Protocol builder'],
                 featured: false,
                 badge: null,
               },
@@ -1422,15 +1480,15 @@ export default function CinematicPage() {
                 name: 'Monthly',
                 price: '9.99',
                 period: '/month',
-                features: ['Everything in Weekly', 'Priority support', 'Advanced analytics'],
+                features: ['Everything in Weekly', 'Priority support', 'Advanced analytics', 'Unlimited AI chats'],
                 featured: true,
                 badge: 'Most Popular',
               },
               {
                 name: 'Yearly',
-                price: '39.99',
+                price: '54.99',
                 period: '/year',
-                features: ['Everything in Monthly', 'Save 67%', 'Early access to new features'],
+                features: ['Everything in Monthly', 'Save 54%', 'Early access to new features'],
                 featured: false,
                 badge: 'Best Value',
               },
