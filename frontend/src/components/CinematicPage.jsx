@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import './CinematicPage.css';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
 
 /* ═══════════════════════════════════════════════════
    Nebula Background Shaders
@@ -613,7 +612,7 @@ const STEPS = [
    ═══════════════════════════════════════════════════ */
 const FAQS = [
   { q: 'What is Peptide AI?', a: 'Peptide AI is an all-in-one app for building peptide protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights to optimize your stack — featuring an AI Insights Chatbot for instant personalized answers and an AI Body Scanner to track your physical transformation.' },
-  { q: 'Is it free to join the waitlist?', a: 'Absolutely. Joining the waitlist is 100% free and gives you early access when we launch, along with exclusive pricing and features.' },
+  { q: 'Is the app free to download?', a: 'Yes! Peptide AI is free to download on both the App Store and Google Play. Premium features are available through our subscription plans.' },
   { q: 'What peptides does the app support?', a: 'We currently catalog 50+ peptides including BPC-157, TB-500, Semax, CJC-1295, Ipamorelin, PT-141, AOD-9604, DSIP, Epitalon, and many more. New peptides are added regularly.' },
   { q: 'How does the AI analysis work?', a: 'Our AI Insights Chatbot lets you ask questions in plain language and get instant, data-backed answers. The AI Body Scanner uses computer vision to track body composition changes. Both analyze your biometric data, dosing logs, and progress to deliver personalized recommendations.' },
   { q: 'What wearables are supported?', a: 'We integrate with Apple Health, Oura Ring, Whoop, Garmin, and other popular health platforms. More integrations are being added before launch.' },
@@ -842,14 +841,6 @@ export default function CinematicPage() {
   const panelsRef = useRef([]);
   const heroRef = useRef(null);
 
-  // Waitlist state
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [status, setStatus] = useState(null);
-  const [message, setMessage] = useState('');
-  const [waitlistCount, setWaitlistCount] = useState(null);
-  const [joinCount, setJoinCount] = useState(0);
-
   // FAQ state
   const [openFaq, setOpenFaq] = useState(null);
 
@@ -880,38 +871,6 @@ export default function CinematicPage() {
   const keyFeaturesRef = useRef(null);
   const keyFeaturesInView = useInView(keyFeaturesRef, { once: true, margin: '-80px' });
 
-  useEffect(() => {
-    fetch(`${API_BASE}/api/waitlist/count`)
-      .then(r => r.json())
-      .then(d => { if (d.count != null) setWaitlistCount(d.count); })
-      .catch(() => {});
-  }, [joinCount]);
-
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus('loading');
-    try {
-      const res = await fetch(`${API_BASE}/api/waitlist`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, phone: phone || undefined }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setStatus('success');
-        setMessage(data.message || "You're on the waitlist!");
-        setEmail(''); setPhone('');
-        setJoinCount(c => c + 1);
-      } else {
-        setStatus('error');
-        setMessage(data.error || 'Something went wrong.');
-      }
-    } catch {
-      setStatus('error');
-      setMessage('Could not connect. Please try again.');
-    }
-  }, [email, phone]);
 
   // ── Three.js + scroll-driven panels ──
   useEffect(() => {
@@ -1253,10 +1212,10 @@ export default function CinematicPage() {
               <span className="store-btn-label">Google Play</span>
             </div>
           </a>
-          <a href="#" className="store-btn store-btn-disabled">
+          <a href="https://apps.apple.com/us/app/peptide-ai-stack-intelligence/id6760374374" target="_blank" rel="noopener" className="store-btn">
             <svg width="20" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
             <div className="store-btn-text">
-              <span className="store-btn-small">COMING SOON ON</span>
+              <span className="store-btn-small">Download on the</span>
               <span className="store-btn-label">App Store</span>
             </div>
           </a>
@@ -1299,8 +1258,8 @@ export default function CinematicPage() {
       <div className="cinematic-panel cinematic-panel-cta" ref={el => (panelsRef.current[3] = el)}>
         <span className="panel-step">04</span>
         <h2>Your biology is your data.</h2>
-        <p>Be first in line when we launch.</p>
-        <MagneticBtn className="panel-cta-btn" href="#waitlist">Join the Waitlist</MagneticBtn>
+        <p>Start optimizing your peptide stack today.</p>
+        <MagneticBtn className="panel-cta-btn" href="#download">Download Now</MagneticBtn>
       </div>
 
       {/* ═══ PHASE 2: Rich Content (normal scroll) ═══ */}
@@ -1514,7 +1473,7 @@ export default function CinematicPage() {
                     </li>
                   ))}
                 </ul>
-                <a className="cine-pricing-cta" href="#waitlist">Get Started</a>
+                <a className="cine-pricing-cta" href="#download">Get Started</a>
               </motion.div>
             ))}
           </div>
@@ -1614,54 +1573,31 @@ export default function CinematicPage() {
           </motion.div>
         </section>
 
-        {/* ── Final CTA / Waitlist ── */}
-        <section className="cine-final" id="waitlist">
+        {/* ── Final CTA / Download ── */}
+        <section className="cine-final" id="download">
           <div className="cine-final-glow" />
           <FloatingParticles count={8} />
           <div className="cine-final-inner">
-            <div className="cine-eyebrow">Launching Soon</div>
+            <div className="cine-eyebrow">Available Now</div>
             <h2>The smarter way to run your <span className="accent">protocol.</span></h2>
-            <p>Peptide AI combines protocol management, biometric tracking, and AI insights in one clean app. Join the waitlist to be first in.</p>
+            <p>Peptide AI combines protocol management, biometric tracking, and AI insights in one clean app. Download now on iOS and Android.</p>
 
-            <AnimatePresence mode="wait">
-              {status === 'success' ? (
-                <motion.div
-                  key="ok"
-                  className="cine-final-success"
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="cine-final-check">
-                    <motion.svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <motion.path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8 }} />
-                      <motion.polyline points="22 4 12 14.01 9 11.01" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.6 }} />
-                    </motion.svg>
-                  </div>
-                  <p>{message}</p>
-                </motion.div>
-              ) : (
-                <motion.form key="form" className="cine-final-form glow-border-wrap" onSubmit={handleSubmit} initial={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <div className="glow-border" />
-                  <div className="cine-final-form-inner">
-                    <input className="cine-final-input" type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} required disabled={status === 'loading'} />
-                    <input className="cine-final-input" type="tel" placeholder="Phone (optional — for SMS)" value={phone} onChange={e => setPhone(e.target.value)} disabled={status === 'loading'} />
-                    <MagneticBtn className="cine-final-btn" type="submit" disabled={status === 'loading'}>
-                      {status === 'loading' ? 'Joining...' : 'Join the Waitlist'}
-                    </MagneticBtn>
-                  </div>
-                </motion.form>
-              )}
-            </AnimatePresence>
-
-            {status === 'error' && <p className="cine-final-error">{message}</p>}
-
-            {waitlistCount > 0 && (
-              <div className="cine-final-proof">
-                Join <strong>{Math.max(500, waitlistCount).toLocaleString()}+</strong> on the waitlist
-              </div>
-            )}
+            <div className="store-buttons" style={{ marginTop: '1.5rem', justifyContent: 'center' }}>
+              <a href="https://play.google.com/store/apps/details?id=com.peptideai.app&utm_source=na_Med" target="_blank" rel="noopener" className="store-btn">
+                <svg width="20" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 1.332-2.302 1.332-1.867-1.332 1.867-1.332zM5.864 3.469l10.937 6.333-2.302 2.302-8.635-8.635z"/></svg>
+                <div className="store-btn-text">
+                  <span className="store-btn-small">GET IT ON</span>
+                  <span className="store-btn-label">Google Play</span>
+                </div>
+              </a>
+              <a href="https://apps.apple.com/us/app/peptide-ai-stack-intelligence/id6760374374" target="_blank" rel="noopener" className="store-btn">
+                <svg width="20" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                <div className="store-btn-text">
+                  <span className="store-btn-small">Download on the</span>
+                  <span className="store-btn-label">App Store</span>
+                </div>
+              </a>
+            </div>
 
             <div className="cine-trust-badges">
               <div className="cine-trust-badge">
@@ -1686,10 +1622,10 @@ export default function CinematicPage() {
                   <span className="store-btn-label">Google Play</span>
                 </div>
               </a>
-              <a href="#" className="store-btn store-btn-disabled">
+              <a href="https://apps.apple.com/us/app/peptide-ai-stack-intelligence/id6760374374" target="_blank" rel="noopener" className="store-btn">
                 <svg width="20" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                 <div className="store-btn-text">
-                  <span className="store-btn-small">COMING SOON ON</span>
+                  <span className="store-btn-small">Download on the</span>
                   <span className="store-btn-label">App Store</span>
                 </div>
               </a>
