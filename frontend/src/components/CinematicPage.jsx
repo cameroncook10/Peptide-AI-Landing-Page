@@ -510,7 +510,7 @@ const ACCENTS = new Set(['AI Insights Chatbot', 'AI Body Scanner', 'Stack Optimi
    Stats
    ═══════════════════════════════════════════════════ */
 const STATS = [
-  { end: 1000, suffix: '+', label: 'Clinical studies referenced', icon: 'book' },
+  { end: 500, suffix: '+', label: 'Clinical studies referenced', icon: 'book' },
   { end: 50, suffix: '+', label: 'Peptides cataloged', icon: 'flask' },
   { end: 12, suffix: '+', label: 'Biomarkers tracked', icon: 'pulse' },
 ];
