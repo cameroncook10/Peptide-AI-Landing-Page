@@ -1550,7 +1550,7 @@ export default function CinematicPage() {
         </section>
 
         {/* ── FAQ ── */}
-        <section className="cine-faq" ref={faqRef}>
+        <section className="cine-faq" id="faq" ref={faqRef}>
           <div className="cine-section-header">
             <div className="cine-eyebrow">FAQ</div>
             <h2>Got <span className="accent">questions?</span></h2>
