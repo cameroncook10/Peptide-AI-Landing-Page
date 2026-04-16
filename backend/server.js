@@ -107,6 +107,71 @@ app.get('/api/waitlist/count', async (req, res) => {
   res.json({ count });
 });
 
+// POST /api/affiliate — submit affiliate application
+app.post('/api/affiliate', async (req, res) => {
+  const { firstName, lastName, email, phone, platforms, audienceSize, contentNiche, promoPlan, existingPartnerships, notes } = req.body;
+
+  if (!firstName || !lastName) {
+    return res.status(400).json({ error: 'First and last name are required.' });
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email address required.' });
+  }
+  if (!platforms || !Array.isArray(platforms) || platforms.length === 0) {
+    return res.status(400).json({ error: 'At least one platform must be selected.' });
+  }
+
+  const { data, error } = await supabase
+    .from('affiliates')
+    .insert({
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone || null,
+      platforms,
+      audience_size: audienceSize || null,
+      content_niche: contentNiche || null,
+      promo_plan: promoPlan || null,
+      existing_partnerships: existingPartnerships || null,
+      notes: notes || null,
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'An application from this email already exists.' });
+    }
+    console.error('Affiliate insert error:', error);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  // Notify owner
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const transporter = createTransporter();
+      await transporter.sendMail({
+        from: `"Peptide AI" <${process.env.SMTP_USER}>`,
+        to: process.env.OWNER_EMAIL || process.env.SMTP_USER,
+        subject: 'New Affiliate Application — Peptide AI',
+        html: `
+          <p><strong>Name:</strong> ${firstName} ${lastName}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone || 'not provided'}</p>
+          <p><strong>Platforms:</strong> ${platforms.join(', ')}</p>
+          <p><strong>Audience Size:</strong> ${audienceSize || 'not provided'}</p>
+          <p><strong>Content Niche:</strong> ${contentNiche || 'not provided'}</p>
+          <p><strong>Promo Plan:</strong> ${promoPlan || 'not provided'}</p>
+          <p><strong>Existing Partnerships:</strong> ${existingPartnerships || 'none'}</p>
+          <p><strong>Notes:</strong> ${notes || 'none'}</p>
+        `,
+      });
+    } catch (err) { console.error('Affiliate owner email failed:', err.message); }
+  }
+
+  res.json({ success: true, message: "Application received! We'll be in touch within 2–3 business days." });
+});
+
 // GET /api/waitlist — admin: list all signups (requires API key)
 app.get('/api/waitlist', async (req, res) => {
   const key = req.headers['x-admin-key'];

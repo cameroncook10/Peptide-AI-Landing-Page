@@ -68,16 +68,16 @@ export default function Hero() {
       >
         <motion.div className="eyebrow" variants={fadeUp(0)}>
           <span className="eyebrow-dot" />
-          AI-Powered Peptide Tracking
+          AI &amp; Machine Learning for Peptide Therapeutics
         </motion.div>
         <h1>
-          <AnimatedLine>Optimize your</AnimatedLine>
-          <AnimatedLine className="accent">Peptide Stack.</AnimatedLine>
-          <AnimatedLine>Like a pro.</AnimatedLine>
+          <AnimatedLine>The Future of</AnimatedLine>
+          <AnimatedLine className="accent">Peptide Intelligence.</AnimatedLine>
         </h1>
         <motion.p className="hero-sub" variants={fadeUp(0.55)}>
-          Build protocols, track doses, and let AI surface the insights
-          that show exactly how your stack is performing.
+          We build proprietary AI models that power the next generation of
+          peptide therapeutics — research-grade protocol intelligence,
+          precision-optimized to your biology.
         </motion.p>
         <motion.div className="cta-row" variants={fadeUp(0.7)}>
           <a className="cta primary" href="#waitlist">
