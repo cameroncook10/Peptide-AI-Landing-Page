@@ -611,7 +611,7 @@ const STEPS = [
    FAQ Data
    ═══════════════════════════════════════════════════ */
 const FAQS = [
-  { q: 'What is Peptide AI?', a: 'Peptide AI is an all-in-one app for building peptide protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights to optimize your stack — featuring an AI Insights Chatbot for instant personalized answers and an AI Body Scanner to track your physical transformation.' },
+  { q: 'What is Peptide AI?', a: 'Peptide AI is a research-driven startup building proprietary AI and machine learning models for peptide therapeutics. Our platform — available as a consumer app — gives you an all-in-one environment for building protocols, tracking doses, syncing biometric data from wearables, and getting AI-powered insights. We\'re not just an app: we\'re a company catalyzing the next generation of personalized peptide therapeutics through technology.' },
   { q: 'Is the app free to download?', a: 'Yes! Peptide AI is free to download on both the App Store and Google Play. Premium features are available through our subscription plans.' },
   { q: 'What peptides does the app support?', a: 'We currently catalog 50+ peptides including BPC-157, TB-500, Semax, CJC-1295, Ipamorelin, PT-141, AOD-9604, DSIP, Epitalon, and many more. New peptides are added regularly.' },
   { q: 'How does the AI analysis work?', a: 'Our AI Insights Chatbot lets you ask questions in plain language and get instant, data-backed answers. The AI Body Scanner uses computer vision to track body composition changes. Both analyze your biometric data, dosing logs, and progress to deliver personalized recommendations.' },
@@ -1192,17 +1192,18 @@ export default function CinematicPage() {
 
       {/* ── Hero Overlay ── */}
       <div className="cinematic-hero" ref={heroRef}>
-        <div className="hero-badge">AI-Powered Peptide Tracking</div>
+        <div className="hero-badge">AI &amp; Machine Learning for Peptide Therapeutics</div>
         <h1 className="hero-headline">
-          <span className="hw" style={{ animationDelay: '0.2s' }}>Optimize</span>{' '}
-          <span className="hw" style={{ animationDelay: '0.35s' }}>Your</span>
+          <span className="hw" style={{ animationDelay: '0.2s' }}>The Future</span>{' '}
+          <span className="hw" style={{ animationDelay: '0.35s' }}>of</span>
           <br />
           <span className="hw accent" style={{ animationDelay: '0.5s' }}>Peptide</span>{' '}
-          <span className="hw accent" style={{ animationDelay: '0.65s' }}>Stack</span>
+          <span className="hw accent" style={{ animationDelay: '0.65s' }}>Intelligence</span>
         </h1>
         <p className="hero-sub">
-          Build protocols, track doses, scan your body, and chat with AI
-          to see exactly how your stack is performing.
+          We build proprietary AI models that power the next generation of
+          peptide therapeutics. Our platform gives you research-grade protocol
+          intelligence — precision optimized to your biology.
         </p>
         <div className="store-buttons">
           <a href="https://play.google.com/store/apps/details?id=com.peptideai.app&utm_source=na_Med" target="_blank" rel="noopener" className="store-btn">
@@ -1571,6 +1572,41 @@ export default function CinematicPage() {
               />
             ))}
           </motion.div>
+        </section>
+
+        {/* ── Affiliate Program ── */}
+        <section className="cine-affiliate" id="affiliates">
+          <FloatingParticles count={6} color="rgba(0,229,160,0.07)" />
+          <div className="cine-affiliate-inner">
+            <div className="cine-eyebrow">Affiliate Program</div>
+            <h2>Grow with <span className="accent">Peptide AI.</span></h2>
+            <p className="cine-affiliate-sub">
+              Partner with a startup at the frontier of AI-driven peptide therapeutics.
+              Earn commission sharing the tools your audience already wants.
+            </p>
+            <div className="cine-affiliate-perks">
+              <div className="cine-affiliate-perk">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <span>Recurring commissions</span>
+              </div>
+              <div className="cine-affiliate-perk">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Dedicated support</span>
+              </div>
+              <div className="cine-affiliate-perk">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span>Real-time dashboard</span>
+              </div>
+              <div className="cine-affiliate-perk">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                <span>Ready-to-use creative assets</span>
+              </div>
+            </div>
+            <Link to="/affiliates" className="cine-affiliate-cta">
+              Apply to the Program
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </Link>
+          </div>
         </section>
 
         {/* ── Final CTA / Download ── */}

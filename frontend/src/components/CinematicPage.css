@@ -1312,6 +1312,83 @@
 }
 
 /* ═══════════════════════════════════════════════════
+   AFFILIATE PROGRAM SECTION
+   ═══════════════════════════════════════════════════ */
+.cine-affiliate {
+  position: relative;
+  padding: 7rem 2rem;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.cine-affiliate-inner {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  z-index: 1;
+}
+.cine-affiliate-inner h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 400;
+  color: #eef2ff;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+.cine-affiliate-inner h2 .accent {
+  background: linear-gradient(135deg, #00e5a0 0%, #00B4D8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cine-affiliate-sub {
+  font-size: 1.05rem;
+  color: #7a8499;
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 2.5rem;
+}
+.cine-affiliate-perks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 2rem;
+  margin-bottom: 2.5rem;
+}
+.cine-affiliate-perk {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #c0cbdf;
+}
+.cine-affiliate-perk svg {
+  color: #00e5a0;
+  flex-shrink: 0;
+}
+.cine-affiliate-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--accent);
+  color: var(--layer-0);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+}
+.cine-affiliate-cta:hover {
+  background: #00c98c;
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════
    FINAL CTA / WAITLIST
    ═══════════════════════════════════════════════════ */
 .cine-final {
