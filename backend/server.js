@@ -127,5 +127,91 @@ app.get('/api/waitlist', async (req, res) => {
   res.json({ count: data.length, entries: data });
 });
 
+// POST /api/affiliate — submit affiliate application
+app.post('/api/affiliate', async (req, res) => {
+  const {
+    firstName, lastName, email, phone,
+    platforms, audienceSize, contentNiche,
+    promoPlan, existingPartnerships, notes,
+  } = req.body;
+
+  if (!firstName?.trim() || !lastName?.trim()) {
+    return res.status(400).json({ error: 'First and last name are required.' });
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email address required.' });
+  }
+  if (!Array.isArray(platforms) || platforms.length === 0) {
+    return res.status(400).json({ error: 'Select at least one platform.' });
+  }
+
+  const { error } = await supabase.from('affiliates').insert({
+    first_name: firstName.trim(),
+    last_name: lastName.trim(),
+    email: email.trim().toLowerCase(),
+    phone: phone || null,
+    platforms,
+    audience_size: audienceSize || null,
+    content_niche: contentNiche || null,
+    promo_plan: promoPlan || null,
+    existing_partnerships: existingPartnerships || null,
+    notes: notes || null,
+  });
+
+  if (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'This email already has an application on file.' });
+    }
+    console.error('Affiliate insert error:', error);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const transporter = createTransporter();
+      await transporter.sendMail({
+        from: `"Peptide AI" <${process.env.SMTP_USER}>`,
+        to: process.env.OWNER_EMAIL || process.env.SMTP_USER,
+        subject: 'New Affiliate Application — Peptide AI',
+        html: `
+          <h2>New Affiliate Application</h2>
+          <table style="border-collapse:collapse;">
+            <tr><td style="padding:4px 12px;font-weight:bold;">Name</td><td>${firstName} ${lastName}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Email</td><td>${email}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Phone</td><td>${phone || '—'}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Platforms</td><td>${platforms.join(', ')}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Audience</td><td>${audienceSize || '—'}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Niche</td><td>${contentNiche || '—'}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Promo Plan</td><td>${promoPlan || '—'}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Partnerships</td><td>${existingPartnerships || '—'}</td></tr>
+            <tr><td style="padding:4px 12px;font-weight:bold;">Notes</td><td>${notes || '—'}</td></tr>
+          </table>`,
+      });
+    } catch (err) { console.error('Affiliate notification email failed:', err.message); }
+  }
+
+  res.json({ success: true, message: "Application received! We'll be in touch within 2–3 business days." });
+});
+
+// GET /api/affiliates — admin: list all affiliate applications
+app.get('/api/affiliates', async (req, res) => {
+  const key = req.headers['x-admin-key'];
+  if (!key || key !== process.env.ADMIN_KEY) {
+    return res.status(401).json({ error: 'Unauthorized.' });
+  }
+
+  const { data, error } = await supabase
+    .from('affiliates')
+    .select('*')
+    .order('applied_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase affiliates fetch error:', error);
+    return res.status(500).json({ error: 'Could not fetch affiliates.' });
+  }
+
+  res.json({ count: data.length, entries: data });
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => console.log(`Backend running on http://localhost:${PORT}`));
