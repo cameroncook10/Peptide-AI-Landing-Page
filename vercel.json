@@ -3,7 +3,7 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!api/|app-ads\\.txt).*)",
       "destination": "/index.html"
     }
   ]
