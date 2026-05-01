@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
 
@@ -103,6 +103,9 @@ function MarqueeColumn({ items, colClass }) {
 export default function LandingPage() {
   const navRef = useRef(null);
   const rootRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function closeMenu() { setMenuOpen(false); }
 
   // Nav frosted-glass on scroll
   useEffect(() => {
@@ -170,9 +173,25 @@ export default function LandingPage() {
           </div>
           <div className="nav-cta">
             <a href="#cta" className="btn btn-mint">Get the app</a>
+            <button
+              className={`nav-hamburger${menuOpen ? ' open' : ''}`}
+              aria-label="Menu"
+              onClick={() => setMenuOpen(o => !o)}
+            >
+              <span /><span /><span />
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu${menuOpen ? ' open' : ''}`}>
+        <a href="#how" onClick={closeMenu}>How it works</a>
+        <a href="#features" onClick={closeMenu}>Features</a>
+        <Link to="/partners" onClick={closeMenu}>Partners</Link>
+        <Link to="/affiliates" onClick={closeMenu}>Affiliates</Link>
+        <a href="#cta" className="mm-cta" onClick={closeMenu}>Get the app</a>
+      </div>
 
       {/* HERO */}
       <section className="hero-v8" id="hero">
@@ -447,6 +466,7 @@ export default function LandingPage() {
             <ul>
               <li><a href="#hero">About</a></li>
               <li><a href="#how">Science</a></li>
+              <li><Link to="/partners">Partners</Link></li>
               <li><Link to="/affiliates">Affiliates</Link></li>
               <li><Link to="/support">Contact</Link></li>
             </ul>
