@@ -4,17 +4,12 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, useTransform, useSpring, useMotionValue } from "framer-motion";
 
 // --- FlipCard Component ---
-const IMG_WIDTH = 120;
-const IMG_HEIGHT = 240;
+const IMG_WIDTH = 140;
+const IMG_HEIGHT = 280;
 
-function FlipCard({
-    src,
-    index,
-    target,
-}) {
+function FlipCard({ src, index, target }) {
     return (
         <motion.div
-            // Smoothly animate to the coordinates defined by the parent
             animate={{
                 x: target.x,
                 y: target.y,
@@ -24,15 +19,15 @@ function FlipCard({
             }}
             transition={{
                 type: "spring",
-                stiffness: 40,
-                damping: 15,
+                stiffness: 22,
+                damping: 14,
+                mass: 1.2,
             }}
-            // Initial style
             style={{
                 position: "absolute",
                 width: IMG_WIDTH,
                 height: IMG_HEIGHT,
-                transformStyle: "preserve-3d", // Essential for the 3D hover effect
+                transformStyle: "preserve-3d",
                 perspective: "1000px",
             }}
             className="cursor-pointer group"
@@ -45,25 +40,51 @@ function FlipCard({
             >
                 {/* Front Face */}
                 <div
-                    className="absolute inset-0 h-full w-full overflow-hidden rounded-xl shadow-lg bg-[#0a0a0a] border border-white/10"
-                    style={{ backfaceVisibility: "hidden", position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    style={{
+                        backfaceVisibility: "hidden",
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden',
+                        borderRadius: 20,
+                        background: '#0a0a0a',
+                        border: '2px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 20px 60px -15px rgba(0,0,0,0.6), 0 0 40px -10px rgba(45,216,132,0.15)',
+                    }}
                 >
                     <img
                         src={src}
-                        alt={`hero-${index}`}
-                        className="h-full w-full object-cover"
+                        alt={`screen-${index}`}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
                     />
-                    <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-transparent" />
                 </div>
 
                 {/* Back Face */}
                 <div
-                    className="absolute inset-0 h-full w-full overflow-hidden rounded-xl shadow-lg bg-[#111111] flex flex-col items-center justify-center p-4 border border-white/20"
-                    style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)", position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    style={{
+                        backfaceVisibility: "hidden",
+                        transform: "rotateY(180deg)",
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden',
+                        borderRadius: 20,
+                        background: '#111',
+                        border: '2px solid rgba(255,255,255,0.15)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 16,
+                    }}
                 >
-                    <div className="text-center">
-                        <p className="text-[8px] font-bold text-[#2dd884] uppercase tracking-widest mb-1">View</p>
-                        <p className="text-xs font-medium text-white">Details</p>
+                    <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontSize: 8, fontWeight: 700, color: '#2dd884', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>View</p>
+                        <p style={{ fontSize: 12, fontWeight: 500, color: '#fff' }}>Details</p>
                     </div>
                 </div>
             </motion.div>
@@ -72,19 +93,16 @@ function FlipCard({
 }
 
 // --- Main Hero Component ---
-const TOTAL_IMAGES = 20;
-const MAX_SCROLL = 3000;
+// Only 4 cards — one per actual app screen
+const TOTAL_IMAGES = 4;
+const MAX_SCROLL = 2000; // Shorter scroll range for gentler motion
 
-// The 4 app screens provided by the user, repeated 5 times to hit 20
-const APP_SCREENS = [
+const IMAGES = [
     "/assets/screen-dashboard.png",
     "/assets/screen-track.png",
     "/assets/screen-stack.png",
     "/assets/screen-injection-sites.png",
 ];
-
-// Generate exactly 20 images by looping the 4 screens
-const IMAGES = Array.from({ length: TOTAL_IMAGES }, (_, i) => APP_SCREENS[i % APP_SCREENS.length]);
 
 const lerp = (start, end, t) => start * (1 - t) + end * t;
 
@@ -117,51 +135,37 @@ export default function IntroAnimation() {
         return () => observer.disconnect();
     }, []);
 
-    // --- Virtual Scroll Logic ---
+    // --- Tie animation to actual page scroll (non-trapping) ---
     const virtualScroll = useMotionValue(0);
     const scrollRef = useRef(0);
 
     useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const handleWheel = (e) => {
-            // Prevent default only if we are morphing inside the hero constraints
-            // (In a real landing page, you might want this to scroll the whole page instead of trapping scroll forever. 
-            // We use standard wheel event and let it progress, then eventually unlock).
-            
-            // Allow normal page scroll, but tie motion to it.
-        };
-
-        // For this landing page integration, we will tie the morph directly to the actual window scrollY!
-        // The original code trapped scroll. We want it to be part of the landing page flow.
         const onScroll = () => {
-             // Map window.scrollY to virtualScroll
-             const currentScroll = window.scrollY;
-             // Slow down the scroll effect slightly so it matches normal page flow
-             const mappedScroll = Math.min(Math.max(currentScroll * 2, 0), MAX_SCROLL);
-             scrollRef.current = mappedScroll;
-             virtualScroll.set(mappedScroll);
+            const currentScroll = window.scrollY;
+            // Gentle mapping — slow progression
+            const mappedScroll = Math.min(Math.max(currentScroll * 1.2, 0), MAX_SCROLL);
+            scrollRef.current = mappedScroll;
+            virtualScroll.set(mappedScroll);
         };
         window.addEventListener("scroll", onScroll, { passive: true });
-        onScroll(); // initialize
+        onScroll();
 
         return () => {
             window.removeEventListener("scroll", onScroll);
         };
     }, [virtualScroll]);
 
-    // 1. Morph Progress: 0 (Circle) -> 1 (Bottom Arc)
-    const morphProgress = useTransform(virtualScroll, [0, 600], [0, 1]);
-    const smoothMorph = useSpring(morphProgress, { stiffness: 40, damping: 20 });
+    // 1. Morph: Circle → gentle arc (slower range)
+    const morphProgress = useTransform(virtualScroll, [0, 800], [0, 1]);
+    const smoothMorph = useSpring(morphProgress, { stiffness: 25, damping: 18 });
 
-    // 2. Scroll Rotation (Shuffling)
-    const scrollRotate = useTransform(virtualScroll, [600, MAX_SCROLL], [0, 360]);
-    const smoothScrollRotate = useSpring(scrollRotate, { stiffness: 40, damping: 20 });
+    // 2. Slow rotation / shuffle after morph
+    const scrollRotate = useTransform(virtualScroll, [800, MAX_SCROLL], [0, 120]);
+    const smoothScrollRotate = useSpring(scrollRotate, { stiffness: 20, damping: 18 });
 
-    // --- Mouse Parallax ---
+    // --- Mouse Parallax (subtle) ---
     const mouseX = useMotionValue(0);
-    const smoothMouseX = useSpring(mouseX, { stiffness: 30, damping: 20 });
+    const smoothMouseX = useSpring(mouseX, { stiffness: 20, damping: 18 });
 
     useEffect(() => {
         const container = containerRef.current;
@@ -171,25 +175,25 @@ export default function IntroAnimation() {
             const rect = container.getBoundingClientRect();
             const relativeX = e.clientX - rect.left;
             const normalizedX = (relativeX / rect.width) * 2 - 1;
-            mouseX.set(normalizedX * 100);
+            mouseX.set(normalizedX * 40); // reduced from 100
         };
         container.addEventListener("mousemove", handleMouseMove);
         return () => container.removeEventListener("mousemove", handleMouseMove);
     }, [mouseX]);
 
-    // --- Intro Sequence ---
+    // --- Intro Sequence (slower) ---
     useEffect(() => {
-        const timer1 = setTimeout(() => setIntroPhase("line"), 500);
-        const timer2 = setTimeout(() => setIntroPhase("circle"), 2500);
+        const timer1 = setTimeout(() => setIntroPhase("line"), 800);
+        const timer2 = setTimeout(() => setIntroPhase("circle"), 3000);
         return () => { clearTimeout(timer1); clearTimeout(timer2); };
     }, []);
 
-    // --- Random Scatter Positions ---
+    // --- Random Scatter Positions (smaller range for fewer cards) ---
     const scatterPositions = useMemo(() => {
         return IMAGES.map(() => ({
-            x: (Math.random() - 0.5) * 1500,
-            y: (Math.random() - 0.5) * 1000,
-            rotation: (Math.random() - 0.5) * 180,
+            x: (Math.random() - 0.5) * 600,
+            y: (Math.random() - 0.5) * 400,
+            rotation: (Math.random() - 0.5) * 60,
             scale: 0.6,
             opacity: 0,
         }));
@@ -210,34 +214,41 @@ export default function IntroAnimation() {
         };
     }, [smoothMorph, smoothScrollRotate, smoothMouseX]);
 
-    const contentOpacity = useTransform(smoothMorph, [0.8, 1], [0, 1]);
-    const contentY = useTransform(smoothMorph, [0.8, 1], [20, 0]);
-
     return (
-        <div ref={containerRef} className="relative w-full h-[600px] overflow-hidden pointer-events-none z-10 -mt-20" style={{ height: '600px', width: '100%', position: 'relative', marginTop: '-5rem' }}>
-            {/* We make the wrapper pointer-events-none so it doesn't block hero clicks, 
-                and re-enable pointer-events-auto on the actual cards if needed */}
-                
-            <div className="flex h-full w-full flex-col items-center justify-center perspective-1000">
+        <div
+            ref={containerRef}
+            style={{
+                height: 700,
+                width: '100%',
+                position: 'relative',
+                overflow: 'hidden',
+                pointerEvents: 'none',
+                zIndex: 10,
+                marginTop: '-3rem',
+            }}
+        >
+            <div style={{ display: 'flex', height: '100%', width: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 
                 {/* Main Container */}
-                <div className="relative flex items-center justify-center w-full h-full pointer-events-auto">
-                    {IMAGES.slice(0, TOTAL_IMAGES).map((src, i) => {
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', pointerEvents: 'auto' }}>
+                    {IMAGES.map((src, i) => {
                         let target = { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 };
 
                         if (introPhase === "scatter") {
                             target = scatterPositions[i];
                         } else if (introPhase === "line") {
-                            const lineSpacing = 70;
+                            // 4 cards in a neat line, nicely spaced
+                            const lineSpacing = 170;
                             const lineTotalWidth = TOTAL_IMAGES * lineSpacing;
-                            const lineX = i * lineSpacing - lineTotalWidth / 2;
+                            const lineX = i * lineSpacing - lineTotalWidth / 2 + lineSpacing / 2;
                             target = { x: lineX, y: 0, rotation: 0, scale: 1, opacity: 1 };
                         } else {
+                            // Circle → arc morph
                             const isMobile = containerSize.width < 768;
                             const minDimension = Math.min(containerSize.width, containerSize.height);
 
-                            // Circle
-                            const circleRadius = Math.min(minDimension * 0.35, 350);
+                            // Circle positions — tight circle for 4 cards
+                            const circleRadius = Math.min(minDimension * 0.25, 200);
                             const circleAngle = (i / TOTAL_IMAGES) * 360;
                             const circleRad = (circleAngle * Math.PI) / 180;
                             const circlePos = {
@@ -246,17 +257,18 @@ export default function IntroAnimation() {
                                 rotation: circleAngle + 90,
                             };
 
-                            // Arc
+                            // Gentle arc — cards spread across bottom in a soft curve
                             const baseRadius = Math.min(containerSize.width, containerSize.height * 1.5);
-                            const arcRadius = baseRadius * (isMobile ? 1.4 : 1.1);
-                            const arcApexY = containerSize.height * (isMobile ? 0.35 : 0.25);
+                            const arcRadius = baseRadius * (isMobile ? 1.2 : 0.9);
+                            const arcApexY = containerSize.height * (isMobile ? 0.3 : 0.2);
                             const arcCenterY = arcApexY + arcRadius;
-                            const spreadAngle = isMobile ? 100 : 130;
+                            const spreadAngle = isMobile ? 60 : 80; // Narrower spread for 4 cards
                             const startAngle = -90 - (spreadAngle / 2);
                             const step = spreadAngle / (TOTAL_IMAGES - 1);
 
-                            const scrollProgress = Math.min(Math.max(rotateValue / 360, 0), 1);
-                            const maxRotation = spreadAngle * 0.8;
+                            // Gentle scroll rotation
+                            const scrollProgress = Math.min(Math.max(rotateValue / 120, 0), 1);
+                            const maxRotation = spreadAngle * 0.4;
                             const boundedRotation = -scrollProgress * maxRotation;
                             const currentArcAngle = startAngle + (i * step) + boundedRotation;
                             const arcRad = (currentArcAngle * Math.PI) / 180;
@@ -265,10 +277,10 @@ export default function IntroAnimation() {
                                 x: Math.cos(arcRad) * arcRadius + parallaxValue,
                                 y: Math.sin(arcRad) * arcRadius + arcCenterY,
                                 rotation: currentArcAngle + 90,
-                                scale: isMobile ? 1.4 : 1.8,
+                                scale: isMobile ? 1.2 : 1.5,
                             };
 
-                            // Morph Interpolation
+                            // Morph interpolation
                             target = {
                                 x: lerp(circlePos.x, arcPos.x, morphValue),
                                 y: lerp(circlePos.y, arcPos.y, morphValue),

@@ -33,20 +33,29 @@ export const ContainerScroll = ({
 
   return (
     <div
-      className="h-[60rem] md:h-[80rem] flex items-center justify-center relative p-2 md:p-20"
       ref={containerRef}
-      style={{ minHeight: isMobile ? '60rem' : '80rem', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}
+      style={{
+        minHeight: isMobile ? '50rem' : '70rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        padding: isMobile ? '0.5rem' : '5rem',
+      }}
     >
       <div
-        className="py-10 md:py-40 w-full relative"
         style={{
           perspective: "1000px",
+          width: '100%',
+          position: 'relative',
+          paddingTop: isMobile ? '2.5rem' : '10rem',
+          paddingBottom: isMobile ? '2.5rem' : '10rem',
         }}
       >
         <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={translate} scale={scale} isMobile={isMobile}>
+        <PhoneCard rotate={rotate} translate={translate} scale={scale} isMobile={isMobile}>
           {children}
-        </Card>
+        </PhoneCard>
       </div>
     </div>
   );
@@ -65,28 +74,74 @@ export const Header = ({ translate, titleComponent }) => {
   );
 };
 
-export const Card = ({
+export const PhoneCard = ({
   rotate,
   scale,
   children,
   isMobile,
 }) => {
+  const phoneWidth = isMobile ? 260 : 320;
+  const phoneHeight = isMobile ? 530 : 660;
+
   return (
     <motion.div
       style={{
         rotateX: rotate,
         scale,
-        boxShadow:
-          "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
-        height: isMobile ? '30rem' : '40rem',
-        maxWidth: '64rem',
-        width: '100%'
+        width: phoneWidth,
+        height: phoneHeight,
+        margin: '0 auto',
+        marginTop: '-3rem',
+        position: 'relative',
       }}
-      className="max-w-5xl -mt-12 mx-auto h-[30rem] md:h-[40rem] w-full border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl"
     >
-      <div className=" h-full w-full overflow-hidden rounded-2xl bg-[#0a0a0a] md:rounded-2xl md:p-4 ">
-        {children}
+      {/* Phone outer shell */}
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          background: 'linear-gradient(145deg, #1a1c1b, #000)',
+          borderRadius: 42,
+          padding: 6,
+          boxShadow: `
+            0 0 0 1px rgba(255,255,255,0.08),
+            0 60px 120px -30px rgba(0,0,0,0.7),
+            0 30px 60px -15px rgba(45, 216, 132, 0.18)
+          `,
+          position: 'relative',
+        }}
+      >
+        {/* Dynamic island / notch */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 10,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 80,
+            height: 22,
+            background: '#000',
+            borderRadius: 12,
+            zIndex: 10,
+          }}
+        />
+
+        {/* Screen content */}
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 36,
+            overflow: 'hidden',
+            background: '#0a0a0a',
+          }}
+        >
+          {children}
+        </div>
       </div>
     </motion.div>
   );
 };
+
+// Keep backward compat export
+export const Card = PhoneCard;

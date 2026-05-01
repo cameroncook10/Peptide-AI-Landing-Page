@@ -433,7 +433,7 @@ export default function LandingPage() {
           <img
             src="/assets/screen-dashboard.png"
             alt="hero"
-            className="mx-auto rounded-2xl object-cover h-full w-full object-left-top"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', borderRadius: 36, display: 'block' }}
             draggable={false}
           />
         </ContainerScroll>
