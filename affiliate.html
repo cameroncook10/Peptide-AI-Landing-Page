@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Affiliate Program — Peptide AI</title>
+<meta name="description" content="Apply to become a Peptide AI affiliate partner. Earn recurring commissions helping your audience optimize their peptide protocols.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050706;
+    --card: #0b0e0d;
+    --ink: #f2efe8;
+    --ink-soft: #a8adaa;
+    --ink-mute: #656966;
+    --line: rgba(255,255,255,0.08);
+    --line-2: rgba(255,255,255,0.14);
+    --mint: #2dd884;
+    --mint-bright: #5fffaa;
+    --mint-deep: #1aa860;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter Tight', -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--mint); color: #000; }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(5,7,6,0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 0;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.2s var(--ease), filter 0.3s var(--ease);
+  }
+  .logo:hover { opacity: 0.9; filter: drop-shadow(0 0 10px rgba(45,216,132,0.5)); }
+  .logo img {
+    height: 28px;
+    width: auto;
+    filter: drop-shadow(0 0 6px rgba(45,216,132,0.35));
+    transition: filter 0.3s var(--ease);
+  }
+  .logo img:hover {
+    filter: drop-shadow(0 0 12px rgba(45,216,132,0.7));
+  }
+  .nav-links { display: flex; gap: 32px; font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+  .nav-links a { transition: color 0.2s ease; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    padding: 11px 22px; border-radius: 999px; border: none; cursor: pointer;
+    transition: all 0.25s var(--ease);
+    display: inline-flex; align-items: center; gap: 6px;
+    letter-spacing: -0.005em; position: relative; overflow: hidden;
+  }
+  .btn-mint {
+    background: var(--mint); color: #000; font-weight: 600;
+  }
+  .btn-mint::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: translateX(-120%); transition: transform 0.7s var(--ease);
+  }
+  .btn-mint:hover { background: var(--mint-bright); transform: translateY(-1px); box-shadow: 0 12px 36px -8px rgba(45, 216, 132, 0.5); }
+  .btn-mint:hover::before { transform: translateX(120%); }
+
+  /* HERO */
+  .hero {
+    padding: 160px 32px 80px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--mint); font-weight: 600; margin-bottom: 24px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero-eyebrow::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--mint); }
+  .hero h1 {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px); line-height: 1; letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: italic; color: var(--mint); }
+  .hero p { font-size: 18px; color: var(--ink-soft); max-width: 560px; margin: 0 auto 40px; line-height: 1.6; }
+
+  .perks { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 60px; }
+  .perk {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 18px; font-size: 14px; color: var(--ink-soft);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* FORM */
+  .form-section {
+    max-width: 680px; margin: 0 auto; padding: 0 32px 120px;
+  }
+  .form-card {
+    background: var(--card); border: 1px solid var(--line-2);
+    border-radius: 20px; padding: 48px 40px;
+  }
+  .form-card h2 {
+    font-family: 'Fraunces', serif; font-weight: 300; font-size: 28px;
+    margin-bottom: 8px; letter-spacing: -0.02em;
+  }
+  .form-card > p { font-size: 15px; color: var(--ink-soft); margin-bottom: 36px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block; font-size: 13px; font-weight: 500; color: var(--ink-soft);
+    margin-bottom: 8px; letter-spacing: 0.02em;
+  }
+  .field label .req { color: var(--mint); }
+  .field label .opt { color: var(--ink-mute); font-weight: 400; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 16px; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color 0.2s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--mint);
+  }
+  .field input::placeholder, .field textarea::placeholder { color: var(--ink-mute); }
+  .field select { appearance: none; cursor: pointer; }
+  .field textarea { resize: vertical; min-height: 80px; }
+
+  .platform-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .platform-chip {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 16px; font-size: 14px; color: var(--ink-soft);
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .platform-chip:hover { border-color: var(--mint); color: var(--ink); }
+  .platform-chip.selected { background: rgba(45,216,132,0.1); border-color: var(--mint); color: var(--mint); }
+
+  .error-msg {
+    background: rgba(255,100,100,0.08); border: 1px solid rgba(255,100,100,0.2);
+    border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #ff8181;
+    margin-bottom: 20px; display: none;
+  }
+  .error-msg.show { display: block; }
+
+  .submit-btn {
+    width: 100%; padding: 16px; border: none; border-radius: 12px; cursor: pointer;
+    background: var(--mint); color: #000; font-family: inherit; font-size: 16px; font-weight: 600;
+    transition: all 0.25s var(--ease); display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover { background: var(--mint-bright); transform: translateY(-1px); box-shadow: 0 12px 36px -8px rgba(45,216,132,0.4); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .success-card {
+    text-align: center; padding: 60px 40px;
+    background: var(--card); border: 1px solid var(--line-2); border-radius: 20px;
+    display: none;
+  }
+  .success-card.show { display: block; }
+  .success-card .check-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(45,216,132,0.1); border: 2px solid var(--mint);
+    display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px;
+  }
+  .success-card h2 { font-family: 'Fraunces', serif; font-weight: 300; font-size: 28px; margin-bottom: 16px; }
+  .success-card p { color: var(--ink-soft); font-size: 16px; margin-bottom: 32px; }
+  .success-card a { color: var(--mint); font-weight: 500; transition: opacity 0.2s; }
+  .success-card a:hover { opacity: 0.8; }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 40px 32px; border-top: 1px solid var(--line);
+    font-size: 14px; color: var(--ink-mute);
+  }
+  footer a { color: var(--ink-soft); margin: 0 12px; transition: color 0.2s; }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 640px) {
+    .field-row { grid-template-columns: 1fr; }
+    .form-card { padding: 32px 24px; }
+    .hero { padding: 140px 20px 60px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/app-icon.png" alt="Peptide AI">
+    </a>
+    <div class="nav-links">
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="partners.html">Partners</a>
+      <a href="affiliate.html" style="color: var(--ink);">Affiliates</a>
+    </div>
+    <div class="nav-cta">
+      <a href="index.html#cta" class="btn btn-mint">Get the app</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Affiliate Program</div>
+  <h1>Grow with <em>Peptide AI.</em></h1>
+  <p>We're building proprietary AI for peptide therapeutics. Partner with us and earn recurring commission introducing your audience to the future of personalized wellness.</p>
+  <div class="perks">
+    <div class="perk">Recurring commissions</div>
+    <div class="perk">Real-time dashboard</div>
+    <div class="perk">Creative assets provided</div>
+    <div class="perk">Dedicated partner support</div>
+  </div>
+</section>
+
+<section class="form-section">
+  <!-- Success state -->
+  <div class="success-card" id="successCard">
+    <div class="check-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12" style="color: var(--mint);"/></svg>
+    </div>
+    <h2>Application received!</h2>
+    <p>Thanks for applying. We review applications within 2–3 business days and will reach out to you via email.</p>
+    <a href="index.html">← Back to homepage</a>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card" id="formCard">
+    <h2>Affiliate Application</h2>
+    <p>Tell us about yourself and how you'd promote Peptide AI.</p>
+
+    <form id="affiliateForm" novalidate>
+      <div class="field-row">
+        <div class="field">
+          <label for="firstName">First Name <span class="req">*</span></label>
+          <input id="firstName" name="firstName" type="text" placeholder="Jane" required autocomplete="given-name">
+        </div>
+        <div class="field">
+          <label for="lastName">Last Name <span class="req">*</span></label>
+          <input id="lastName" name="lastName" type="text" placeholder="Smith" required autocomplete="family-name">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="email">Email <span class="req">*</span></label>
+          <input id="email" name="email" type="email" placeholder="jane@example.com" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="phone">Phone <span class="opt">(optional)</span></label>
+          <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Platforms / Channels <span class="req">*</span></label>
+        <div class="platform-grid" id="platformGrid">
+          <button type="button" class="platform-chip" data-platform="Instagram">Instagram</button>
+          <button type="button" class="platform-chip" data-platform="TikTok">TikTok</button>
+          <button type="button" class="platform-chip" data-platform="YouTube">YouTube</button>
+          <button type="button" class="platform-chip" data-platform="Twitter / X">Twitter / X</button>
+          <button type="button" class="platform-chip" data-platform="Blog / Website">Blog / Website</button>
+          <button type="button" class="platform-chip" data-platform="Podcast">Podcast</button>
+          <button type="button" class="platform-chip" data-platform="Other">Other</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="audienceSize">Audience / Follower Count</label>
+          <select id="audienceSize" name="audienceSize">
+            <option value="">Select a range</option>
+            <option>Under 5,000</option>
+            <option>5,000 – 25,000</option>
+            <option>25,000 – 100,000</option>
+            <option>100,000 – 500,000</option>
+            <option>500,000+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="contentNiche">Content Niche</label>
+          <input id="contentNiche" name="contentNiche" type="text" placeholder="e.g. Biohacking, Fitness, Longevity…">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="promoPlan">How do you plan to promote Peptide AI?</label>
+        <textarea id="promoPlan" name="promoPlan" rows="3" placeholder="Describe your content format, posting cadence, and audience demographics…"></textarea>
+      </div>
+      <div class="field">
+        <label for="existingPartnerships">Any existing brand partnerships? <span class="opt">(optional)</span></label>
+        <input id="existingPartnerships" name="existingPartnerships" type="text" placeholder="e.g. Whoop, Levels Health, AG1…">
+      </div>
+      <div class="field">
+        <label for="notes">Anything else? <span class="opt">(optional)</span></label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Links to profiles, past campaigns, questions…"></textarea>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Application →</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Peptide AI LLC. All rights reserved.</p>
+  <div style="margin-top: 8px;">
+    <a href="privacy.html">Privacy Policy</a>
+    <span style="color: var(--ink-mute);">·</span>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+</footer>
+
+<script>
+// ===== PLATFORM SELECTION =====
+const selectedPlatforms = new Set();
+document.querySelectorAll('.platform-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const p = chip.dataset.platform;
+    if (selectedPlatforms.has(p)) {
+      selectedPlatforms.delete(p);
+      chip.classList.remove('selected');
+    } else {
+      selectedPlatforms.add(p);
+      chip.classList.add('selected');
+    }
+  });
+});
+
+// ===== FORM SUBMIT =====
+const form = document.getElementById('affiliateForm');
+const errorEl = document.getElementById('errorMsg');
+const submitBtn = document.getElementById('submitBtn');
+const formCard = document.getElementById('formCard');
+const successCard = document.getElementById('successCard');
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  errorEl.classList.add('show');
+}
+function hideError() {
+  errorEl.classList.remove('show');
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideError();
+
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName = document.getElementById('lastName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const audienceSize = document.getElementById('audienceSize').value;
+  const contentNiche = document.getElementById('contentNiche').value.trim();
+  const promoPlan = document.getElementById('promoPlan').value.trim();
+  const existingPartnerships = document.getElementById('existingPartnerships').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!firstName || !lastName) { showError('Please enter your full name.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Please enter a valid email address.'); return; }
+  if (selectedPlatforms.size === 0) { showError('Please select at least one platform.'); return; }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting…';
+
+  const payload = {
+    firstName,
+    lastName,
+    email,
+    phone: phone || null,
+    platforms: Array.from(selectedPlatforms),
+    audienceSize: audienceSize || null,
+    contentNiche: contentNiche || null,
+    promoPlan: promoPlan || null,
+    existingPartnerships: existingPartnerships || null,
+    notes: notes || null,
+  };
+
+  try {
+    const response = await fetch('/api/affiliate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Something went wrong.');
+    }
+
+    // Show success
+    formCard.style.display = 'none';
+    successCard.classList.add('show');
+  } catch (err) {
+    showError(err.message);
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Application →';
+  }
+});
+</script>
+
+</body>
+</html>

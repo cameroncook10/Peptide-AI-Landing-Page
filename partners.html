@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partners — Peptide AI</title>
+<meta name="description" content="Peptide AI partners with industry leaders like Overtime Men's Health to deliver AI-powered peptide protocol optimization to serious athletes and wellness users.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050706;
+    --card: #0b0e0d;
+    --ink: #f2efe8;
+    --ink-soft: #a8adaa;
+    --ink-mute: #656966;
+    --line: rgba(255,255,255,0.08);
+    --line-2: rgba(255,255,255,0.14);
+    --mint: #2dd884;
+    --mint-bright: #5fffaa;
+    --mint-deep: #1aa860;
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter Tight', -apple-system, sans-serif;
+    font-size: 17px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  ::selection { background: var(--mint); color: #000; }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(5,7,6,0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 0;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.2s var(--ease), filter 0.3s var(--ease);
+  }
+  .logo:hover { opacity: 0.9; filter: drop-shadow(0 0 10px rgba(45,216,132,0.5)); }
+  .logo img {
+    height: 28px;
+    width: auto;
+    filter: drop-shadow(0 0 6px rgba(45,216,132,0.35));
+    transition: filter 0.3s var(--ease);
+  }
+  .logo img:hover {
+    filter: drop-shadow(0 0 12px rgba(45,216,132,0.7));
+  }
+  .nav-links { display: flex; gap: 32px; font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+  .nav-links a { transition: color 0.2s ease; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { display: flex; gap: 10px; align-items: center; }
+  .btn {
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    padding: 11px 22px; border-radius: 999px; border: none; cursor: pointer;
+    transition: all 0.25s var(--ease);
+    display: inline-flex; align-items: center; gap: 6px;
+    letter-spacing: -0.005em; position: relative; overflow: hidden;
+  }
+  .btn-mint {
+    background: var(--mint); color: #000; font-weight: 600;
+  }
+  .btn-mint::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: translateX(-120%); transition: transform 0.7s var(--ease);
+  }
+  .btn-mint:hover { background: var(--mint-bright); transform: translateY(-1px); box-shadow: 0 12px 36px -8px rgba(45, 216, 132, 0.5); }
+  .btn-mint:hover::before { transform: translateX(120%); }
+
+  /* HERO */
+  .hero {
+    padding: 180px 32px 100px;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--mint); font-weight: 600; margin-bottom: 28px;
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 18px 8px 14px;
+    background: rgba(45,216,132,0.04);
+    border: 1px solid rgba(45,216,132,0.2);
+    border-radius: 999px;
+  }
+  .hero-eyebrow .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(40px, 6vw, 72px); line-height: 0.97; letter-spacing: -0.04em;
+    margin-bottom: 28px;
+  }
+  .hero h1 em { font-style: italic; color: var(--mint); }
+  .hero p { font-size: 18px; color: var(--ink-soft); max-width: 580px; margin: 0 auto 0; line-height: 1.6; }
+
+  /* PARTNERS SECTION */
+  .partners-section {
+    max-width: 1100px; margin: 0 auto; padding: 0 32px 80px;
+  }
+
+  /* Featured partner card */
+  .partner-card {
+    background: var(--card);
+    border: 1px solid var(--line-2);
+    border-radius: 24px;
+    padding: 64px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 72px;
+    align-items: center;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .partner-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(45,216,132,0.3), transparent);
+  }
+  .partner-card:hover {
+    border-color: rgba(45,216,132,0.25);
+    box-shadow: 0 0 60px -20px rgba(45,216,132,0.1);
+  }
+
+  .partner-logo-area {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; gap: 20px;
+  }
+  .partner-logo-box {
+    width: 280px;
+    background: #0e1210;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 36px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+  .partner-card:hover .partner-logo-box {
+    box-shadow: 0 12px 60px rgba(0,0,0,0.6);
+    transform: translateY(-2px);
+  }
+  .partner-logo-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+  .partner-badge {
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--mint); font-weight: 700;
+    background: rgba(45,216,132,0.08);
+    border: 1px solid rgba(45,216,132,0.2);
+    border-radius: 999px; padding: 5px 14px;
+  }
+
+  /* MINIMAL CLINICAL PARTNER CARD */
+  .clinical-partner-card {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    background: var(--card);
+    border: 1px solid var(--line-2);
+    border-radius: 20px;
+    padding: 40px 48px;
+    margin: 0 auto 32px auto;
+    position: relative;
+    overflow: hidden;
+    max-width: 640px;
+  }
+  .clinical-partner-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(45,216,132,0.25), transparent);
+  }
+  .cp-logo-box {
+    flex-shrink: 0;
+    width: 180px;
+    background: #0e1210;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cp-logo-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+  .cp-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cp-desc {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    max-width: 280px;
+  }
+
+  @media (max-width: 600px) {
+    .clinical-partner-card { flex-direction: column; gap: 24px; padding: 28px 24px; }
+    .cp-logo-box { width: 140px; }
+    .cp-desc { max-width: 100%; }
+  }
+
+  .partner-details {}
+  .partner-details h2 {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(28px, 3.2vw, 48px); line-height: 1.05; letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .partner-details h2 em { font-style: italic; color: var(--mint); }
+  .partner-details p {
+    font-size: 16px; color: var(--ink-soft); line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .partner-highlights {
+    list-style: none; padding: 0; margin-top: 32px; border-top: 1px solid var(--line);
+  }
+  .partner-highlights li {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px; color: var(--ink-soft);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .partner-highlights li::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--mint); flex-shrink: 0;
+  }
+  .partner-highlights li strong { color: var(--ink); }
+
+  /* STATS ROW */
+  .partner-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    margin-top: 48px; margin-bottom: 48px;
+  }
+  .stat-box {
+    background: rgba(45,216,132,0.04);
+    border: 1px solid rgba(45,216,132,0.12);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: 40px; letter-spacing: -0.03em; color: var(--mint);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 13px; color: var(--ink-soft);
+    margin-top: 8px; letter-spacing: 0.02em;
+  }
+
+  /* CTA Section */
+  .cta-section {
+    max-width: 780px; margin: 0 auto; padding: 0 32px 120px;
+    text-align: center;
+  }
+  .cta-box {
+    background: var(--card); border: 1px solid var(--line-2);
+    border-radius: 24px; padding: 64px 48px;
+    position: relative; overflow: hidden;
+  }
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(45,216,132,0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-box h2 {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(28px, 3.5vw, 44px); letter-spacing: -0.03em; margin-bottom: 16px;
+    position: relative;
+  }
+  .cta-box h2 em { font-style: italic; color: var(--mint); }
+  .cta-box p {
+    color: var(--ink-soft); font-size: 16px; margin-bottom: 36px;
+    max-width: 460px; margin-left: auto; margin-right: auto; margin-bottom: 36px;
+    position: relative;
+  }
+  .cta-box .btn-mint { font-size: 15px; padding: 14px 32px; position: relative; }
+
+  /* PARTNER FORM */
+  .partner-form-section {
+    max-width: 1100px; margin: 0 auto; padding: 0 32px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .pf-pitch {
+    position: sticky;
+    top: 100px;
+  }
+  .pf-pitch h2 {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: clamp(32px, 3.8vw, 52px); line-height: 1.05; letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .pf-pitch h2 em { font-style: italic; color: var(--mint); }
+  .pf-pitch p { font-size: 16px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 20px; }
+  .pf-not-looking {
+    margin-top: 32px;
+    background: rgba(255,100,80,0.06);
+    border: 1px solid rgba(255,100,80,0.15);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .pf-not-looking p {
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .pf-not-looking strong { color: rgba(255,150,130,0.9); }
+  .pf-category-grid {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 28px;
+  }
+  .pf-cat-chip {
+    background: rgba(45,216,132,0.06);
+    border: 1px solid rgba(45,216,132,0.18);
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 13px;
+    color: var(--mint);
+    font-weight: 500;
+  }
+
+  .pf-form-card {
+    background: var(--card);
+    border: 1px solid var(--line-2);
+    border-radius: 24px;
+    padding: 48px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pf-form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(45,216,132,0.35), transparent);
+  }
+  .pf-form-card h3 {
+    font-family: 'Fraunces', serif; font-weight: 300;
+    font-size: 26px; letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+  .pf-form-card > p { font-size: 14px; color: var(--ink-soft); margin-bottom: 36px; }
+
+  .pf-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .pf-field { margin-bottom: 20px; }
+  .pf-field label {
+    display: block; font-size: 13px; font-weight: 500; color: var(--ink-soft);
+    margin-bottom: 8px; letter-spacing: 0.02em;
+  }
+  .pf-field label .req { color: var(--mint); }
+  .pf-field label .opt { color: var(--ink-mute); font-weight: 400; }
+  .pf-field input, .pf-field select, .pf-field textarea {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    border-radius: 10px; padding: 12px 16px; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color 0.2s;
+    outline: none;
+  }
+  .pf-field input:focus, .pf-field select:focus, .pf-field textarea:focus {
+    border-color: var(--mint);
+  }
+  .pf-field input::placeholder, .pf-field textarea::placeholder { color: var(--ink-mute); }
+  .pf-field select { appearance: none; cursor: pointer; }
+  .pf-field textarea { resize: vertical; min-height: 80px; }
+
+  .pf-error-msg {
+    background: rgba(255,100,100,0.08); border: 1px solid rgba(255,100,100,0.2);
+    border-radius: 10px; padding: 12px 16px; font-size: 14px; color: #ff8181;
+    margin-bottom: 20px; display: none;
+  }
+  .pf-error-msg.show { display: block; }
+
+  .pf-submit-btn {
+    width: 100%; padding: 16px; border: none; border-radius: 12px; cursor: pointer;
+    background: var(--mint); color: #000; font-family: inherit; font-size: 16px; font-weight: 600;
+    transition: all 0.25s var(--ease); display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .pf-submit-btn:hover { background: var(--mint-bright); transform: translateY(-1px); box-shadow: 0 12px 36px -8px rgba(45,216,132,0.4); }
+  .pf-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .pf-success-card {
+    text-align: center; padding: 60px 40px;
+    background: var(--card); border: 1px solid var(--line-2); border-radius: 24px;
+    display: none;
+  }
+  .pf-success-card.show { display: block; }
+  .pf-success-card .check-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(45,216,132,0.1); border: 2px solid var(--mint);
+    display: inline-flex; align-items: center; justify-content: center; margin-bottom: 24px;
+  }
+  .pf-success-card h2 { font-family: 'Fraunces', serif; font-weight: 300; font-size: 28px; margin-bottom: 16px; }
+  .pf-success-card p { color: var(--ink-soft); font-size: 16px; }
+
+  @media (max-width: 860px) {
+    .partner-form-section { grid-template-columns: 1fr; gap: 48px; }
+    .pf-pitch { position: static; }
+    .pf-form-card { padding: 32px 24px; }
+    .pf-field-row { grid-template-columns: 1fr; }
+  }
+
+  /* LEGAL */
+  .legal-disclaimer {
+    max-width: 900px; margin: 0 auto; padding: 0 32px 80px;
+  }
+  .legal-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .legal-box p {
+    font-size: 12px; color: var(--ink-mute); line-height: 1.8;
+  }
+  .legal-box strong { color: var(--ink-soft); }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 40px 32px; border-top: 1px solid var(--line);
+    font-size: 14px; color: var(--ink-mute);
+  }
+  footer a { color: var(--ink-soft); margin: 0 12px; transition: color 0.2s; }
+  footer a:hover { color: var(--ink); }
+
+  /* REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal.d1 { transition-delay: 0.1s; }
+  .reveal.d2 { transition-delay: 0.22s; }
+  .reveal.d3 { transition-delay: 0.34s; }
+
+  @media (max-width: 860px) {
+    .partner-card { grid-template-columns: 1fr; gap: 48px; padding: 48px 28px; }
+    .partner-logo-area { flex-direction: row; justify-content: flex-start; }
+    .partner-logo-box { width: 180px; }
+    .hero { padding: 150px 20px 80px; }
+    .nav-links { display: none; }
+    .partner-stats { grid-template-columns: 1fr; }
+    .cta-box { padding: 48px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/app-icon.png" alt="Peptide AI">
+    </a>
+    <div class="nav-links">
+      <a href="index.html#how">How it works</a>
+      <a href="index.html#features">Features</a>
+      <a href="index.html#pricing">Pricing</a>
+      <a href="partners.html" style="color: var(--ink);">Partners</a>
+      <a href="affiliate.html">Affiliates</a>
+    </div>
+    <div class="nav-cta">
+      <a href="index.html#cta" class="btn btn-mint">Get the app</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Brand Partners
+  </div>
+  <h1>Built with the <em>best in wellness.</em></h1>
+  <p>Peptide AI partners with supplement brands, protein companies, clothing lines, and performance brands whose audience overlaps with serious athletes running real protocols.</p>
+</section>
+
+<section class="partners-section">
+
+  <!-- Overtime Men's Health — minimal clinical partner badge -->
+  <div class="clinical-partner-card reveal">
+    <div class="cp-logo-box">
+      <img src="assets/overtime-logo-new.png" alt="Overtime Men's Health">
+    </div>
+    <div class="cp-meta">
+      <div class="partner-badge">Clinical Partner</div>
+      <p class="cp-desc">Our trusted clinical partner for supervised peptide and hormone protocols.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- BECOME A PARTNER FORM -->
+<section class="partner-form-section" id="partner-apply">
+
+  <!-- LEFT: Pitch copy -->
+  <div class="pf-pitch reveal">
+    <h2>Partner with <em>Peptide AI.</em></h2>
+    <p>We're building the most trusted platform in performance optimization. If your brand serves serious athletes and biohackers, let's talk about what we can build together.</p>
+    <p>We work with brands on co-marketing, in-app placements, sponsored content, discount integrations, and product spotlights inside the app.</p>
+
+    <div class="pf-category-grid">
+      <span class="pf-cat-chip">Supplements</span>
+      <span class="pf-cat-chip">Protein &amp; Nutrition</span>
+      <span class="pf-cat-chip">Clothing &amp; Apparel</span>
+      <span class="pf-cat-chip">Fitness Equipment</span>
+      <span class="pf-cat-chip">Performance Tech</span>
+      <span class="pf-cat-chip">Recovery Brands</span>
+    </div>
+
+    <div class="pf-not-looking">
+      <p><strong>Not currently accepting:</strong> labs, clinics, compounding pharmacies, or medical providers. Our clinical partnership roster is full. If you are a supplement brand, performance apparel company, or consumer wellness product, this is the right form for you.</p>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div>
+    <div class="pf-success-card" id="pfSuccessCard">
+      <div class="check-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12" style="color: var(--mint);"/></svg>
+      </div>
+      <h2>Application received!</h2>
+      <p>Thanks for applying. We review brand partnership applications within 3–5 business days and will reach out via email.</p>
+    </div>
+
+    <div class="pf-form-card reveal d1" id="pfFormCard">
+      <h3>Brand Partnership Application</h3>
+      <p>Tell us about your brand and how we could work together.</p>
+
+      <form id="partnerForm" novalidate>
+        <div class="pf-field-row">
+          <div class="pf-field">
+            <label for="pfCompanyName">Company Name <span class="req">*</span></label>
+            <input id="pfCompanyName" type="text" placeholder="Your Brand Co." required autocomplete="organization">
+          </div>
+          <div class="pf-field">
+            <label for="pfContactName">Your Name <span class="req">*</span></label>
+            <input id="pfContactName" type="text" placeholder="Jane Smith" required autocomplete="name">
+          </div>
+        </div>
+        <div class="pf-field-row">
+          <div class="pf-field">
+            <label for="pfEmail">Business Email <span class="req">*</span></label>
+            <input id="pfEmail" type="email" placeholder="jane@yourbrand.com" required autocomplete="email">
+          </div>
+          <div class="pf-field">
+            <label for="pfPhone">Phone <span class="opt">(optional)</span></label>
+            <input id="pfPhone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel">
+          </div>
+        </div>
+        <div class="pf-field">
+          <label for="pfBrandCategory">Brand Category <span class="req">*</span></label>
+          <select id="pfBrandCategory" required>
+            <option value="">Select your brand type</option>
+            <option value="Supplements">Supplements</option>
+            <option value="Protein & Nutrition">Protein &amp; Nutrition</option>
+            <option value="Clothing & Apparel">Clothing &amp; Apparel</option>
+            <option value="Fitness Equipment">Fitness Equipment</option>
+            <option value="Performance Tech">Performance Tech / Wearables</option>
+            <option value="Recovery">Recovery Products</option>
+            <option value="Other Consumer Brand">Other Consumer Brand</option>
+          </select>
+        </div>
+        <div class="pf-field">
+          <label for="pfWebsite">Brand Website <span class="opt">(optional)</span></label>
+          <input id="pfWebsite" type="url" placeholder="https://yourbrand.com">
+        </div>
+        <div class="pf-field">
+          <label for="pfPartnershipIdea">Partnership Idea <span class="opt">(optional)</span></label>
+          <textarea id="pfPartnershipIdea" rows="3" placeholder="Co-marketing, in-app discount code, sponsored content, product gifting, ambassador program…"></textarea>
+        </div>
+        <div class="pf-field">
+          <label for="pfNotes">Anything else? <span class="opt">(optional)</span></label>
+          <textarea id="pfNotes" rows="2" placeholder="Links, previous partnerships, audience size, questions…"></textarea>
+        </div>
+
+        <div class="pf-error-msg" id="pfErrorMsg"></div>
+        <button type="submit" class="pf-submit-btn" id="pfSubmitBtn">Submit Partnership Application →</button>
+      </form>
+    </div>
+  </div>
+
+</section>
+
+<!-- IP Protection / Legal Disclaimer -->
+<section class="legal-disclaimer">
+  <div class="legal-box">
+    <p>
+      <strong>Trademark Notice:</strong> "Overtime Men's Health" and the Overtime Men's Health logo are trademarks or registered trademarks of their respective owners. Their use on this page is for informational purposes only and does not imply endorsement of Peptide AI by Overtime Men's Health beyond the scope of the described partnership. All intellectual property rights related to Overtime Men's Health — including its name, logo, trade dress, and associated marks — remain the exclusive property of their respective owners. Peptide AI, the Peptide AI logo, and all associated software, algorithms, and data models are the exclusive intellectual property of Peptide AI LLC. © 2026 Peptide AI LLC. All rights reserved. No part of this partnership confers ownership, license, or transfer of intellectual property between parties unless explicitly stated in a separate written agreement.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Peptide AI. All rights reserved.</p>
+  <div style="margin-top: 8px;">
+    <a href="privacy.html">Privacy Policy</a>
+    <span style="color: var(--ink-mute);">·</span>
+    <a href="terms.html">Terms of Service</a>
+  </div>
+</footer>
+
+<script>
+  // ===== REVEAL =====
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ===== PARTNER FORM =====
+  const partnerForm = document.getElementById('partnerForm');
+  const pfErrorEl = document.getElementById('pfErrorMsg');
+  const pfSubmitBtn = document.getElementById('pfSubmitBtn');
+  const pfFormCard = document.getElementById('pfFormCard');
+  const pfSuccessCard = document.getElementById('pfSuccessCard');
+
+  function pfShowError(msg) { pfErrorEl.textContent = msg; pfErrorEl.classList.add('show'); }
+  function pfHideError() { pfErrorEl.classList.remove('show'); }
+
+  partnerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    pfHideError();
+
+    const companyName = document.getElementById('pfCompanyName').value.trim();
+    const contactName = document.getElementById('pfContactName').value.trim();
+    const email = document.getElementById('pfEmail').value.trim();
+    const phone = document.getElementById('pfPhone').value.trim();
+    const brandCategory = document.getElementById('pfBrandCategory').value;
+    const website = document.getElementById('pfWebsite').value.trim();
+    const partnershipIdea = document.getElementById('pfPartnershipIdea').value.trim();
+    const notes = document.getElementById('pfNotes').value.trim();
+
+    if (!companyName) { pfShowError('Please enter your company name.'); return; }
+    if (!contactName) { pfShowError('Please enter your name.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { pfShowError('Please enter a valid business email.'); return; }
+    if (!brandCategory) { pfShowError('Please select a brand category.'); return; }
+
+    pfSubmitBtn.disabled = true;
+    pfSubmitBtn.textContent = 'Submitting…';
+
+    try {
+      const response = await fetch('/api/partner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companyName, contactName, email, phone: phone || null, brandCategory, website: website || null, partnershipIdea: partnershipIdea || null, notes: notes || null }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+      pfFormCard.style.display = 'none';
+      pfSuccessCard.classList.add('show');
+      pfSuccessCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      pfShowError(err.message);
+      pfSubmitBtn.disabled = false;
+      pfSubmitBtn.textContent = 'Submit Partnership Application →';
+    }
+  });
+</script>
+
+</body>
+</html>

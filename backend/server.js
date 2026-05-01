@@ -172,6 +172,71 @@ app.post('/api/affiliate', async (req, res) => {
   res.json({ success: true, message: "Application received! We'll be in touch within 2–3 business days." });
 });
 
+// POST /api/partner — submit brand/sponsor partnership application
+app.post('/api/partner', async (req, res) => {
+  const { companyName, contactName, email, phone, brandCategory, website, partnershipIdea, notes } = req.body;
+
+  if (!companyName || !companyName.trim()) {
+    return res.status(400).json({ error: 'Company name is required.' });
+  }
+  if (!contactName || !contactName.trim()) {
+    return res.status(400).json({ error: 'Contact name is required.' });
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email address required.' });
+  }
+  if (!brandCategory) {
+    return res.status(400).json({ error: 'Brand category is required.' });
+  }
+
+  const { data, error } = await supabase
+    .from('partners')
+    .insert({
+      company_name: companyName.trim(),
+      contact_name: contactName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone || null,
+      brand_category: brandCategory,
+      website: website || null,
+      partnership_idea: partnershipIdea || null,
+      notes: notes || null,
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'An application from this email already exists.' });
+    }
+    console.error('Partner insert error:', error);
+    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+  }
+
+  // Notify owner
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const transporter = createTransporter();
+      await transporter.sendMail({
+        from: `"Peptide AI" <${process.env.SMTP_USER}>`,
+        to: process.env.OWNER_EMAIL || process.env.SMTP_USER,
+        subject: 'New Brand Partnership Application — Peptide AI',
+        html: `
+          <p><strong>Company:</strong> ${companyName}</p>
+          <p><strong>Contact:</strong> ${contactName}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Phone:</strong> ${phone || 'not provided'}</p>
+          <p><strong>Brand Category:</strong> ${brandCategory}</p>
+          <p><strong>Website:</strong> ${website || 'not provided'}</p>
+          <p><strong>Partnership Idea:</strong> ${partnershipIdea || 'not provided'}</p>
+          <p><strong>Notes:</strong> ${notes || 'none'}</p>
+        `,
+      });
+    } catch (err) { console.error('Partner owner email failed:', err.message); }
+  }
+
+  res.json({ success: true, message: "Application received! We'll review your submission and be in touch within 3–5 business days." });
+});
+
 // GET /api/waitlist — admin: list all signups (requires API key)
 app.get('/api/waitlist', async (req, res) => {
   const key = req.headers['x-admin-key'];
