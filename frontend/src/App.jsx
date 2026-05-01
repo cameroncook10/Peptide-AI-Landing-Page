@@ -5,6 +5,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import CCPA from './components/CCPA';
 import Support from './components/Support';
 import Affiliate from './components/Affiliate';
+import Partners from './components/Partners';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/affiliates" element={<Affiliate />} />
+        <Route path="/partners" element={<Partners />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/ccpa" element={<CCPA />} />

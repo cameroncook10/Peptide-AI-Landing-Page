@@ -164,8 +164,8 @@ export default function LandingPage() {
           </a>
           <div className="nav-links">
             <a href="#how">How it works</a>
-            <a href="#library">Library</a>
             <a href="#features">Features</a>
+            <Link to="/partners">Partners</Link>
             <Link to="/affiliates">Affiliates</Link>
           </div>
           <div className="nav-cta">
