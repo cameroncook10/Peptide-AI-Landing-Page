@@ -100,7 +100,127 @@ function MarqueeColumn({ items, colClass }) {
   );
 }
 
-export default function LandingPage() {
+const PHONE_SCREENS = [
+  { img: '/assets/screen-stack.png',           num: '01', label: 'Protocol Stack',  desc: 'Build your entire stack in one place' },
+  { img: '/assets/screen-dashboard.png',       num: '02', label: 'Dashboard',        desc: 'Your protocol at a glance' },
+  { img: '/assets/screen-track.png',           num: '03', label: 'Dose Tracking',    desc: 'Log every dose, never miss a beat' },
+  { img: '/assets/screen-injection-sites.png', num: '04', label: 'Injection Sites',  desc: 'Rotate smarter, recover faster' },
+];
+
+function PhoneScroll() {
+  const [active, setActive] = useState(0);
+  const [dir, setDir] = useState(1); // 1 = forward, -1 = backward
+  const sectionRef = useRef(null);
+  const isMobile = useRef(typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches);
+
+  // Scroll-driven on desktop
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const onScroll = () => {
+      const rect = section.getBoundingClientRect();
+      const scrolled = -rect.top;
+      const scrollable = section.offsetHeight - window.innerHeight;
+      const progress = Math.max(0, Math.min(0.999, scrolled / scrollable));
+      const idx = Math.floor(progress * PHONE_SCREENS.length);
+      setActive(prev => {
+        if (idx !== prev) setDir(idx > prev ? 1 : -1);
+        return idx;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Auto-cycle on mobile
+  useEffect(() => {
+    if (!isMobile.current) return;
+    const t = setInterval(() => {
+      setActive(prev => (prev + 1) % PHONE_SCREENS.length);
+      setDir(1);
+    }, 2800);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div
+      ref={sectionRef}
+      className="psc-section"
+      style={{ height: isMobile.current ? 'auto' : `${PHONE_SCREENS.length * 100}vh` }}
+    >
+      <div className="psc-sticky">
+        <div className="psc-inner">
+
+          {/* LEFT — feature labels (desktop) */}
+          <div className="psc-labels">
+            {PHONE_SCREENS.map((s, i) => (
+              <button
+                key={i}
+                className={`psc-label${i === active ? ' active' : ''}`}
+                onClick={() => { setDir(i > active ? 1 : -1); setActive(i); }}
+              >
+                <span className="psc-num">{s.num}</span>
+                <div className="psc-label-text">
+                  <div className="psc-name">{s.label}</div>
+                  <div className="psc-desc">{s.desc}</div>
+                </div>
+                <div className="psc-bar" />
+              </button>
+            ))}
+          </div>
+
+          {/* CENTER — phone mockup */}
+          <div className="psc-device-wrap">
+            <div className="psc-glow" />
+            <div className="psc-phone">
+              <div className="psc-side-btn psc-side-btn-top" />
+              <div className="psc-side-btn psc-side-btn-mid" />
+              <div className="psc-island" />
+              <div className="psc-screen-viewport">
+                {PHONE_SCREENS.map((s, i) => (
+                  <img
+                    key={i}
+                    src={s.img}
+                    alt={s.label}
+                    className={`psc-screen-img${i === active ? ' active' : ''}`}
+                    style={{ '--dir': dir }}
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — current label (mobile / right column desktop) */}
+          <div className="psc-right-col">
+            {PHONE_SCREENS.map((s, i) => (
+              <div key={i} className={`psc-right-label${i === active ? ' active' : ''}`}>
+                <div className="psc-right-num">{s.num}</div>
+                <div className="psc-right-name">{s.label}</div>
+                <div className="psc-right-desc">{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dots */}
+        <div className="psc-dots">
+          {PHONE_SCREENS.map((_, i) => (
+            <button
+              key={i}
+              className={`psc-dot${i === active ? ' active' : ''}`}
+              onClick={() => { setDir(i > active ? 1 : -1); setActive(i); }}
+              aria-label={PHONE_SCREENS[i].label}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
   const navRef = useRef(null);
   const rootRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -219,24 +339,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="hero-v8-phones reveal d2">
-          <div className="hv8-phone hv8-phone-left">
-            <div className="hv8-phone-frame">
-              <img src="/assets/screen-dashboard.png" alt="Peptide AI Home" loading="eager" />
-            </div>
-          </div>
-          <div className="hv8-phone hv8-phone-center">
-            <div className="hv8-phone-frame">
-              <img src="/assets/screen-track.png" alt="Peptide AI Optimize" loading="eager" />
-            </div>
-          </div>
-          <div className="hv8-phone hv8-phone-right">
-            <div className="hv8-phone-frame">
-              <img src="/assets/screen-stack.png" alt="Peptide AI Body Scan" loading="eager" />
-            </div>
-          </div>
-        </div>
       </section>
+
+      {/* PHONE SCROLL SHOWCASE */}
+      <PhoneScroll />
 
       {/* HOW IT WORKS */}
       <section className="section" id="how">
