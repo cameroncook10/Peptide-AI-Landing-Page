@@ -64,19 +64,19 @@ export default function Partners() {
   return (
     <div className="partners-page">
       {/* NAV */}
-      <nav className="p-nav">
-        <div className="p-nav-inner">
-          <Link to="/" className="p-logo">
+      <nav className="lp-nav" id="nav">
+        <div className="nav-inner">
+          <Link to="/" className="lp-logo">
             <img src="/assets/app-icon.png" alt="Peptide AI" />
           </Link>
-          <div className="p-nav-links">
+          <div className="nav-links">
             <Link to="/#how">How it works</Link>
             <Link to="/#features">Features</Link>
             <Link to="/partners" className="active">Partners</Link>
             <Link to="/affiliates">Affiliates</Link>
           </div>
-          <div className="p-nav-cta">
-            <Link to="/#cta" className="p-btn-mint">Get the app</Link>
+          <div className="nav-cta">
+            <Link to="/#cta" className="btn btn-mint">Get the app</Link>
           </div>
         </div>
       </nav>

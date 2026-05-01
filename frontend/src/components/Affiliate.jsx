@@ -111,15 +111,21 @@ export default function Affiliate() {
 
   return (
     <div className="affiliate-page">
-      {/* ── Nav ── */}
-      <nav className="topbar">
-        <Link to="/" className="brand" style={{ textDecoration: 'none' }}>
-          <img src="/assets/app-icon.png" alt="Peptide AI" className="brand-icon" />
-          <span className="brand-name">Peptide AI</span>
-        </Link>
-        <div className="topbar-actions">
-          <Link className="pill" to="/">Home</Link>
-          <Link className="pill primary" to="/affiliates">Affiliates</Link>
+      {/* NAV */}
+      <nav className="lp-nav" id="nav">
+        <div className="nav-inner">
+          <Link to="/" className="lp-logo">
+            <img src="/assets/app-icon.png" alt="Peptide AI" />
+          </Link>
+          <div className="nav-links">
+            <Link to="/#how">How it works</Link>
+            <Link to="/#features">Features</Link>
+            <Link to="/partners">Partners</Link>
+            <Link to="/affiliates" className="active">Affiliates</Link>
+          </div>
+          <div className="nav-cta">
+            <Link to="/#cta" className="btn btn-mint">Get the app</Link>
+          </div>
         </div>
       </nav>
 

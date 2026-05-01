@@ -4,8 +4,8 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, useTransform, useSpring, useMotionValue } from "framer-motion";
 
 // --- FlipCard Component ---
-const IMG_WIDTH = 60;
-const IMG_HEIGHT = 85;
+const IMG_WIDTH = 120;
+const IMG_HEIGHT = 240;
 
 function FlipCard({
     src,
@@ -46,7 +46,7 @@ function FlipCard({
                 {/* Front Face */}
                 <div
                     className="absolute inset-0 h-full w-full overflow-hidden rounded-xl shadow-lg bg-[#0a0a0a] border border-white/10"
-                    style={{ backfaceVisibility: "hidden" }}
+                    style={{ backfaceVisibility: "hidden", position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
                 >
                     <img
                         src={src}
@@ -59,7 +59,7 @@ function FlipCard({
                 {/* Back Face */}
                 <div
                     className="absolute inset-0 h-full w-full overflow-hidden rounded-xl shadow-lg bg-[#111111] flex flex-col items-center justify-center p-4 border border-white/20"
-                    style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+                    style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)", position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
                 >
                     <div className="text-center">
                         <p className="text-[8px] font-bold text-[#2dd884] uppercase tracking-widest mb-1">View</p>
@@ -214,7 +214,7 @@ export default function IntroAnimation() {
     const contentY = useTransform(smoothMorph, [0.8, 1], [20, 0]);
 
     return (
-        <div ref={containerRef} className="relative w-full h-[600px] overflow-hidden pointer-events-none z-10 -mt-20">
+        <div ref={containerRef} className="relative w-full h-[600px] overflow-hidden pointer-events-none z-10 -mt-20" style={{ height: '600px', width: '100%', position: 'relative', marginTop: '-5rem' }}>
             {/* We make the wrapper pointer-events-none so it doesn't block hero clicks, 
                 and re-enable pointer-events-auto on the actual cards if needed */}
                 
