@@ -223,6 +223,7 @@ function PhoneScroll() {
 }
 
 
+export default function LandingPage() {
   const navRef = useRef(null);
   const rootRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
