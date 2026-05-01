@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import IntroAnimation from './ui/scroll-morph-hero';
+import { ContainerScroll } from './ui/container-scroll-animation';
 import './LandingPage.css';
 
 const APP_STORE_URL =
@@ -338,11 +340,10 @@ function PhoneScroll() {
             </a>
           </div>
         </div>
-
       </section>
 
-      {/* PHONE SCROLL SHOWCASE */}
-      <PhoneScroll />
+      {/* SCROLL MORPH HERO SHOWCASE */}
+      <IntroAnimation />
 
       {/* HOW IT WORKS */}
       <section className="section" id="how">
@@ -395,6 +396,29 @@ function PhoneScroll() {
           </div>
         </div>
       </section>
+
+      {/* CONTAINER SCROLL SHOWCASE */}
+      <div className="bg-[#050706] relative z-20">
+        <ContainerScroll
+          titleComponent={
+            <>
+              <h2 className="text-4xl font-semibold text-white">
+                Unleash the power of <br />
+                <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none text-[#2dd884]">
+                  Protocol Intelligence
+                </span>
+              </h2>
+            </>
+          }
+        >
+          <img
+            src="/assets/screen-dashboard.png"
+            alt="hero"
+            className="mx-auto rounded-2xl object-cover h-full w-full object-left-top"
+            draggable={false}
+          />
+        </ContainerScroll>
+      </div>
 
       {/* FEATURES — real app screens */}
       <section className="section" id="features">
