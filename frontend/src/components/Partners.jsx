@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Partners.css';
+import './LandingPage.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 

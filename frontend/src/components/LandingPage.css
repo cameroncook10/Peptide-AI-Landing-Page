@@ -1424,3 +1424,82 @@ body:has(.lp-root) {
   .lp-root .site-glow::before,
   .lp-root .site-glow::after { filter: blur(28px); }
 }
+
+/* ================= GREEN WAVE SECTION ================= */
+.lp-root .green-wave-section {
+  position: relative;
+  z-index: 2;
+  padding: 0;
+  overflow: hidden;
+  margin: 0;
+}
+.lp-root .green-wave-section .wave-inner {
+  position: relative;
+  padding: 140px 40px;
+  max-width: 1360px;
+  margin: 0 auto;
+  text-align: center;
+}
+.lp-root .green-wave-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(45,216,132,0.18) 0%, rgba(26,168,96,0.06) 50%, transparent 80%);
+  filter: blur(1px);
+  pointer-events: none;
+}
+.lp-root .green-wave-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 70%, rgba(45,216,132,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 20%, rgba(95,255,170,0.08) 0%, transparent 60%);
+}
+.lp-root .green-wave-section .wave-quote {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(28px, 3.8vw, 58px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.lp-root .green-wave-section .wave-quote em { font-style: italic; color: var(--mint); }
+.lp-root .green-wave-section .wave-stat-row {
+  display: flex;
+  justify-content: center;
+  gap: 64px;
+  margin-top: 72px;
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
+}
+.lp-root .wave-stat {
+  text-align: center;
+}
+.lp-root .wave-stat .num {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--mint);
+}
+.lp-root .wave-stat .desc {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ================= PRICING RESPONSIVE ================= */
+@media (max-width: 680px) {
+  .lp-root .section#pricing > div:last-child {
+    grid-template-columns: 1fr !important;
+  }
+}

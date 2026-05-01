@@ -340,6 +340,24 @@ function PhoneScroll() {
             </a>
           </div>
         </div>
+
+        <div className="hero-v8-phones reveal d2">
+          <div className="hv8-phone hv8-phone-left">
+            <div className="hv8-phone-frame">
+              <img src="/assets/screen-dashboard.png" alt="Peptide AI Home" loading="eager" />
+            </div>
+          </div>
+          <div className="hv8-phone hv8-phone-center">
+            <div className="hv8-phone-frame">
+              <img src="/assets/screen-track.png" alt="Peptide AI Optimize" loading="eager" />
+            </div>
+          </div>
+          <div className="hv8-phone hv8-phone-right">
+            <div className="hv8-phone-frame">
+              <img src="/assets/screen-stack.png" alt="Peptide AI Body Scan" loading="eager" />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* SCROLL MORPH HERO SHOWCASE */}
@@ -382,7 +400,7 @@ function PhoneScroll() {
         <div className="marquee-head">
           <div className="label reveal">The library</div>
           <h2 className="section-title reveal d1">
-            100+ peptides. Every<br />biomarker that <em>matters.</em>
+            57 peptides. Every<br />biomarker that <em>matters.</em>
           </h2>
           <p className="section-lead reveal d2">
             From BPC-157 to Retatrutide. From IGF-1 to ApoB. The only app that connects them.
@@ -516,30 +534,112 @@ function PhoneScroll() {
         </div>
       </section>
 
+      {/* GREEN WAVE SECTION */}
+      <section className="green-wave-section">
+        <div className="green-wave-bg" />
+        <div className="wave-inner">
+          <p className="wave-quote reveal">Built for athletes who <em>run real protocols</em> — not guesswork.</p>
+          <div className="wave-stat-row">
+            <div className="wave-stat reveal">
+              <div className="num">57</div>
+              <div className="desc">Peptides in catalog</div>
+            </div>
+            <div className="wave-stat reveal d1">
+              <div className="num">4</div>
+              <div className="desc">Wearable integrations</div>
+            </div>
+            <div className="wave-stat reveal d2">
+              <div className="num">AI</div>
+              <div className="desc">Protocol intelligence</div>
+            </div>
+            <div className="wave-stat reveal d3">
+              <div className="num">0</div>
+              <div className="desc">Guesswork required</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* MANIFESTO */}
       <section className="manifesto">
         <div className="label reveal">The problem</div>
         <p className="manifesto-quote reveal d1">
           Most peptide users are <em>flying blind</em> — running protocols built from forum posts and guessing whether any of it is working.
         </p>
-        <div className="manifesto-cite reveal d2">Peptide AI is the precision layer.</div>
+        <div className="manifesto-cite reveal d2">Peptide AI is the intelligence layer.</div>
       </section>
 
-      {/* TESTIMONIAL */}
+      {/* TESTIMONIALS */}
       <section className="testify">
+        <div className="label reveal">What users are saying</div>
         <p className="testify-quote reveal">
           "Finally an app that treats peptide protocols seriously. The AI chat knows my stack <em>and</em> my labs — it's like having a smart friend who actually reads the research."
         </p>
         <div className="testify-person reveal d1">
-          <span className="testify-name">Jackson R.</span> &nbsp;·&nbsp; Biohacker, Austin TX
+          <span className="testify-name">@BrickBoyDior</span> &nbsp;·&nbsp; Fitness Influencer
+        </div>
+        <p className="testify-quote reveal" style={{ marginTop: '3rem' }}>
+          "This is the tool I wish I had when I started. Tracking doses, syncing my wearable data, and getting AI insights in one place — Peptide AI makes it effortless."
+        </p>
+        <div className="testify-person reveal d1">
+          <span className="testify-name">@RaphKG</span> &nbsp;·&nbsp; Fitness Creator
+        </div>
+        <p className="testify-quote reveal" style={{ marginTop: '3rem' }}>
+          "Gharilla approved. The body scan and protocol tracker alone are worth it — I can actually see the comp changes in real time."
+        </p>
+        <div className="testify-person reveal d1">
+          <span className="testify-name">@Gharilla</span> &nbsp;·&nbsp; Fitness Influencer
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="section" id="pricing">
+        <div className="section-head">
+          <div className="label reveal">Pricing</div>
+          <h2 className="section-title reveal d1">Simple, transparent<br /><em>pricing.</em></h2>
+          <p className="section-lead reveal d2" style={{ fontSize: '16px' }}>Start monthly, or commit yearly and save over 54%. Most users switch to yearly within the first month.</p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '1.5rem', maxWidth: '820px', margin: '0 auto', padding: '0 1.5rem' }}>
+          {/* Yearly — PRIMARY */}
+          <div className="reveal" style={{ background: 'var(--card)', border: '2px solid var(--mint)', borderRadius: '1.25rem', padding: '2.5rem 2rem', textAlign: 'center', position: 'relative', boxShadow: '0 0 60px -20px rgba(45,216,132,0.25)' }}>
+            <div style={{ position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)', background: 'var(--mint)', color: '#000', fontSize: '.75rem', fontWeight: 700, padding: '.3rem .9rem', borderRadius: '1rem', whiteSpace: 'nowrap' }}>Best Value — Save 54%</div>
+            <div style={{ fontSize: '.85rem', textTransform: 'uppercase', letterSpacing: '.12em', color: 'var(--mint)', marginBottom: '.75rem' }}>Yearly</div>
+            <div style={{ fontSize: '3rem', fontWeight: 600, fontFamily: "'Fraunces',serif", color: 'var(--ink)' }}><span style={{ fontSize: '1.5rem', verticalAlign: 'super' }}>$</span>54.99<span style={{ fontSize: '1rem', color: 'var(--ink-soft)' }}>/year</span></div>
+            <div style={{ fontSize: '.82rem', color: 'var(--mint)', margin: '.4rem 0 1.25rem', fontWeight: 500 }}>≈ $4.58 / month</div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '1.25rem 0', textAlign: 'left', color: 'var(--ink-soft)', fontSize: '.95rem', lineHeight: 2.2 }}>
+              <li>✓ Full peptide tracking (57 compounds)</li>
+              <li>✓ AI Insights Chatbot</li>
+              <li>✓ AI Body Scanner</li>
+              <li>✓ Protocol &amp; stack builder</li>
+              <li>✓ Priority support</li>
+              <li>✓ Early access to new features</li>
+            </ul>
+            <a href="#cta" className="btn btn-mint" style={{ width: '100%', display: 'block', textAlign: 'center', fontSize: '1rem' }}>Get started →</a>
+          </div>
+          {/* Monthly */}
+          <div className="reveal d1" style={{ background: 'var(--card)', border: '1px solid var(--line-2)', borderRadius: '1.25rem', padding: '2.5rem 2rem', textAlign: 'center', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(255,255,255,0.08)', border: '1px solid var(--line-2)', color: 'var(--ink-soft)', fontSize: '.75rem', fontWeight: 600, padding: '.3rem .9rem', borderRadius: '1rem', whiteSpace: 'nowrap' }}>Most Popular</div>
+            <div style={{ fontSize: '.85rem', textTransform: 'uppercase', letterSpacing: '.12em', color: 'var(--ink-soft)', marginBottom: '.75rem' }}>Monthly</div>
+            <div style={{ fontSize: '3rem', fontWeight: 600, fontFamily: "'Fraunces',serif", color: 'var(--ink)' }}><span style={{ fontSize: '1.5rem', verticalAlign: 'super' }}>$</span>9.99<span style={{ fontSize: '1rem', color: 'var(--ink-soft)' }}>/month</span></div>
+            <div style={{ fontSize: '.82rem', color: 'var(--ink-mute)', margin: '.4rem 0 1.25rem' }}>Cancel anytime</div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '1.25rem 0', textAlign: 'left', color: 'var(--ink-soft)', fontSize: '.95rem', lineHeight: 2.2 }}>
+              <li>✓ Full peptide tracking (57 compounds)</li>
+              <li>✓ AI Insights Chatbot</li>
+              <li>✓ AI Body Scanner</li>
+              <li>✓ Protocol &amp; stack builder</li>
+              <li>✓ Priority support</li>
+              <li style={{ color: 'var(--ink-mute)' }}>✗ Early access to new features</li>
+            </ul>
+            <a href="#cta" className="btn btn-ghost" style={{ width: '100%', display: 'block', textAlign: 'center' }}>Get started</a>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="cta" id="cta">
         <div className="cta-card reveal">
-          <h2>Your protocol,<br /><em>finally measured.</em></h2>
-          <p>Join the serious users running their stacks with precision.</p>
+          <h2>Stop guessing.<br /><em>Start measuring.</em></h2>
+          <p>Join thousands of serious users running their protocols with precision. Download free, upgrade when you're ready.</p>
           <div className="cta-buttons">
             <a
               href={APP_STORE_URL}
