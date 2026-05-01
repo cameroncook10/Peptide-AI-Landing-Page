@@ -150,15 +150,11 @@ export default function LandingPage() {
 
   return (
     <div className="lp-root" ref={rootRef}>
-      {/* Shader mesh background */}
-      <div className="mesh-bg" aria-hidden="true">
-        <div className="mesh-blob blob-1"></div>
-        <div className="mesh-blob blob-2"></div>
-        <div className="mesh-blob blob-3"></div>
-        <div className="mesh-blob blob-4"></div>
+      {/* Animated glow background */}
+      <div className="site-glow" aria-hidden="true">
+        <div className="glow-dots"></div>
+        <div className="glow-mid"></div>
       </div>
-      <div className="noise-overlay" aria-hidden="true"></div>
-      <div className="grid-overlay" aria-hidden="true"></div>
 
       {/* NAV */}
       <nav className="lp-nav" id="nav" ref={navRef}>
@@ -183,35 +179,41 @@ export default function LandingPage() {
         <div className="hero-v8-inner">
           <div className="hero-v8-kicker reveal">
             <span className="kicker-dot"></span>
-            Meet Peptide AI
+            Mastering your peptide protocols
           </div>
           <h1 className="hero-v8-title reveal d1">
             <span className="hv8-word" data-dir="-1">Peptide</span>
-            <span className="hv8-word" data-dir="1"><em>Intelligence.</em></span>
+            <span className="hv8-word" data-dir="1"><em>AI.</em></span>
           </h1>
           <p className="hero-v8-sub reveal d2">
-            Log every dose, sync your wearables, upload your labs — and finally see which compounds are earning their keep. For the people running real protocols, not reading Reddit threads.
+            Peptides are powerful amino acid chains that signal your body to heal, recover, and optimize performance. Peptide AI removes the guesswork from your therapy — log doses, sync wearables, upload labs, and see exactly how your body responds.
           </p>
-          <div className="hero-v8-cta reveal d3">
-            <a href="#cta" className="btn btn-mint btn-lg">Get the app →</a>
-            <a href="#features" className="btn btn-ghost btn-lg">See it in action</a>
+          <div className="hero-store-row reveal d3">
+            <a href={APP_STORE_URL} className="hero-store-btn" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.41-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.41C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span className="hsb-label"><span className="hsb-sub">Download on the</span><span className="hsb-name">App Store</span></span>
+            </a>
+            <a href={PLAY_STORE_URL} className="hero-store-btn" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.21 12l2.488-2.491zM5.864 2.658L16.802 8.99l-2.302 2.302-8.636-8.634z"/></svg>
+              <span className="hsb-label"><span className="hsb-sub">Get it on</span><span className="hsb-name">Google Play</span></span>
+            </a>
           </div>
         </div>
 
         <div className="hero-v8-phones reveal d2">
           <div className="hv8-phone hv8-phone-left">
             <div className="hv8-phone-frame">
-              <img src="/assets/screen1.png" alt="Peptide AI Home" />
+              <img src="/assets/screen-dashboard.png" alt="Peptide AI Home" loading="eager" />
             </div>
           </div>
           <div className="hv8-phone hv8-phone-center">
             <div className="hv8-phone-frame">
-              <img src="/assets/screen2.png" alt="Peptide AI Optimize" />
+              <img src="/assets/screen-track.png" alt="Peptide AI Optimize" loading="eager" />
             </div>
           </div>
           <div className="hv8-phone hv8-phone-right">
             <div className="hv8-phone-frame">
-              <img src="/assets/screen3.png" alt="Peptide AI Body Scan" />
+              <img src="/assets/screen-stack.png" alt="Peptide AI Body Scan" loading="eager" />
             </div>
           </div>
         </div>
@@ -274,70 +276,91 @@ export default function LandingPage() {
         <div className="section-head">
           <div className="label reveal">Inside the app</div>
           <h2 className="section-title reveal d1">
-            Three screens that<br />change how you run <em>protocols.</em>
+            Four screens that<br />change how you run <em>protocols.</em>
           </h2>
         </div>
 
         <div className="showcase">
-          {/* ROW 1: Today's Stack */}
+          {/* ROW 1: Protocol Stack */}
           <div className="show-row">
             <div className="show-phone reveal">
               <div className="show-phone-frame">
-                <img src="/assets/screen1.png" alt="Today's Stack screen" />
+                <img src="/assets/screen-stack.png" alt="Peptide Stack screen" />
               </div>
             </div>
             <div className="show-copy reveal d1">
-              <div className="show-mark">01 / Home</div>
-              <h3>Today's stack,<br /><em>front and center.</em></h3>
+              <div className="show-mark">01 / Protocol Stack</div>
+              <h3>Build and manage<br /><em>your entire stack.</em></h3>
               <p>
-                Every peptide you're running — BPC-157, TB-500, Tirzepatide, whatever the stack — shows up as a single tap-to-log card. Active compound count, doses taken today, current streak. No spreadsheets. No guessing which vial is next.
+                Add every peptide, dose, route, and cycle to your personalized stack. Visualize what's active, what's coming up, and what you've cycled — all in one organized view.
               </p>
               <ul className="show-list">
-                <li>Cycle-aware: auto-tracks Week X of Y on every compound</li>
-                <li>Sync with Whoop, Oura, Apple Health for live key metrics</li>
-                <li>One-tap Body Scan to AI-analyze progress over time</li>
+                <li>Log 50+ peptides with dose, frequency, and route</li>
+                <li>Stack templates and AI-assisted protocol builder</li>
+                <li>Cycle tracking with on/off phase reminders</li>
               </ul>
             </div>
           </div>
 
-          {/* ROW 2: Optimize */}
+          {/* ROW 2: Dashboard */}
           <div className="show-row reverse">
             <div className="show-phone reveal">
               <div className="show-phone-frame">
-                <img src="/assets/screen2.png" alt="Optimize screen" />
+                <img src="/assets/screen-dashboard.png" alt="Dashboard screen" />
               </div>
             </div>
             <div className="show-copy reveal d1">
-              <div className="show-mark">02 / Optimize</div>
-              <h3>Patterns your <em>spreadsheet</em> will never catch.</h3>
+              <div className="show-mark">02 / Dashboard</div>
+              <h3>Your protocol,<br /><em>at a glance.</em></h3>
               <p>
-                Every dose, side effect, and workout logged feeds a 30-day trend engine. Adherence, volume, and response all plotted against your protocol — with AI insights that connect the dots between what you're taking and what's actually shifting.
+                See everything that matters on one screen — active compounds, today's doses, wearable data, and recent AI insights. Your entire protocol, organized and actionable.
               </p>
               <ul className="show-list">
-                <li>Adherence, side effect, and volume trends — computed live</li>
-                <li>Upload bloodwork to unlock biomarker-linked insights</li>
-                <li>AI explains <em>why</em> something's moving, not just that it is</li>
+                <li>Active compound count with real-time cycle tracking</li>
+                <li>Quick-log doses with a single tap</li>
+                <li>Sync with Whoop, Oura, and Apple Health</li>
               </ul>
             </div>
           </div>
 
-          {/* ROW 3: Body Scan */}
+          {/* ROW 3: Dose Tracking */}
           <div className="show-row">
             <div className="show-phone reveal">
               <div className="show-phone-frame">
-                <img src="/assets/screen3.png" alt="Body Scan screen" />
+                <img src="/assets/screen-track.png" alt="Dose Tracking screen" />
               </div>
             </div>
             <div className="show-copy reveal d1">
-              <div className="show-mark">03 / Body Scan</div>
-              <h3>See composition change <em>before</em> the scale does.</h3>
+              <div className="show-mark">03 / Dose Tracking</div>
+              <h3>Log every dose,<br /><em>never miss a beat.</em></h3>
               <p>
-                Front-facing physique photos, analyzed on-device, never uploaded. The model watches body composition trend across your cycle — so you can tell in week 4 whether that GLP-1 or GH secretagogue is actually doing what you paid for.
+                One-tap dose logging with timestamps, route of administration, and cycle-day tracking. Build a complete injection history so the AI always has full context.
               </p>
               <ul className="show-list">
-                <li>On-device analysis — your photos never leave your phone</li>
-                <li>50 scans/month included, more on higher tiers</li>
-                <li>Overlay progress against each active compound's cycle</li>
+                <li>Timestamped dose logs with route and amount</li>
+                <li>Streak and adherence tracking per compound</li>
+                <li>AI insights pull from your actual log history</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* ROW 4: Injection Sites */}
+          <div className="show-row reverse">
+            <div className="show-phone reveal">
+              <div className="show-phone-frame">
+                <img src="/assets/screen-injection-sites.png" alt="Injection Sites screen" />
+              </div>
+            </div>
+            <div className="show-copy reveal d1">
+              <div className="show-mark">04 / Injection Sites</div>
+              <h3>Rotate smarter,<br /><em>recover faster.</em></h3>
+              <p>
+                Track every injection site on a visual body map. The app remembers where you last pinned and suggests optimal rotation to reduce scar tissue buildup and improve absorption.
+              </p>
+              <ul className="show-list">
+                <li>Visual body map with pin history</li>
+                <li>Smart rotation suggestions based on healing time</li>
+                <li>Log pain, swelling, or bruising per site</li>
               </ul>
             </div>
           </div>
