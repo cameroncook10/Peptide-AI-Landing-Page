@@ -35,6 +35,7 @@
   -webkit-overflow-scrolling: touch;
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Override the global body background only when the landing page is mounted. */
@@ -52,15 +53,15 @@ body:has(.lp-root) {
 .lp-root img { max-width: 100%; display: block; }
 .lp-root ::selection { background: #2dd884; color: #000; }
 
-/* Offscreen sections skip render work until near-visible */
+/* Offscreen sections — use containment without content-visibility,
+   which was causing sections to "pop" into place when scrolling. */
 .lp-root .section,
 .lp-root .marquee-section,
 .lp-root .manifesto,
 .lp-root .testify,
 .lp-root .cta,
 .lp-root footer {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
+  contain: layout paint;
 }
 
 /* ================= ANIMATED GREEN GLOW BG ================= */
@@ -80,6 +81,9 @@ body:has(.lp-root) {
   top: -200px; left: -250px;
   animation: lp-glowDriftA 18s ease-in-out infinite alternate;
   filter: blur(40px);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .lp-root .site-glow::after {
   content: '';
@@ -90,6 +94,9 @@ body:has(.lp-root) {
   bottom: -150px; right: -180px;
   animation: lp-glowDriftB 22s ease-in-out infinite alternate;
   filter: blur(50px);
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 @keyframes lp-glowDriftA {
   0%   { transform: translate(0, 0) scale(1); opacity: 0.8; }
@@ -278,6 +285,7 @@ body:has(.lp-root) {
   margin: 0 auto;
   padding: 180px 40px 140px;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1006,14 +1014,31 @@ body:has(.lp-root) {
 /* ================= REVEAL ================= */
 .lp-root .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 1.1s var(--ease-out), transform 1.1s var(--ease-out);
+  transform: translate3d(0, 24px, 0);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  will-change: opacity, transform;
 }
-.lp-root .reveal.visible { opacity: 1; transform: translateY(0); }
-.lp-root .reveal.d1 { transition-delay: 0.1s; }
-.lp-root .reveal.d2 { transition-delay: 0.22s; }
-.lp-root .reveal.d3 { transition-delay: 0.34s; }
-.lp-root .reveal.d4 { transition-delay: 0.46s; }
+.lp-root .reveal.visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+.lp-root .reveal.d1 { transition-delay: 0.08s; }
+.lp-root .reveal.d2 { transition-delay: 0.16s; }
+.lp-root .reveal.d3 { transition-delay: 0.24s; }
+.lp-root .reveal.d4 { transition-delay: 0.32s; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .lp-root .reveal { opacity: 1; transform: none; transition: none; }
+  .lp-root .site-glow::before,
+  .lp-root .site-glow::after,
+  .lp-root .glow-dots,
+  .lp-root .glow-mid { animation: none !important; }
+  .lp-root .marq-col-1,
+  .lp-root .marq-col-2,
+  .lp-root .marq-col-3 { animation: none !important; }
+}
 
 /* ================= HAMBURGER MENU ================= */
 .lp-root .nav-hamburger {
@@ -1119,4 +1144,10 @@ body:has(.lp-root) {
   .lp-root .hv8-phone-frame { width: 140px; border-radius: 22px; }
   .lp-root .hv8-phone-frame img { border-radius: 19px; }
   .lp-root .hero-v8-phones { gap: 8px; }
+
+  /* On phones, kill the heaviest paint loops that cause jank */
+  .lp-root .glow-dots { animation: none; opacity: 0.6; }
+  .lp-root .glow-mid { animation: none; }
+  .lp-root .site-glow::before,
+  .lp-root .site-glow::after { filter: blur(28px); }
 }
