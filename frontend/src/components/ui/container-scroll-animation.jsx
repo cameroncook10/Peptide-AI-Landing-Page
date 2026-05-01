@@ -44,7 +44,7 @@ export const ContainerScroll = ({
         }}
       >
         <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={translate} scale={scale}>
+        <Card rotate={rotate} translate={translate} scale={scale} isMobile={isMobile}>
           {children}
         </Card>
       </div>
@@ -69,6 +69,7 @@ export const Card = ({
   rotate,
   scale,
   children,
+  isMobile,
 }) => {
   return (
     <motion.div
