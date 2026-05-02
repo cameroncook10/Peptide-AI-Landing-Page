@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import IntroAnimation from './ui/scroll-morph-hero';
-import { ContainerScroll } from './ui/container-scroll-animation';
 import './LandingPage.css';
 
 const APP_STORE_URL =
@@ -398,28 +397,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CONTAINER SCROLL SHOWCASE */}
-      <div className="bg-[#050706] relative z-20">
-        <ContainerScroll
-          titleComponent={
-            <>
-              <h2 className="text-4xl font-semibold text-white">
-                Unleash the power of <br />
-                <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none text-[#2dd884]">
-                  Protocol Intelligence
-                </span>
-              </h2>
-            </>
-          }
-        >
-          <img
-            src="/assets/screen-dashboard.png"
-            alt="hero"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', borderRadius: 36, display: 'block' }}
-            draggable={false}
-          />
-        </ContainerScroll>
-      </div>
 
       {/* FEATURES — real app screens */}
       <section className="section" id="features">
