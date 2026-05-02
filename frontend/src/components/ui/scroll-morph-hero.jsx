@@ -4,11 +4,11 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, useTransform, useSpring, useMotionValue } from "framer-motion";
 
 /* ─── Realistic iPhone Frame ──────────────────────────────────────── */
-const PHONE_W = 170;
-const PHONE_H = 340;
-const BEZEL = 5;
-const OUTER_R = 44;
-const INNER_R = 38;
+const PHONE_W = 220;
+const PHONE_H = 450;
+const BEZEL = 6;
+const OUTER_R = 50;
+const INNER_R = 44;
 
 function RealisticPhone({ src, index, target }) {
   return (
@@ -22,9 +22,9 @@ function RealisticPhone({ src, index, target }) {
       }}
       transition={{
         type: "spring",
-        stiffness: 16,
-        damping: 12,
-        mass: 1.5,
+        stiffness: 8,
+        damping: 18,
+        mass: 2.5,
       }}
       style={{
         position: "absolute",
@@ -238,44 +238,44 @@ export default function IntroAnimation() {
 
   const virtualScroll = useMotionValue(0);
   useEffect(() => {
-    const onScroll = () => virtualScroll.set(Math.min(Math.max(window.scrollY * 0.7, 0), MAX_SCROLL));
+    const onScroll = () => virtualScroll.set(Math.min(Math.max(window.scrollY * 0.4, 0), MAX_SCROLL));
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, [virtualScroll]);
 
-  const morphProgress = useTransform(virtualScroll, [0, 700], [0, 1]);
-  const smoothMorph = useSpring(morphProgress, { stiffness: 18, damping: 14 });
+  const morphProgress = useTransform(virtualScroll, [0, 800], [0, 1]);
+  const smoothMorph = useSpring(morphProgress, { stiffness: 8, damping: 16 });
 
-  const scrollRotate = useTransform(virtualScroll, [700, MAX_SCROLL], [0, 50]);
-  const smoothRotate = useSpring(scrollRotate, { stiffness: 14, damping: 14 });
+  const scrollRotate = useTransform(virtualScroll, [800, MAX_SCROLL], [0, 25]);
+  const smoothRotate = useSpring(scrollRotate, { stiffness: 6, damping: 16 });
 
   const mouseX = useMotionValue(0);
-  const smoothMouseX = useSpring(mouseX, { stiffness: 14, damping: 14 });
+  const smoothMouseX = useSpring(mouseX, { stiffness: 6, damping: 16 });
 
   useEffect(() => {
     const c = containerRef.current;
     if (!c) return;
     const onMove = (e) => {
       const r = c.getBoundingClientRect();
-      mouseX.set(((e.clientX - r.left) / r.width * 2 - 1) * 20);
+      mouseX.set(((e.clientX - r.left) / r.width * 2 - 1) * 8);
     };
     c.addEventListener("mousemove", onMove);
     return () => c.removeEventListener("mousemove", onMove);
   }, [mouseX]);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setIntroPhase("line"), 500);
-    const t2 = setTimeout(() => setIntroPhase("circle"), 2500);
+    const t1 = setTimeout(() => setIntroPhase("line"), 800);
+    const t2 = setTimeout(() => setIntroPhase("circle"), 3500);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   const scatterPos = useMemo(() =>
     IMAGES.map(() => ({
-      x: (Math.random() - 0.5) * 500,
-      y: (Math.random() - 0.5) * 350,
-      rotation: (Math.random() - 0.5) * 35,
-      scale: 0.4, opacity: 0,
+      x: (Math.random() - 0.5) * 200,
+      y: (Math.random() - 0.5) * 150,
+      rotation: (Math.random() - 0.5) * 12,
+      scale: 0.7, opacity: 0,
     })), []);
 
   const [mVal, setMVal] = useState(0);
@@ -293,7 +293,7 @@ export default function IntroAnimation() {
     <div
       ref={containerRef}
       style={{
-        height: 520,
+        height: 620,
         width: '100%',
         position: 'relative',
         overflow: 'visible',
@@ -310,31 +310,31 @@ export default function IntroAnimation() {
             if (introPhase === "scatter") {
               target = scatterPos[i];
             } else if (introPhase === "line") {
-              const spacing = isMobile ? 140 : 200;
+              const spacing = isMobile ? 160 : 240;
               const totalW = (TOTAL_IMAGES - 1) * spacing;
               target = { x: i * spacing - totalW / 2, y: 0, rotation: 0, scale: 1, opacity: 1 };
             } else {
               // Circle
-              const cR = isMobile ? 100 : 170;
+              const cR = isMobile ? 130 : 200;
               const cAngle = (i / TOTAL_IMAGES) * 360 - 90;
               const cRad = (cAngle * Math.PI) / 180;
               const cPos = { x: Math.cos(cRad) * cR, y: Math.sin(cRad) * cR, rotation: 0 };
 
-              // Arc
-              const aR = isMobile ? 350 : 550;
-              const aCY = 340;
-              const spread = isMobile ? 45 : 65;
+              // Arc — gentle, minimal movement
+              const aR = isMobile ? 400 : 600;
+              const aCY = 380;
+              const spread = isMobile ? 35 : 50;
               const startA = -90 - spread / 2;
               const step = spread / (TOTAL_IMAGES - 1);
-              const sP = Math.min(Math.max(rVal / 50, 0), 1);
-              const bR = -sP * spread * 0.25;
+              const sP = Math.min(Math.max(rVal / 25, 0), 1);
+              const bR = -sP * spread * 0.15;
               const curA = startA + i * step + bR;
               const aRad = (curA * Math.PI) / 180;
               const aPos = {
                 x: Math.cos(aRad) * aR + pVal,
                 y: Math.sin(aRad) * aR + aCY,
                 rotation: curA + 90,
-                scale: isMobile ? 0.95 : 1.1,
+                scale: isMobile ? 0.9 : 1.0,
               };
 
               target = {
