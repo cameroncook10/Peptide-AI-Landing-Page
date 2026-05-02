@@ -334,8 +334,11 @@ export default function LandingPage() {
             </a>
           </div>
 
-          {/* SCROLL MORPH HERO SHOWCASE — centered below store buttons */}
-          <IntroAnimation />
+          {/* Orbit phones — kept below store buttons with enough clearance
+              for the 126px phone overhang above the stage container */}
+          <div style={{ marginTop: '160px' }}>
+            <IntroAnimation />
+          </div>
         </div>
       </section>
 
