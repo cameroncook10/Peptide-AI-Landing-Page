@@ -521,23 +521,56 @@ export default function LandingPage() {
       {/* TESTIMONIALS */}
       <section className="testify">
         <div className="label reveal">What users are saying</div>
-        <p className="testify-quote reveal">
-          "Finally an app that treats peptide protocols seriously. The AI chat knows my stack <em>and</em> my labs — it's like having a smart friend who actually reads the research."
-        </p>
-        <div className="testify-person reveal d1">
-          <span className="testify-name">@BrickBoyDior</span> &nbsp;·&nbsp; Fitness Influencer
-        </div>
-        <p className="testify-quote reveal" style={{ marginTop: '3rem' }}>
-          "This is the tool I wish I had when I started. Tracking doses, syncing my wearable data, and getting AI insights in one place — Peptide AI makes it effortless."
-        </p>
-        <div className="testify-person reveal d1">
-          <span className="testify-name">@RaphKG</span> &nbsp;·&nbsp; Fitness Creator
-        </div>
-        <p className="testify-quote reveal" style={{ marginTop: '3rem' }}>
-          "Gharilla approved. The body scan and protocol tracker alone are worth it — I can actually see the comp changes in real time."
-        </p>
-        <div className="testify-person reveal d1">
-          <span className="testify-name">@Gharilla</span> &nbsp;·&nbsp; Fitness Influencer
+        <h2 className="section-title reveal d1" style={{ textAlign: 'center', marginBottom: '64px' }}>
+          Real results from <em>real athletes.</em>
+        </h2>
+        <div className="testify-cards">
+
+          <div className="testify-card reveal">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/brickboydior.png" alt="BrickBoyDior" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"Finally an app that treats peptide protocols seriously. The AI chat knows my stack <em>and</em> my labs — it's like having a smart friend who actually reads the research."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@BrickBoyDior</span>
+                <span className="testify-role">Fitness Influencer</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="testify-card reveal d1">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/raphkg.png" alt="RaphKG" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"This is the tool I wish I had when I started. Tracking doses, syncing my wearable data, and getting AI insights in one place — Peptide AI makes it effortless."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@RaphKG</span>
+                <span className="testify-role">Fitness Creator</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="testify-card reveal d2">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/gharilla.png" alt="Gharilla" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"Gharilla approved. The body scan and protocol tracker alone are worth it — I can actually see the comp changes in real time."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@Gharilla</span>
+                <span className="testify-role">Fitness Influencer</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 

@@ -1547,3 +1547,120 @@ body:has(.lp-root) {
 @media (max-width: 900px) {
   .lp-root .psc-phone-v2 { width: 220px; height: 477px; }
 }
+
+/* ================= TESTIMONIAL CARDS ================= */
+.lp-root .testify-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.lp-root .testify-card {
+  background: var(--card);
+  border: 1px solid var(--line-2);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s var(--ease), transform 0.4s var(--ease);
+}
+.lp-root .testify-card:hover {
+  border-color: rgba(45, 216, 132, 0.25);
+  transform: translateY(-4px);
+}
+
+/* Photo strip at top */
+.lp-root .testify-avatar-wrap {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lp-root .testify-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s var(--ease);
+}
+.lp-root .testify-card:hover .testify-avatar {
+  transform: scale(1.04);
+}
+/* Gradient fade from photo into card body */
+.lp-root .testify-avatar-glow {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to top, var(--card) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Text area */
+.lp-root .testify-card-body {
+  padding: 24px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.lp-root .testify-stars {
+  color: var(--mint);
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+.lp-root .testify-card-quote {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(16px, 1.4vw, 19px);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--ink-soft);
+  flex: 1;
+}
+.lp-root .testify-card-quote em {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.lp-root .testify-card-person {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.lp-root .testify-card-person .testify-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.lp-root .testify-role {
+  font-size: 12px;
+  color: var(--mint);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+/* Remove old single-quote testify styles that conflict */
+.lp-root .testify-quote { display: none; }
+.lp-root .testify-person { display: none; }
+
+@media (max-width: 900px) {
+  .lp-root .testify-cards {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    padding: 0 24px;
+  }
+  .lp-root .testify-avatar-wrap { height: 240px; }
+}
+@media (min-width: 600px) and (max-width: 900px) {
+  .lp-root .testify-cards { grid-template-columns: repeat(2, 1fr); max-width: 680px; }
+}
