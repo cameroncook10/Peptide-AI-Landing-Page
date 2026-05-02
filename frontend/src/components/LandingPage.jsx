@@ -409,6 +409,21 @@ export default function LandingPage() {
             </div>
           </div>
 
+          <div className="testify-card reveal d3">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/influencer4.png" alt="DomFitPro" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"I've tried every tracking app out there — nothing comes close. Peptide AI connected my BPC-157 cycle directly to my recovery data and I finally <em>know</em> what's working."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@DomFitPro</span>
+                <span className="testify-role">Strength Coach &amp; Creator</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 

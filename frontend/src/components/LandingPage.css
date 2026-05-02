@@ -1552,9 +1552,9 @@ body:has(.lp-root) {
 /* ================= TESTIMONIAL CARDS ================= */
 .lp-root .testify-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 40px;
 }
@@ -1654,16 +1654,16 @@ body:has(.lp-root) {
 .lp-root .testify-quote { display: none; }
 .lp-root .testify-person { display: none; }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .lp-root .testify-cards { grid-template-columns: repeat(2, 1fr); max-width: 800px; }
+}
+@media (max-width: 600px) {
   .lp-root .testify-cards {
     grid-template-columns: 1fr;
     max-width: 480px;
     padding: 0 24px;
   }
   .lp-root .testify-avatar-wrap { height: 240px; }
-}
-@media (min-width: 600px) and (max-width: 900px) {
-  .lp-root .testify-cards { grid-template-columns: repeat(2, 1fr); max-width: 680px; }
 }
 
 /* ── Partners Bar ─────────────────────────────────────────── */
