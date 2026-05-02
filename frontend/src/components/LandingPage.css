@@ -735,10 +735,10 @@ body:has(.lp-root) {
   z-index: 2;
   max-width: 1360px;
   margin: 0 auto;
-  padding: 140px 40px;
+  padding: 80px 40px;
 }
 .lp-root .section-head {
-  margin-bottom: 80px;
+  margin-bottom: 48px;
   max-width: 820px;
 }
 .lp-root .label {
@@ -942,10 +942,10 @@ body:has(.lp-root) {
 
 /* ================= SHOWCASE ================= */
 .lp-root .showcase {
-  margin-top: 100px;
+  margin-top: 48px;
   display: flex;
   flex-direction: column;
-  gap: 160px;
+  gap: 100px;
 }
 .lp-root .show-row {
   display: grid;
@@ -1436,7 +1436,7 @@ body:has(.lp-root) {
 }
 .lp-root .green-wave-section .wave-inner {
   position: relative;
-  padding: 140px 40px;
+  padding: 80px 40px;
   max-width: 1360px;
   margin: 0 auto;
   text-align: center;
