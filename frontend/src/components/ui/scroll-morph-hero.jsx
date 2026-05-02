@@ -4,11 +4,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, useTransform, useSpring, useMotionValue } from "framer-motion";
 
 /* ─── Dimensions ──────────────────────────────────────── */
-const PHONE_W = 220;
-const PHONE_H = 450;
-const BEZEL = 6;
-const OUTER_R = 50;
-const INNER_R = 44;
+const PHONE_W = 280;
+const PHONE_H = 570;
+const BEZEL = 7;
+const OUTER_R = 56;
+const INNER_R = 48;
 
 /* ─── DNA Helix SVG (matches Peptide AI branding) ───── */
 function DnaHelix() {
