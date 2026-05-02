@@ -1,359 +1,218 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { motion, useTransform, useSpring, useMotionValue } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { LayoutGroup, motion, useAnimate } from "framer-motion";
 
-/* ─── Realistic iPhone Frame ──────────────────────────────────────── */
-const PHONE_W = 280;
-const PHONE_H = 570;
-const BEZEL = 7;
-const OUTER_R = 56;
-const INNER_R = 48;
+/* ─── Phone Dimensions ─── */
+const PHONE_W = 190;
+const PHONE_H = 390;
+const BEZEL = 6;
+const OUTER_R = 46;
+const INNER_R = 40;
 
-/* ─── DNA Helix SVG ───── */
-function DnaHelix() {
-  return (
-    <svg width="40" height="48" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 2C8 2 24 8 24 12C24 16 8 18 8 22C8 26 24 28 24 32C24 36 8 38 8 38" stroke="#2dd884" strokeWidth="2" strokeLinecap="round" fill="none"/>
-      <path d="M24 2C24 2 8 8 8 12C8 16 24 18 24 22C24 26 8 28 8 32C8 36 24 38 24 38" stroke="#2dd884" strokeWidth="2" strokeLinecap="round" fill="none"/>
-      <line x1="8" y1="12" x2="24" y2="12" stroke="#2dd884" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
-      <line x1="8" y1="22" x2="24" y2="22" stroke="#2dd884" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
-      <line x1="8" y1="32" x2="24" y2="32" stroke="#2dd884" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
-      <line x1="12" y1="7" x2="20" y2="7" stroke="#2dd884" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
-      <line x1="12" y1="17" x2="20" y2="17" stroke="#2dd884" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
-      <line x1="12" y1="27" x2="20" y2="27" stroke="#2dd884" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
-      <line x1="12" y1="37" x2="20" y2="37" stroke="#2dd884" strokeWidth="1" strokeLinecap="round" opacity="0.3"/>
-    </svg>
-  );
-}
-
-function RealisticPhone({ src, index, target }) {
-  return (
-    <motion.div
-      animate={{
-        x: target.x,
-        y: target.y,
-        rotate: target.rotation,
-        scale: target.scale,
-        opacity: target.opacity,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 8,
-        damping: 18,
-        mass: 2.5,
-      }}
-      style={{
-        position: "absolute",
-        width: PHONE_W,
-        height: PHONE_H,
-        transformStyle: "preserve-3d",
-        perspective: 1200,
-      }}
-    >
-      <motion.div
-        style={{ width: '100%', height: '100%', transformStyle: "preserve-3d", position: 'relative' }}
-        transition={{ duration: 0.7, type: "spring", stiffness: 200, damping: 22 }}
-        whileHover={{ rotateY: 180 }}
-      >
-        {/* ──── FRONT FACE ──── */}
-        <div style={{
-          backfaceVisibility: "hidden",
-          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-        }}>
-          {/* Titanium outer shell */}
-          <div style={{
-            width: '100%', height: '100%',
-            borderRadius: OUTER_R,
-            background: 'linear-gradient(165deg, #2a2a2c 0%, #1a1a1c 30%, #0e0e0f 70%, #1f1f21 100%)',
-            padding: BEZEL,
-            position: 'relative',
-            boxShadow: `
-              0 0 0 0.5px rgba(255,255,255,0.12),
-              inset 0 0.5px 0 rgba(255,255,255,0.08),
-              0 25px 50px -12px rgba(0,0,0,0.7),
-              0 0 80px -20px rgba(45,216,132,0.08)
-            `,
-          }}>
-            {/* Side buttons — left */}
-            <div style={{
-              position: 'absolute', left: -2.5, top: 80,
-              width: 3, height: 28, borderRadius: 2,
-              background: 'linear-gradient(180deg, #3a3a3c, #1a1a1c)',
-              boxShadow: '-1px 0 2px rgba(0,0,0,0.5)',
-            }} />
-            <div style={{
-              position: 'absolute', left: -2.5, top: 120,
-              width: 3, height: 44, borderRadius: 2,
-              background: 'linear-gradient(180deg, #3a3a3c, #1a1a1c)',
-              boxShadow: '-1px 0 2px rgba(0,0,0,0.5)',
-            }} />
-            <div style={{
-              position: 'absolute', left: -2.5, top: 172,
-              width: 3, height: 44, borderRadius: 2,
-              background: 'linear-gradient(180deg, #3a3a3c, #1a1a1c)',
-              boxShadow: '-1px 0 2px rgba(0,0,0,0.5)',
-            }} />
-            {/* Side button — right (power) */}
-            <div style={{
-              position: 'absolute', right: -2.5, top: 130,
-              width: 3, height: 52, borderRadius: 2,
-              background: 'linear-gradient(180deg, #3a3a3c, #1a1a1c)',
-              boxShadow: '1px 0 2px rgba(0,0,0,0.5)',
-            }} />
-
-            {/* Screen area */}
-            <div style={{
-              width: '100%', height: '100%',
-              borderRadius: INNER_R,
-              overflow: 'hidden',
-              position: 'relative',
-              background: '#000',
-            }}>
-              {/* Dynamic Island */}
-              <div style={{
-                position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
-                width: 72, height: 20, background: '#000',
-                borderRadius: 14, zIndex: 10,
-                boxShadow: 'inset 0 0 0 0.5px rgba(255,255,255,0.04)',
-              }}>
-                {/* Camera lens */}
-                <div style={{
-                  position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: 'radial-gradient(circle, #1a2a3a 30%, #0a0a0f 60%, #000 100%)',
-                  boxShadow: '0 0 0 1px rgba(255,255,255,0.06)',
-                }} />
-              </div>
-
-              {/* App screenshot */}
-              <img
-                src={src}
-                alt={`screen-${index}`}
-                style={{
-                  width: '100%', height: '100%',
-                  objectFit: 'cover', objectPosition: 'top center',
-                  display: 'block',
-                }}
-              />
-
-              {/* Glass highlight — top edge reflection */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: '35%',
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)',
-                pointerEvents: 'none',
-              }} />
-
-              {/* Home indicator */}
-              <div style={{
-                position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)',
-                width: 100, height: 4, borderRadius: 4,
-                background: 'rgba(255,255,255,0.15)',
-              }} />
-            </div>
-
-            {/* Frame highlight — top edge glint */}
-            <div style={{
-              position: 'absolute', top: 0, left: '15%', right: '15%', height: 1,
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
-              borderRadius: OUTER_R,
-            }} />
-          </div>
-        </div>
-
-        {/* ──── BACK FACE ──── */}
-        <div style={{
-          backfaceVisibility: "hidden",
-          transform: "rotateY(180deg)",
-          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-        }}>
-          <div style={{
-            width: '100%', height: '100%',
-            borderRadius: OUTER_R,
-            background: 'linear-gradient(165deg, #2a2a2c 0%, #1a1a1c 30%, #0e0e0f 70%, #1f1f21 100%)',
-            position: 'relative',
-            boxShadow: `
-              0 0 0 0.5px rgba(255,255,255,0.12),
-              inset 0 0.5px 0 rgba(255,255,255,0.08),
-              0 25px 50px -12px rgba(0,0,0,0.7)
-            `,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', gap: 14,
-          }}>
-            {/* Camera bump */}
-            <div style={{
-              position: 'absolute', top: 14, left: 14,
-              width: 48, height: 48, borderRadius: 14,
-              background: 'linear-gradient(135deg, #1a1a1c, #0e0e0f)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <div style={{
-                width: 20, height: 20, borderRadius: '50%',
-                background: 'radial-gradient(circle, #1a2a3a 20%, #0a0a0f 60%, #000 100%)',
-                boxShadow: '0 0 0 2px rgba(255,255,255,0.05), inset 0 0 4px rgba(0,200,100,0.2)',
-              }} />
-            </div>
-
-            {/* Logo — DNA helix + Peptide AI */}
-            <DnaHelix />
-            <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <p style={{
-                fontSize: 32, fontWeight: 500, color: '#f2efe8', margin: 0,
-                letterSpacing: '-0.03em', fontFamily: "'Fraunces', serif", lineHeight: 1.1
-              }}>
-                Peptide <span style={{ color: '#2dd884' }}>AI</span>
-              </p>
-            </div>
-
-            {/* Back frame highlight */}
-            <div style={{
-              position: 'absolute', top: 0, left: '15%', right: '15%', height: 1,
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)',
-              borderRadius: OUTER_R,
-            }} />
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-/* ─── Main Carousel ──────────────────────────────────────────── */
-const TOTAL_IMAGES = 4;
-const MAX_SCROLL = 1600;
-
-const IMAGES = [
-  "/assets/screen-dashboard.png",
-  "/assets/screen-track.png",
-  "/assets/screen-stack.png",
-  "/assets/screen-injection-sites.png",
+/* ─── Screenshot Data ─── */
+const ORBIT_ITEMS = [
+  { id: 1, name: "Dashboard", src: "/assets/screen-dashboard.png" },
+  { id: 2, name: "Track", src: "/assets/screen-track.png" },
+  { id: 3, name: "Stack", src: "/assets/screen-stack.png" },
+  { id: 4, name: "Injection Sites", src: "/assets/screen-injection-sites.png" },
 ];
 
-const lerp = (a, b, t) => a * (1 - t) + b * t;
+/* ─── Animation Config ─── */
+const springTransition = {
+  stiffness: 300,
+  damping: 35,
+  type: "spring",
+  restSpeed: 0.01,
+  restDelta: 0.01,
+};
 
-export default function IntroAnimation() {
-  const [introPhase, setIntroPhase] = useState("hidden");
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-  const containerRef = useRef(null);
+const spinConfig = {
+  duration: 30,
+  ease: "linear",
+  repeat: Infinity,
+};
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const obs = new ResizeObserver(entries => {
-      for (const e of entries) setContainerSize({ width: e.contentRect.width, height: e.contentRect.height });
-    });
-    obs.observe(containerRef.current);
-    setContainerSize({ width: containerRef.current.offsetWidth, height: containerRef.current.offsetHeight });
-    return () => obs.disconnect();
-  }, []);
+/* ─── Helpers ─── */
+const qsa = (root, sel) => Array.from(root.querySelectorAll(sel));
+const angleOf = (el) => Number(el.dataset.angle || 0);
+const armOfPhone = (phone) => phone.closest("[data-arm]");
 
-  const virtualScroll = useMotionValue(0);
-  useEffect(() => {
-    const onScroll = () => virtualScroll.set(Math.min(Math.max(window.scrollY * 0.4, 0), MAX_SCROLL));
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [virtualScroll]);
-
-  const morphProgress = useTransform(virtualScroll, [0, 800], [0, 1]);
-  const smoothMorph = useSpring(morphProgress, { stiffness: 8, damping: 16 });
-
-  const scrollRotate = useTransform(virtualScroll, [800, MAX_SCROLL], [0, 25]);
-  const smoothRotate = useSpring(scrollRotate, { stiffness: 6, damping: 16 });
-
-  const mouseX = useMotionValue(0);
-  const smoothMouseX = useSpring(mouseX, { stiffness: 6, damping: 16 });
-
-  useEffect(() => {
-    const c = containerRef.current;
-    if (!c) return;
-    const onMove = (e) => {
-      const r = c.getBoundingClientRect();
-      mouseX.set(((e.clientX - r.left) / r.width * 2 - 1) * 8);
-    };
-    c.addEventListener("mousemove", onMove);
-    return () => c.removeEventListener("mousemove", onMove);
-  }, [mouseX]);
-
-  useEffect(() => {
-    // Fade in as a line, then smoothly morph to circle
-    const t1 = setTimeout(() => setIntroPhase("line"), 100);
-    const t2 = setTimeout(() => setIntroPhase("circle"), 2000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
-
-  const [mVal, setMVal] = useState(0);
-  const [rVal, setRVal] = useState(0);
-  const [pVal, setPVal] = useState(0);
-
-  useEffect(() => {
-    const u1 = smoothMorph.on("change", setMVal);
-    const u2 = smoothRotate.on("change", setRVal);
-    const u3 = smoothMouseX.on("change", setPVal);
-    return () => { u1(); u2(); u3(); };
-  }, [smoothMorph, smoothRotate, smoothMouseX]);
-
+/* ─── Realistic iPhone Frame ─── */
+function PhoneFrame({ src, name }) {
   return (
-    <div
-      ref={containerRef}
-      style={{
-        height: 620,
-        width: '100%',
-        position: 'relative',
-        overflow: 'visible',
-        zIndex: 5,
-        marginTop: 48,
-      }}
-    >
-      <div style={{ display: 'flex', height: '100%', width: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-          {IMAGES.map((src, i) => {
-            let target = { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 };
-            const isMobile = containerSize.width < 768;
+    <div style={{ width: PHONE_W, height: PHONE_H, position: "relative" }}>
+      {/* Titanium bezel */}
+      <div style={{
+        position: "absolute", inset: 0,
+        borderRadius: OUTER_R,
+        background: "linear-gradient(145deg, #4a4a4c 0%, #2c2c2e 25%, #1a1a1c 50%, #2c2c2e 75%, #3a3a3c 100%)",
+        boxShadow: `
+          0 0 0 0.5px rgba(255,255,255,0.12),
+          inset 0 0.5px 0 rgba(255,255,255,0.1),
+          0 25px 50px -12px rgba(0,0,0,0.6),
+          0 0 20px rgba(45,216,132,0.04)
+        `,
+        padding: BEZEL,
+      }}>
+        {/* Screen */}
+        <div style={{
+          width: "100%", height: "100%",
+          borderRadius: INNER_R, overflow: "hidden",
+          position: "relative", background: "#000",
+        }}>
+          {/* Dynamic Island */}
+          <div style={{
+            position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)",
+            width: 76, height: 22, borderRadius: 14,
+            background: "#000", zIndex: 10,
+            display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 8,
+          }}>
+            <div style={{
+              width: 6, height: 6, borderRadius: "50%",
+              background: "radial-gradient(circle, #1a3a2a 20%, #0a0a0f 80%)",
+              boxShadow: "0 0 3px rgba(0,200,100,0.15)",
+            }} />
+          </div>
 
-            if (introPhase === "hidden") {
-              target = { x: 0, y: 40, rotation: 0, scale: 0.95, opacity: 0 };
-            } else if (introPhase === "line") {
-              const spacing = isMobile ? 160 : 240;
-              const totalW = (TOTAL_IMAGES - 1) * spacing;
-              target = { x: i * spacing - totalW / 2, y: 0, rotation: 0, scale: 1, opacity: 1 };
-            } else {
-              // Circle
-              const cR = isMobile ? 130 : 200;
-              const cAngle = (i / TOTAL_IMAGES) * 360 - 90;
-              const cRad = (cAngle * Math.PI) / 180;
-              const cPos = { x: Math.cos(cRad) * cR, y: Math.sin(cRad) * cR, rotation: 0 };
+          {/* Screenshot image */}
+          <img
+            src={src} alt={name} draggable={false}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", display: "block" }}
+          />
 
-              // Arc — gentle, minimal movement
-              const aR = isMobile ? 400 : 600;
-              const aCY = 380;
-              const spread = isMobile ? 35 : 50;
-              const startA = -90 - spread / 2;
-              const step = spread / (TOTAL_IMAGES - 1);
-              const sP = Math.min(Math.max(rVal / 25, 0), 1);
-              const bR = -sP * spread * 0.15;
-              const curA = startA + i * step + bR;
-              const aRad = (curA * Math.PI) / 180;
-              const aPos = {
-                x: Math.cos(aRad) * aR + pVal,
-                y: Math.sin(aRad) * aR + aCY,
-                rotation: curA + 90,
-                scale: isMobile ? 0.9 : 1.0,
-              };
+          {/* Glass highlight */}
+          <div style={{
+            position: "absolute", top: 0, left: 0, right: 0, height: "30%",
+            background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)",
+            pointerEvents: "none",
+          }} />
 
-              target = {
-                x: lerp(cPos.x, aPos.x, mVal),
-                y: lerp(cPos.y, aPos.y, mVal),
-                rotation: lerp(cPos.rotation, aPos.rotation, mVal),
-                scale: lerp(1, aPos.scale, mVal),
-                opacity: 1,
-              };
-            }
-
-            return <RealisticPhone key={i} src={src} index={i} target={target} />;
-          })}
+          {/* Home indicator */}
+          <div style={{
+            position: "absolute", bottom: 5, left: "50%", transform: "translateX(-50%)",
+            width: 76, height: 3, borderRadius: 3, background: "rgba(255,255,255,0.15)",
+          }} />
         </div>
       </div>
+
+      {/* Top glint */}
+      <div style={{
+        position: "absolute", top: 0, left: "15%", right: "15%", height: 1,
+        background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
+        borderRadius: OUTER_R,
+      }} />
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Radial Orbit Hero — phones orbit in a circle, counter-
+   rotating so screens always face the viewer.
+   ═══════════════════════════════════════════════════════════ */
+export default function IntroAnimation() {
+  const [scope, animate] = useAnimate();
+  const step = 360 / ORBIT_ITEMS.length;
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const stageSize = isMobile ? 360 : 700;
+  const phoneScale = isMobile ? 0.7 : 1;
+
+  useEffect(() => {
+    const root = scope.current;
+    if (!root) return;
+
+    const arms = qsa(root, "[data-arm]");
+    const phones = qsa(root, "[data-arm-phone]");
+    const stops = [];
+    const timers = [];
+
+    /* Phase 1 — lift phones from center to orbit edge */
+    timers.push(setTimeout(() => {
+      animate(phones, { top: 0 }, springTransition);
+    }, 250));
+
+    /* Phase 2 — spread into angular positions */
+    const seq = [
+      ...arms.map((el) => [el, { rotate: angleOf(el) }, { ...springTransition, at: 0 }]),
+      ...phones.map((p) => [
+        p,
+        { rotate: -angleOf(armOfPhone(p)), opacity: 1 },
+        { ...springTransition, at: 0 },
+      ]),
+    ];
+    timers.push(setTimeout(() => animate(seq), 700));
+
+    /* Phase 3 — continuous slow spin (arms CW, phones CCW to stay upright) */
+    timers.push(setTimeout(() => {
+      arms.forEach((el) => {
+        const a = angleOf(el);
+        const c = animate(el, { rotate: [a, a + 360] }, spinConfig);
+        stops.push(() => c.cancel());
+      });
+      phones.forEach((p) => {
+        const a = armOfPhone(p) ? angleOf(armOfPhone(p)) : 0;
+        const c = animate(p, { rotate: [-a, -a - 360] }, spinConfig);
+        stops.push(() => c.cancel());
+      });
+    }, 1300));
+
+    return () => {
+      timers.forEach(clearTimeout);
+      stops.forEach((s) => s());
+    };
+  }, [isMobile]);
+
+  return (
+    <div style={{
+      display: "flex", justifyContent: "center", alignItems: "center",
+      width: "100%", height: stageSize + 60,
+      position: "relative", overflow: "visible", zIndex: 5,
+    }}>
+      <LayoutGroup>
+        <motion.div
+          ref={scope}
+          style={{ position: "relative", overflow: "visible", width: stageSize, height: stageSize }}
+          initial={false}
+        >
+          {ORBIT_ITEMS.map((item, i) => (
+            <motion.div
+              key={item.id}
+              data-arm
+              data-angle={i * step}
+              style={{
+                position: "absolute", inset: 0,
+                willChange: "transform",
+                zIndex: ORBIT_ITEMS.length - i,
+              }}
+              layoutId={`arm-${item.id}`}
+            >
+              <motion.div
+                data-arm-phone
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  top: "50%",
+                  marginLeft: -(PHONE_W * phoneScale) / 2,
+                  opacity: i === 0 ? 1 : 0,
+                  transform: `scale(${phoneScale})`,
+                  transformOrigin: "top center",
+                }}
+                layoutId={`arm-phone-${item.id}`}
+              >
+                <PhoneFrame src={item.src} name={item.name} />
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </LayoutGroup>
     </div>
   );
 }
