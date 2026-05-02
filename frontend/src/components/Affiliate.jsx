@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
 import './Partners.css';
+import MeshGradientBg from './ui/mesh-gradient-bg';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -85,6 +86,7 @@ export default function Affiliate() {
 
   return (
     <div className="lp-root partners-page">
+      <MeshGradientBg />
       {/* NAV — identical to landing page */}
       <nav className="lp-nav" id="nav">
         <div className="nav-inner">

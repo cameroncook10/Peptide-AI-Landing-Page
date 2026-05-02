@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import IntroAnimation from './ui/scroll-morph-hero';
+import MeshGradientBg from './ui/mesh-gradient-bg';
 import './LandingPage.css';
 
 const APP_STORE_URL =
@@ -275,11 +276,8 @@ export default function LandingPage() {
 
   return (
     <div className="lp-root" ref={rootRef}>
-      {/* Animated glow background */}
-      <div className="site-glow" aria-hidden="true">
-        <div className="glow-dots"></div>
-        <div className="glow-mid"></div>
-      </div>
+      {/* Animated mesh gradient background */}
+      <MeshGradientBg />
 
       {/* NAV */}
       <nav className="lp-nav" id="nav" ref={navRef}>

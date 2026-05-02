@@ -13,7 +13,7 @@
   --mint-deep: #1aa860;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  background: var(--bg);
+  background: transparent;
   color: var(--ink);
   font-family: 'Inter Tight', -apple-system, sans-serif;
   font-size: 17px;

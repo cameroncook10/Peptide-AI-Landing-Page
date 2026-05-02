@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Partners.css';
 import './LandingPage.css';
+import MeshGradientBg from './ui/mesh-gradient-bg';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -64,6 +65,7 @@ export default function Partners() {
 
   return (
     <div className="lp-root partners-page">
+      <MeshGradientBg />
       {/* NAV */}
       <nav className="lp-nav" id="nav">
         <div className="nav-inner">
