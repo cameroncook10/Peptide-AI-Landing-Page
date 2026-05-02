@@ -1387,6 +1387,7 @@ body:has(.lp-root) {
   .lp-root .nav-links { display: none; }
   .lp-root .nav-hamburger { display: flex; }
   .lp-root .hero-v8 { padding: 120px 20px 80px; min-height: auto; }
+  .lp-root .hero-v8-inner { display: flex; flex-direction: column; align-items: center; }
   .lp-root .hero-v8-phones { gap: 12px; margin-top: 60px; }
   .lp-root .hv8-phone-frame { width: 180px; border-radius: 28px; padding: 4px; }
   .lp-root .hv8-phone-frame img { border-radius: 24px; }
@@ -1663,4 +1664,77 @@ body:has(.lp-root) {
 }
 @media (min-width: 600px) and (max-width: 900px) {
   .lp-root .testify-cards { grid-template-columns: repeat(2, 1fr); max-width: 680px; }
+}
+
+/* ── Partners Bar ─────────────────────────────────────────── */
+.lp-root .partners-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 28px 24px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+}
+
+.lp-root .partners-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  white-space: nowrap;
+}
+
+.lp-root .partners-logos {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.lp-root .partner-logo-img {
+  height: 28px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.lp-root .partner-logo-img:hover { opacity: 1; }
+
+.lp-root .partner-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--line-2);
+}
+
+.lp-root .partner-mh {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: 'Inter Tight', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.lp-root .partner-mh:hover { opacity: 1; }
+
+.lp-root .partner-mh-overtime {
+  color: var(--ink);
+}
+.lp-root .partner-mh-mens {
+  color: var(--ink);
+}
+.lp-root .partner-mh-health {
+  color: var(--mint);
+}
+
+@media (max-width: 600px) {
+  .lp-root .partners-bar {
+    flex-direction: column;
+    gap: 16px;
+  }
 }

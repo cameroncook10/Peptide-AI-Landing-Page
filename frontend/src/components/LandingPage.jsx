@@ -342,6 +342,76 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* PARTNERS BAR */}
+      <div className="partners-bar reveal">
+        <span className="partners-label">Official Partners</span>
+        <div className="partners-logos">
+          <img src="/assets/overtime-logo-new.png" alt="Overtime" className="partner-logo-img" />
+          <div className="partner-divider" />
+          <span className="partner-mh">
+            <span className="partner-mh-overtime">Overtime</span>
+            <span className="partner-mh-mens"> Men's</span>
+            <span className="partner-mh-health"> Health</span>
+          </span>
+        </div>
+      </div>
+
+      {/* TESTIMONIALS — moved up for early social proof */}
+      <section className="testify">
+        <div className="label reveal">What users are saying</div>
+        <h2 className="section-title reveal d1" style={{ textAlign: 'center', marginBottom: '64px' }}>
+          Real results from <em>real athletes.</em>
+        </h2>
+        <div className="testify-cards">
+
+          <div className="testify-card reveal">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/brickboydior.png" alt="BrickBoyDior" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"Finally an app that treats peptide protocols seriously. The AI chat knows my stack <em>and</em> my labs — it's like having a smart friend who actually reads the research."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@BrickBoyDior</span>
+                <span className="testify-role">Fitness Influencer</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="testify-card reveal d1">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/raphkg.png" alt="RaphKG" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"This is the tool I wish I had when I started. Tracking doses, syncing my wearable data, and getting AI insights in one place — Peptide AI makes it effortless."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@RaphKG</span>
+                <span className="testify-role">Fitness Creator</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="testify-card reveal d2">
+            <div className="testify-avatar-wrap">
+              <img src="/assets/gharilla.png" alt="Gharilla" className="testify-avatar" style={{ objectPosition: 'top center' }} />
+              <div className="testify-avatar-glow" />
+            </div>
+            <div className="testify-card-body">
+              <div className="testify-stars">★★★★★</div>
+              <p className="testify-card-quote">"Gharilla approved. The body scan and protocol tracker alone are worth it — I can actually see the comp changes in real time."</p>
+              <div className="testify-card-person">
+                <span className="testify-name">@Gharilla</span>
+                <span className="testify-role">Fitness Influencer</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
       <section className="section" id="how">
         <div className="section-head">
@@ -519,62 +589,6 @@ export default function LandingPage() {
           Most peptide users are <em>flying blind</em> — running protocols built from forum posts and guessing whether any of it is working.
         </p>
         <div className="manifesto-cite reveal d2">Peptide AI is the intelligence layer.</div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="testify">
-        <div className="label reveal">What users are saying</div>
-        <h2 className="section-title reveal d1" style={{ textAlign: 'center', marginBottom: '64px' }}>
-          Real results from <em>real athletes.</em>
-        </h2>
-        <div className="testify-cards">
-
-          <div className="testify-card reveal">
-            <div className="testify-avatar-wrap">
-              <img src="/assets/brickboydior.png" alt="BrickBoyDior" className="testify-avatar" style={{ objectPosition: 'top center' }} />
-              <div className="testify-avatar-glow" />
-            </div>
-            <div className="testify-card-body">
-              <div className="testify-stars">★★★★★</div>
-              <p className="testify-card-quote">"Finally an app that treats peptide protocols seriously. The AI chat knows my stack <em>and</em> my labs — it's like having a smart friend who actually reads the research."</p>
-              <div className="testify-card-person">
-                <span className="testify-name">@BrickBoyDior</span>
-                <span className="testify-role">Fitness Influencer</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="testify-card reveal d1">
-            <div className="testify-avatar-wrap">
-              <img src="/assets/raphkg.png" alt="RaphKG" className="testify-avatar" style={{ objectPosition: 'top center' }} />
-              <div className="testify-avatar-glow" />
-            </div>
-            <div className="testify-card-body">
-              <div className="testify-stars">★★★★★</div>
-              <p className="testify-card-quote">"This is the tool I wish I had when I started. Tracking doses, syncing my wearable data, and getting AI insights in one place — Peptide AI makes it effortless."</p>
-              <div className="testify-card-person">
-                <span className="testify-name">@RaphKG</span>
-                <span className="testify-role">Fitness Creator</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="testify-card reveal d2">
-            <div className="testify-avatar-wrap">
-              <img src="/assets/gharilla.png" alt="Gharilla" className="testify-avatar" style={{ objectPosition: 'top center' }} />
-              <div className="testify-avatar-glow" />
-            </div>
-            <div className="testify-card-body">
-              <div className="testify-stars">★★★★★</div>
-              <p className="testify-card-quote">"Gharilla approved. The body scan and protocol tracker alone are worth it — I can actually see the comp changes in real time."</p>
-              <div className="testify-card-person">
-                <span className="testify-name">@Gharilla</span>
-                <span className="testify-role">Fitness Influencer</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
       </section>
 
       {/* PRICING */}

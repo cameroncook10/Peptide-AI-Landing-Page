@@ -164,8 +164,9 @@ export default function IntroAnimation() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const stageSize = isMobile ? 560 : 980;
-  const phoneScale = isMobile ? 0.65 : 1;
+  const stageSize = isMobile ? 360 : 980;
+  const phoneScale = isMobile ? 0.50 : 1;
+  const phoneMarginTop = isMobile ? -Math.round(PHONE_H * 0.12) : PHONE_MARGIN_TOP;
 
   useEffect(() => {
     const root = scope.current;
@@ -243,7 +244,7 @@ export default function IntroAnimation() {
                   left: "50%",
                   top: "50%",
                   marginLeft: -(PHONE_W * phoneScale) / 2,
-                  marginTop: PHONE_MARGIN_TOP,
+                  marginTop: phoneMarginTop,
                   opacity: i === 0 ? 1 : 0,
                   transform: `scale(${phoneScale})`,
                   transformOrigin: "top center",
