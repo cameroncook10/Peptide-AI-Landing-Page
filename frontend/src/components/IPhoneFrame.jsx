@@ -11,8 +11,8 @@ export default function IPhoneFrame({ src, alt = '', width = 300, className = ''
   const lBtn = (top, height) => ({
     position: 'absolute', left: -3, top: Math.round(h * top),
     width: 3, height: Math.round(h * height), borderRadius: '2px 0 0 2px',
-    background: 'linear-gradient(to right, #525254, #3e3e40 35%, #2e2e30 65%, #3c3c3e)',
-    boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.09), inset 0 -0.5px 0 rgba(0,0,0,0.5)',
+    background: 'linear-gradient(to right, #1c1c1e, #141416 50%, #1a1a1c)',
+    boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.06), inset 0 -0.5px 0 rgba(0,0,0,0.8)',
     zIndex: 2,
   });
 
@@ -30,28 +30,28 @@ export default function IPhoneFrame({ src, alt = '', width = 300, className = ''
       <div style={{
         position: 'absolute', right: -3, top: Math.round(h * 0.235),
         width: 3, height: Math.round(h * 0.12), borderRadius: '0 2px 2px 0',
-        background: 'linear-gradient(to left, #525254, #3e3e40 35%, #2e2e30 65%, #3c3c3e)',
-        boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.09), inset 0 -0.5px 0 rgba(0,0,0,0.5)',
+        background: 'linear-gradient(to left, #1c1c1e, #141416 50%, #1a1a1c)',
+        boxShadow: 'inset 0 0.5px 0 rgba(255,255,255,0.06), inset 0 -0.5px 0 rgba(0,0,0,0.8)',
         zIndex: 2,
       }} />
 
-      {/* Titanium chassis */}
+      {/* Space Black chassis */}
       <div style={{
         position: 'absolute', inset: 0, borderRadius: br, padding: pad,
         background: `linear-gradient(
           150deg,
-          #606062 0%, #444446 7%, #303032 16%,
-          #1e1e20 30%, #222224 46%, #2c2c2e 60%,
-          #3c3c3e 74%, #4e4e50 87%, #5c5c5e 100%
+          #1a1a1c 0%, #111113 8%, #0b0b0d 18%,
+          #070709 32%, #09090b 48%, #0d0d0f 62%,
+          #111113 76%, #161618 88%, #1c1c1e 100%
         )`,
         boxShadow: [
-          'inset 0 0 0 0.5px rgba(255,255,255,0.065)',
-          'inset 0 1.5px 0 rgba(255,255,255,0.1)',
-          'inset 0 -1px 0 rgba(0,0,0,0.6)',
-          '0 0 0 0.5px rgba(0,0,0,0.9)',
-          '0 40px 80px -18px rgba(0,0,0,0.75)',
-          '0 14px 40px -8px rgba(0,0,0,0.45)',
-          '0 0 50px -8px rgba(45,216,132,0.15)',
+          'inset 0 0 0 0.5px rgba(255,255,255,0.05)',
+          'inset 0 1px 0 rgba(255,255,255,0.07)',
+          'inset 0 -1px 0 rgba(0,0,0,0.8)',
+          '0 0 0 0.5px rgba(0,0,0,0.95)',
+          '0 40px 80px -18px rgba(0,0,0,0.85)',
+          '0 14px 40px -8px rgba(0,0,0,0.5)',
+          '0 0 50px -8px rgba(45,216,132,0.14)',
         ].join(', '),
       }}>
 
@@ -100,14 +100,14 @@ export default function IPhoneFrame({ src, alt = '', width = 300, className = ''
           <div style={{
             position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 5,
             borderRadius: 'inherit',
-            background: 'linear-gradient(165deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 25%, transparent 55%)',
+            background: 'linear-gradient(165deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.008) 25%, transparent 55%)',
           }} />
         </div>
 
         {/* Top edge glint */}
         <div style={{
           position: 'absolute', top: 0, left: '18%', right: '18%', height: 1,
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
           borderRadius: br, pointerEvents: 'none',
         }} />
 

@@ -178,14 +178,13 @@ function PhoneScroll() {
             <div className="psc-glow" />
             <div className="psc-phone-v2">
               {PHONE_SCREENS.map((s, i) => (
-                <IPhoneFrame
+                <div
                   key={i}
-                  src={s.img}
-                  alt={s.label}
-                  width={260}
                   className={`psc-screen-switch${i === active ? ' active' : ''}`}
                   style={{ '--dir': dir }}
-                />
+                >
+                  <IPhoneFrame src={s.img} alt={s.label} width={260} />
+                </div>
               ))}
             </div>
           </div>

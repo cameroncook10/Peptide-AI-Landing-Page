@@ -4,11 +4,13 @@ import React, { useState, useEffect } from "react";
 import { LayoutGroup, motion, useAnimate } from "framer-motion";
 
 /* ─── Phone Dimensions ─── */
-const PHONE_W = 190;
-const PHONE_H = 390;
+const PHONE_W = 220;
+const PHONE_H = 450;
 const BEZEL = 6;
 const OUTER_R = 46;
 const INNER_R = 40;
+/* Push phones this far above the arm top so they orbit further from center */
+const PHONE_MARGIN_TOP = -Math.round(PHONE_H * 0.28); // -126px → orbit radius ~380px desktop
 
 /* ─── Screenshot Data ─── */
 const ORBIT_ITEMS = [
@@ -49,45 +51,46 @@ function PhoneFrame({ src, name }) {
       <div style={{
         position: "absolute", left: -3, top: Math.round(PHONE_H * 0.11),
         width: 3, height: Math.round(PHONE_H * 0.053), borderRadius: "2px 0 0 2px",
-        background: "linear-gradient(to right, #525254, #3a3a3c)",
-        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        background: "linear-gradient(to right, #1c1c1e, #141416)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.06)",
         zIndex: 2,
       }} />
       {/* Volume up */}
       <div style={{
         position: "absolute", left: -3, top: Math.round(PHONE_H * 0.19),
         width: 3, height: Math.round(PHONE_H * 0.098), borderRadius: "2px 0 0 2px",
-        background: "linear-gradient(to right, #525254, #3a3a3c)",
-        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        background: "linear-gradient(to right, #1c1c1e, #141416)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.06)",
         zIndex: 2,
       }} />
       {/* Volume down */}
       <div style={{
         position: "absolute", left: -3, top: Math.round(PHONE_H * 0.305),
         width: 3, height: Math.round(PHONE_H * 0.098), borderRadius: "2px 0 0 2px",
-        background: "linear-gradient(to right, #525254, #3a3a3c)",
-        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        background: "linear-gradient(to right, #1c1c1e, #141416)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.06)",
         zIndex: 2,
       }} />
       {/* Power button */}
       <div style={{
         position: "absolute", right: -3, top: Math.round(PHONE_H * 0.235),
         width: 3, height: Math.round(PHONE_H * 0.12), borderRadius: "0 2px 2px 0",
-        background: "linear-gradient(to left, #525254, #3a3a3c)",
-        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        background: "linear-gradient(to left, #1c1c1e, #141416)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.06)",
         zIndex: 2,
       }} />
 
-      {/* Titanium chassis */}
+      {/* Space Black chassis */}
       <div style={{
         position: "absolute", inset: 0,
         borderRadius: OUTER_R,
-        background: "linear-gradient(150deg, #5e5e60 0%, #3e3e40 8%, #282829 18%, #1c1c1e 32%, #222224 48%, #2c2c2e 62%, #3c3c3e 76%, #4e4e50 100%)",
+        background: "linear-gradient(150deg, #1a1a1c 0%, #111113 8%, #0b0b0d 18%, #070709 32%, #09090b 48%, #0d0d0f 62%, #111113 76%, #161618 90%, #1c1c1e 100%)",
         boxShadow: [
-          "inset 0 0 0 0.5px rgba(255,255,255,0.065)",
-          "inset 0 1px 0 rgba(255,255,255,0.09)",
-          "0 0 0 0.5px rgba(0,0,0,0.9)",
-          "0 20px 45px -12px rgba(0,0,0,0.7)",
+          "inset 0 0 0 0.5px rgba(255,255,255,0.05)",
+          "inset 0 1px 0 rgba(255,255,255,0.07)",
+          "inset 0 -1px 0 rgba(0,0,0,0.8)",
+          "0 0 0 0.5px rgba(0,0,0,0.95)",
+          "0 20px 50px -12px rgba(0,0,0,0.85)",
           "0 0 30px -6px rgba(45,216,132,0.12)",
         ].join(", "),
         padding: BEZEL,
@@ -161,8 +164,8 @@ export default function IntroAnimation() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const stageSize = isMobile ? 360 : 700;
-  const phoneScale = isMobile ? 0.7 : 1;
+  const stageSize = isMobile ? 560 : 980;
+  const phoneScale = isMobile ? 0.65 : 1;
 
   useEffect(() => {
     const root = scope.current;
@@ -240,6 +243,7 @@ export default function IntroAnimation() {
                   left: "50%",
                   top: "50%",
                   marginLeft: -(PHONE_W * phoneScale) / 2,
+                  marginTop: PHONE_MARGIN_TOP,
                   opacity: i === 0 ? 1 : 0,
                   transform: `scale(${phoneScale})`,
                   transformOrigin: "top center",
