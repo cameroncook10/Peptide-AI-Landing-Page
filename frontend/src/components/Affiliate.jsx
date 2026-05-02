@@ -96,6 +96,7 @@ export default function Affiliate() {
           <div className="nav-links">
             <Link to="/#how">How it works</Link>
             <Link to="/#features">Features</Link>
+            <Link to="/#pricing">Pricing</Link>
             <Link to="/partners">Partners</Link>
             <Link to="/affiliates" className="active">Affiliates</Link>
           </div>

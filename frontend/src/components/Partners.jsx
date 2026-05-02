@@ -75,6 +75,7 @@ export default function Partners() {
           <div className="nav-links">
             <Link to="/#how">How it works</Link>
             <Link to="/#features">Features</Link>
+            <Link to="/#pricing">Pricing</Link>
             <Link to="/partners" className="active">Partners</Link>
             <Link to="/affiliates">Affiliates</Link>
           </div>
