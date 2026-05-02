@@ -1,20 +1,11 @@
-import { useState, useRef, useCallback } from 'react';
-import { motion, useInView, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
+import './Partners.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
 const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'Twitter / X', 'Blog / Website', 'Podcast', 'Other'];
-
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
-};
-const fadeUp = {
-  hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
-  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-};
 
 function CheckIcon() {
   return (
@@ -37,26 +28,8 @@ export default function Affiliate() {
     existingPartnerships: '',
     notes: '',
   });
-  const [status, setStatus] = useState(null); // null | 'loading' | 'success' | 'error'
+  const [status, setStatus] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
-
-  const sectionRef = useRef(null);
-  const cardRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, margin: '-60px' });
-
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const spotlightBg = useTransform(
-    [mouseX, mouseY],
-    ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(0,229,160,0.04), transparent 60%)`
-  );
-
-  const handleMouseMove = useCallback((e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  }, [mouseX, mouseY]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -111,8 +84,8 @@ export default function Affiliate() {
   }
 
   return (
-    <div className="affiliate-page">
-      {/* NAV */}
+    <div className="lp-root partners-page">
+      {/* NAV — identical to landing page */}
       <nav className="lp-nav" id="nav">
         <div className="nav-inner">
           <Link to="/" className="lp-logo">
@@ -130,167 +103,130 @@ export default function Affiliate() {
         </div>
       </nav>
 
-      {/* ── Hero Banner ── */}
-      <div className="aff-hero">
-        <div className="aff-hero-glow" />
-        <motion.div
-          className="aff-hero-inner"
-          variants={stagger}
-          initial="hidden"
-          animate="show"
-        >
-          <motion.div className="aff-eyebrow" variants={fadeUp}>
-            <span className="eyebrow-dot" />
-            Affiliate Program
-          </motion.div>
-          <motion.h1 className="aff-headline" variants={fadeUp}>
-            Grow with <span className="accent">Peptide AI.</span>
-          </motion.h1>
-          <motion.p className="aff-sub" variants={fadeUp}>
-            We&apos;re a research-driven startup building proprietary AI for peptide therapeutics.
-            Partner with us and earn recurring commission introducing your audience to the future of
-            personalized wellness.
-          </motion.p>
-          <motion.div className="aff-perks-row" variants={fadeUp}>
-            {[
-              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>, label: 'Recurring commissions' },
-              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>, label: 'Real-time dashboard' },
-              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>, label: 'Creative assets provided' },
-              { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, label: 'Dedicated partner support' },
-            ].map(p => (
-              <div className="aff-perk-chip" key={p.label}>
-                <span style={{ color: 'var(--mint)', display: 'flex', alignItems: 'center' }}>{p.icon}</span>
-                <span>{p.label}</span>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-      </div>
+      {/* HERO — same styling as Partners hero */}
+      <section className="p-hero">
+        <div className="p-hero-eyebrow">
+          <span className="dot" />
+          Affiliate Program
+        </div>
+        <h1>Grow with <em>Peptide AI</em></h1>
+        <p>
+          We&apos;re a research-driven startup building proprietary AI for peptide therapeutics. 
+          Partner with us and earn recurring commission introducing your audience to the future of 
+          personalized wellness.
+        </p>
+      </section>
 
-      {/* ── Form ── */}
-      <section className="aff-form-section" ref={sectionRef}>
-        <AnimatePresence mode="wait">
+      {/* PERKS */}
+      <section className="p-partners-section">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '60px' }}>
+          {[
+            { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>, label: 'Recurring commissions' },
+            { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>, label: 'Real-time dashboard' },
+            { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>, label: 'Creative assets provided' },
+            { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, label: 'Dedicated partner support' },
+          ].map(p => (
+            <span key={p.label} className="pf-cat-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'var(--mint)', display: 'flex', alignItems: 'center' }}>{p.icon}</span>
+              {p.label}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* APPLICATION FORM — same grid layout as Partners */}
+      <section className="p-form-section" id="affiliate-apply">
+        {/* LEFT: Pitch */}
+        <div className="pf-pitch">
+          <h2>Join the <em>Affiliate Program</em></h2>
+          <p>Earn recurring commission for every subscriber you refer. We provide creative assets, tracking dashboards, and dedicated support to help you succeed.</p>
+          <p>Whether you&apos;re a fitness influencer, biohacking creator, or wellness content producer — if your audience cares about optimization, we want to work with you.</p>
+          <div className="pf-category-grid">
+            {['Fitness', 'Biohacking', 'Longevity', 'Nutrition', 'Wellness', 'Health Tech'].map(c => (
+              <span key={c} className="pf-cat-chip">{c}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Form */}
+        <div>
           {status === 'success' ? (
-            <motion.div
-              key="success"
-              className="aff-success"
-              initial={{ opacity: 0, scale: 0.92, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="aff-success-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="pf-success">
+              <div className="pf-success-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
               <h2>Application received!</h2>
               <p>Thanks for applying to the Peptide AI affiliate program. We review applications within 2–3 business days and will reach out to you at <strong>{form.email}</strong>.</p>
-              <Link to="/" className="aff-back-link">← Back to homepage</Link>
-            </motion.div>
+              <Link to="/" style={{ color: 'var(--mint)', fontSize: '14px', marginTop: '20px', display: 'inline-block' }}>← Back to homepage</Link>
+            </div>
           ) : (
-            <motion.div
-              key="form"
-              className="aff-card"
-              ref={cardRef}
-              onMouseMove={handleMouseMove}
-              style={{ background: spotlightBg }}
-              variants={stagger}
-              initial="hidden"
-              animate={isInView ? 'show' : 'hidden'}
-            >
-              <motion.div className="aff-card-header" variants={fadeUp}>
-                <h2>Affiliate Application</h2>
-                <p>Tell us about yourself and how you&apos;d promote Peptide AI.</p>
-              </motion.div>
+            <div className="pf-form-card">
+              <h3>Affiliate Application</h3>
+              <p>Tell us about yourself and how you&apos;d promote Peptide AI.</p>
 
               <form onSubmit={handleSubmit} noValidate>
                 {/* Name row */}
-                <motion.div className="aff-field-row" variants={fadeUp}>
-                  <div className="aff-field">
+                <div className="pf-field-row">
+                  <div className="pf-field">
                     <label htmlFor="firstName">First Name <span className="req">*</span></label>
-                    <input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      placeholder="Jane"
-                      value={form.firstName}
-                      onChange={handleChange}
-                      required
-                      autoComplete="given-name"
-                    />
+                    <input id="firstName" name="firstName" type="text" placeholder="Jane" value={form.firstName} onChange={handleChange} required autoComplete="given-name" />
                   </div>
-                  <div className="aff-field">
+                  <div className="pf-field">
                     <label htmlFor="lastName">Last Name <span className="req">*</span></label>
-                    <input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      placeholder="Smith"
-                      value={form.lastName}
-                      onChange={handleChange}
-                      required
-                      autoComplete="family-name"
-                    />
+                    <input id="lastName" name="lastName" type="text" placeholder="Smith" value={form.lastName} onChange={handleChange} required autoComplete="family-name" />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Contact row */}
-                <motion.div className="aff-field-row" variants={fadeUp}>
-                  <div className="aff-field">
+                <div className="pf-field-row">
+                  <div className="pf-field">
                     <label htmlFor="email">Email <span className="req">*</span></label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="jane@example.com"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                      autoComplete="email"
-                    />
+                    <input id="email" name="email" type="email" placeholder="jane@example.com" value={form.email} onChange={handleChange} required autoComplete="email" />
                   </div>
-                  <div className="aff-field">
-                    <label htmlFor="phone">Phone <span className="optional">(optional)</span></label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="+1 (555) 000-0000"
-                      value={form.phone}
-                      onChange={handleChange}
-                      autoComplete="tel"
-                    />
+                  <div className="pf-field">
+                    <label htmlFor="phone">Phone <span className="opt">(optional)</span></label>
+                    <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000" value={form.phone} onChange={handleChange} autoComplete="tel" />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Platforms */}
-                <motion.div className="aff-field" variants={fadeUp}>
+                <div className="pf-field">
                   <label>Platforms / Channels <span className="req">*</span></label>
-                  <div className="aff-platform-grid">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
                     {PLATFORMS.map(p => (
                       <button
                         key={p}
                         type="button"
-                        className={`aff-platform-chip${form.platforms.includes(p) ? ' selected' : ''}`}
                         onClick={() => togglePlatform(p)}
+                        style={{
+                          background: form.platforms.includes(p) ? 'rgba(45,216,132,0.12)' : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${form.platforms.includes(p) ? 'var(--mint)' : 'var(--line)'}`,
+                          borderRadius: '999px',
+                          padding: '8px 16px',
+                          fontSize: '13px',
+                          color: form.platforms.includes(p) ? 'var(--mint)' : 'var(--ink-soft)',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'all 0.2s',
+                        }}
                       >
                         {form.platforms.includes(p) && <CheckIcon />}
                         {p}
                       </button>
                     ))}
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Audience + Niche row */}
-                <motion.div className="aff-field-row" variants={fadeUp}>
-                  <div className="aff-field">
+                <div className="pf-field-row">
+                  <div className="pf-field">
                     <label htmlFor="audienceSize">Audience / Follower Count</label>
-                    <select
-                      id="audienceSize"
-                      name="audienceSize"
-                      value={form.audienceSize}
-                      onChange={handleChange}
-                    >
+                    <select id="audienceSize" name="audienceSize" value={form.audienceSize} onChange={handleChange}>
                       <option value="">Select a range</option>
                       <option>Under 5,000</option>
                       <option>5,000 – 25,000</option>
@@ -299,103 +235,50 @@ export default function Affiliate() {
                       <option>500,000+</option>
                     </select>
                   </div>
-                  <div className="aff-field">
+                  <div className="pf-field">
                     <label htmlFor="contentNiche">Content Niche</label>
-                    <input
-                      id="contentNiche"
-                      name="contentNiche"
-                      type="text"
-                      placeholder="e.g. Biohacking, Fitness, Longevity…"
-                      value={form.contentNiche}
-                      onChange={handleChange}
-                    />
+                    <input id="contentNiche" name="contentNiche" type="text" placeholder="e.g. Biohacking, Fitness, Longevity…" value={form.contentNiche} onChange={handleChange} />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Promo plan */}
-                <motion.div className="aff-field" variants={fadeUp}>
+                <div className="pf-field">
                   <label htmlFor="promoPlan">How do you plan to promote Peptide AI?</label>
-                  <textarea
-                    id="promoPlan"
-                    name="promoPlan"
-                    rows={3}
-                    placeholder="Describe your content format, posting cadence, and audience demographics…"
-                    value={form.promoPlan}
-                    onChange={handleChange}
-                  />
-                </motion.div>
+                  <textarea id="promoPlan" name="promoPlan" rows={3} placeholder="Describe your content format, posting cadence, and audience demographics…" value={form.promoPlan} onChange={handleChange} />
+                </div>
 
                 {/* Existing partnerships */}
-                <motion.div className="aff-field" variants={fadeUp}>
-                  <label htmlFor="existingPartnerships">Any existing brand partnerships? <span className="optional">(optional)</span></label>
-                  <input
-                    id="existingPartnerships"
-                    name="existingPartnerships"
-                    type="text"
-                    placeholder="e.g. Whoop, Levels Health, AG1…"
-                    value={form.existingPartnerships}
-                    onChange={handleChange}
-                  />
-                </motion.div>
+                <div className="pf-field">
+                  <label htmlFor="existingPartnerships">Any existing brand partnerships? <span className="opt">(optional)</span></label>
+                  <input id="existingPartnerships" name="existingPartnerships" type="text" placeholder="e.g. Whoop, Levels Health, AG1…" value={form.existingPartnerships} onChange={handleChange} />
+                </div>
 
                 {/* Notes */}
-                <motion.div className="aff-field" variants={fadeUp}>
-                  <label htmlFor="notes">Anything else you&apos;d like us to know? <span className="optional">(optional)</span></label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    rows={3}
-                    placeholder="Links to profiles, past campaigns, questions for us…"
-                    value={form.notes}
-                    onChange={handleChange}
-                  />
-                </motion.div>
+                <div className="pf-field">
+                  <label htmlFor="notes">Anything else you&apos;d like us to know? <span className="opt">(optional)</span></label>
+                  <textarea id="notes" name="notes" rows={3} placeholder="Links to profiles, past campaigns, questions for us…" value={form.notes} onChange={handleChange} />
+                </div>
 
                 {/* Error */}
-                <AnimatePresence>
-                  {status === 'error' && (
-                    <motion.div
-                      className="aff-error"
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                      {errorMsg}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {status === 'error' && (
+                  <div className="pf-error">{errorMsg}</div>
+                )}
 
-                <motion.button
-                  className="aff-submit"
-                  type="submit"
-                  disabled={status === 'loading'}
-                  variants={fadeUp}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {status === 'loading' ? (
-                    <span className="aff-spinner" />
-                  ) : (
-                    <>
-                      Submit Application
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                    </>
-                  )}
-                </motion.button>
+                <button type="submit" className="pf-submit" disabled={status === 'loading'}>
+                  {status === 'loading' ? 'Submitting…' : 'Submit Affiliate Application →'}
+                </button>
               </form>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="aff-footer">
+      {/* FOOTER — same as Partners */}
+      <footer className="p-footer">
         <p>© {new Date().getFullYear()} Peptide AI. All rights reserved.</p>
-        <div className="aff-footer-links">
+        <div className="p-footer-links">
           <Link to="/privacy">Privacy Policy</Link>
-          <span>·</span>
+          <span style={{ color: 'var(--ink-mute)', margin: '0 4px' }}>·</span>
           <Link to="/terms">Terms of Service</Link>
         </div>
       </footer>

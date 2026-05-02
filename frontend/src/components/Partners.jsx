@@ -63,7 +63,7 @@ export default function Partners() {
   }
 
   return (
-    <div className="partners-page">
+    <div className="lp-root partners-page">
       {/* NAV */}
       <nav className="lp-nav" id="nav">
         <div className="nav-inner">

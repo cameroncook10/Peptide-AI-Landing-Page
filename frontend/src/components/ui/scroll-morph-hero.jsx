@@ -83,8 +83,9 @@ function FlipCard({ src, index, target }) {
                     }}
                 >
                     <div style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: 8, fontWeight: 700, color: '#2dd884', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>View</p>
-                        <p style={{ fontSize: 12, fontWeight: 500, color: '#fff' }}>Details</p>
+                        <img src="/assets/app-icon.png" alt="Peptide AI" style={{ width: 28, height: 28, margin: '0 auto 8px', display: 'block' }} />
+                        <p style={{ fontSize: 11, fontWeight: 600, color: '#2dd884', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 2, margin: 0 }}>Peptide</p>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: '#fff', margin: 0 }}>AI</p>
                     </div>
                 </div>
             </motion.div>
@@ -224,7 +225,7 @@ export default function IntroAnimation() {
                 overflow: 'hidden',
                 pointerEvents: 'none',
                 zIndex: 10,
-                marginTop: '-3rem',
+                marginTop: '2rem',
             }}
         >
             <div style={{ display: 'flex', height: '100%', width: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>

@@ -325,7 +325,7 @@ export default function LandingPage() {
           </div>
           <h1 className="hero-v8-title reveal d1">
             <span className="hv8-word" data-dir="-1">Peptide</span>
-            <span className="hv8-word" data-dir="1"><em>AI.</em></span>
+            <span className="hv8-word" data-dir="1"><em>AI</em></span>
           </h1>
           <p className="hero-v8-sub reveal d2">
             Peptides are powerful amino acid chains that signal your body to heal, recover, and optimize performance. Peptide AI removes the guesswork from your therapy — log doses, sync wearables, upload labs, and see exactly how your body responds.
