@@ -340,29 +340,11 @@ export default function LandingPage() {
               <span className="hsb-label"><span className="hsb-sub">Get it on</span><span className="hsb-name">Google Play</span></span>
             </a>
           </div>
-        </div>
 
-        <div className="hero-v8-phones reveal d2">
-          <div className="hv8-phone hv8-phone-left">
-            <div className="hv8-phone-frame">
-              <img src="/assets/screen-dashboard.png" alt="Peptide AI Home" loading="eager" />
-            </div>
-          </div>
-          <div className="hv8-phone hv8-phone-center">
-            <div className="hv8-phone-frame">
-              <img src="/assets/screen-track.png" alt="Peptide AI Optimize" loading="eager" />
-            </div>
-          </div>
-          <div className="hv8-phone hv8-phone-right">
-            <div className="hv8-phone-frame">
-              <img src="/assets/screen-stack.png" alt="Peptide AI Body Scan" loading="eager" />
-            </div>
-          </div>
+          {/* SCROLL MORPH HERO SHOWCASE — centered below store buttons */}
+          <IntroAnimation />
         </div>
       </section>
-
-      {/* SCROLL MORPH HERO SHOWCASE */}
-      <IntroAnimation />
 
       {/* HOW IT WORKS */}
       <section className="section" id="how">
