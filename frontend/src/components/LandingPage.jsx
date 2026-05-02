@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import IntroAnimation from './ui/scroll-morph-hero';
 import MeshGradientBg from './ui/mesh-gradient-bg';
+import IPhoneFrame from './IPhoneFrame';
 import './LandingPage.css';
 
 const APP_STORE_URL =
@@ -175,22 +176,17 @@ function PhoneScroll() {
           {/* CENTER — phone mockup */}
           <div className="psc-device-wrap">
             <div className="psc-glow" />
-            <div className="psc-phone">
-              <div className="psc-side-btn psc-side-btn-top" />
-              <div className="psc-side-btn psc-side-btn-mid" />
-              <div className="psc-island" />
-              <div className="psc-screen-viewport">
-                {PHONE_SCREENS.map((s, i) => (
-                  <img
-                    key={i}
-                    src={s.img}
-                    alt={s.label}
-                    className={`psc-screen-img${i === active ? ' active' : ''}`}
-                    style={{ '--dir': dir }}
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                  />
-                ))}
-              </div>
+            <div className="psc-phone-v2">
+              {PHONE_SCREENS.map((s, i) => (
+                <IPhoneFrame
+                  key={i}
+                  src={s.img}
+                  alt={s.label}
+                  width={260}
+                  className={`psc-screen-switch${i === active ? ' active' : ''}`}
+                  style={{ '--dir': dir }}
+                />
+              ))}
             </div>
           </div>
 
@@ -397,6 +393,9 @@ export default function LandingPage() {
       </section>
 
 
+      {/* PHONE SCROLL — interactive app showcase */}
+      <PhoneScroll />
+
       {/* FEATURES — real app screens */}
       <section className="section" id="features">
         <div className="section-head">
@@ -410,9 +409,7 @@ export default function LandingPage() {
           {/* ROW 1: Protocol Stack */}
           <div className="show-row">
             <div className="show-phone reveal">
-              <div className="show-phone-frame">
-                <img src="/assets/screen-stack.png" alt="Peptide Stack screen" />
-              </div>
+              <IPhoneFrame src="/assets/screen-stack.png" alt="Peptide Stack screen" width={300} className="show-iphone" />
             </div>
             <div className="show-copy reveal d1">
               <div className="show-mark">01 / Protocol Stack</div>
@@ -431,9 +428,7 @@ export default function LandingPage() {
           {/* ROW 2: Dashboard */}
           <div className="show-row reverse">
             <div className="show-phone reveal">
-              <div className="show-phone-frame">
-                <img src="/assets/screen-dashboard.png" alt="Dashboard screen" />
-              </div>
+              <IPhoneFrame src="/assets/screen-dashboard.png" alt="Dashboard screen" width={300} className="show-iphone" />
             </div>
             <div className="show-copy reveal d1">
               <div className="show-mark">02 / Dashboard</div>
@@ -452,9 +447,7 @@ export default function LandingPage() {
           {/* ROW 3: Dose Tracking */}
           <div className="show-row">
             <div className="show-phone reveal">
-              <div className="show-phone-frame">
-                <img src="/assets/screen-track.png" alt="Dose Tracking screen" />
-              </div>
+              <IPhoneFrame src="/assets/screen-track.png" alt="Dose Tracking screen" width={300} className="show-iphone" />
             </div>
             <div className="show-copy reveal d1">
               <div className="show-mark">03 / Dose Tracking</div>
@@ -473,9 +466,7 @@ export default function LandingPage() {
           {/* ROW 4: Injection Sites */}
           <div className="show-row reverse">
             <div className="show-phone reveal">
-              <div className="show-phone-frame">
-                <img src="/assets/screen-injection-sites.png" alt="Injection Sites screen" />
-              </div>
+              <IPhoneFrame src="/assets/screen-injection-sites.png" alt="Injection Sites screen" width={300} className="show-iphone" />
             </div>
             <div className="show-copy reveal d1">
               <div className="show-mark">04 / Injection Sites</div>

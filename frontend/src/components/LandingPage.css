@@ -1503,3 +1503,47 @@ body:has(.lp-root) {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ================= IPHONE FRAME — showcase hover ================= */
+.lp-root .show-iphone {
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.lp-root .show-phone:hover .show-iphone {
+  transform: translateY(-10px);
+}
+
+/* ================= PSC PHONE V2 — IPhoneFrame switcher ================= */
+.lp-root .psc-phone-v2 {
+  position: relative;
+  width: 260px;
+  height: 563px; /* 260 * (1083/500) */
+  animation: psc-float 6s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  filter: drop-shadow(0 0 40px rgba(45,216,132,0.13));
+}
+
+/* Each IPhoneFrame absolutely stacked, fades in/out */
+.lp-root .psc-screen-switch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transform: translate3d(0, calc(var(--dir, 1) * 28px), 0);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  pointer-events: none;
+}
+.lp-root .psc-screen-switch.active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  z-index: 2;
+  pointer-events: auto;
+  will-change: auto;
+}
+
+@media (max-width: 900px) {
+  .lp-root .psc-phone-v2 { width: 220px; height: 477px; }
+}

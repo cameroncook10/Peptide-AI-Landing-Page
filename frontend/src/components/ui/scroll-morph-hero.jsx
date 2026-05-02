@@ -38,70 +38,109 @@ const qsa = (root, sel) => Array.from(root.querySelectorAll(sel));
 const angleOf = (el) => Number(el.dataset.angle || 0);
 const armOfPhone = (phone) => phone.closest("[data-arm]");
 
-/* ─── Realistic iPhone Frame ─── */
+/* ─── iPhone 16 Pro Frame ─── */
 function PhoneFrame({ src, name }) {
+  const diW = Math.round((PHONE_W - BEZEL * 2) * 0.33);
+  const diH = Math.max(20, Math.round((PHONE_W - BEZEL * 2) * 0.09));
+
   return (
     <div style={{ width: PHONE_W, height: PHONE_H, position: "relative" }}>
-      {/* Titanium bezel */}
+      {/* Action button */}
+      <div style={{
+        position: "absolute", left: -3, top: Math.round(PHONE_H * 0.11),
+        width: 3, height: Math.round(PHONE_H * 0.053), borderRadius: "2px 0 0 2px",
+        background: "linear-gradient(to right, #525254, #3a3a3c)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        zIndex: 2,
+      }} />
+      {/* Volume up */}
+      <div style={{
+        position: "absolute", left: -3, top: Math.round(PHONE_H * 0.19),
+        width: 3, height: Math.round(PHONE_H * 0.098), borderRadius: "2px 0 0 2px",
+        background: "linear-gradient(to right, #525254, #3a3a3c)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        zIndex: 2,
+      }} />
+      {/* Volume down */}
+      <div style={{
+        position: "absolute", left: -3, top: Math.round(PHONE_H * 0.305),
+        width: 3, height: Math.round(PHONE_H * 0.098), borderRadius: "2px 0 0 2px",
+        background: "linear-gradient(to right, #525254, #3a3a3c)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        zIndex: 2,
+      }} />
+      {/* Power button */}
+      <div style={{
+        position: "absolute", right: -3, top: Math.round(PHONE_H * 0.235),
+        width: 3, height: Math.round(PHONE_H * 0.12), borderRadius: "0 2px 2px 0",
+        background: "linear-gradient(to left, #525254, #3a3a3c)",
+        boxShadow: "inset 0 0.5px 0 rgba(255,255,255,0.08)",
+        zIndex: 2,
+      }} />
+
+      {/* Titanium chassis */}
       <div style={{
         position: "absolute", inset: 0,
         borderRadius: OUTER_R,
-        background: "linear-gradient(145deg, #4a4a4c 0%, #2c2c2e 25%, #1a1a1c 50%, #2c2c2e 75%, #3a3a3c 100%)",
-        boxShadow: `
-          0 0 0 0.5px rgba(255,255,255,0.12),
-          inset 0 0.5px 0 rgba(255,255,255,0.1),
-          0 25px 50px -12px rgba(0,0,0,0.6),
-          0 0 20px rgba(45,216,132,0.04)
-        `,
+        background: "linear-gradient(150deg, #5e5e60 0%, #3e3e40 8%, #282829 18%, #1c1c1e 32%, #222224 48%, #2c2c2e 62%, #3c3c3e 76%, #4e4e50 100%)",
+        boxShadow: [
+          "inset 0 0 0 0.5px rgba(255,255,255,0.065)",
+          "inset 0 1px 0 rgba(255,255,255,0.09)",
+          "0 0 0 0.5px rgba(0,0,0,0.9)",
+          "0 20px 45px -12px rgba(0,0,0,0.7)",
+          "0 0 30px -6px rgba(45,216,132,0.12)",
+        ].join(", "),
         padding: BEZEL,
       }}>
-        {/* Screen */}
+        {/* OLED screen */}
         <div style={{
           width: "100%", height: "100%",
           borderRadius: INNER_R, overflow: "hidden",
           position: "relative", background: "#000",
+          boxShadow: "inset 0 0 0 0.5px rgba(255,255,255,0.04)",
         }}>
           {/* Dynamic Island */}
           <div style={{
-            position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)",
-            width: 76, height: 22, borderRadius: 14,
+            position: "absolute", top: 7, left: "50%", transform: "translateX(-50%)",
+            width: diW, height: diH, borderRadius: 999,
             background: "#000", zIndex: 10,
-            display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 8,
+            display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 7,
           }}>
             <div style={{
-              width: 6, height: 6, borderRadius: "50%",
-              background: "radial-gradient(circle, #1a3a2a 20%, #0a0a0f 80%)",
-              boxShadow: "0 0 3px rgba(0,200,100,0.15)",
+              width: 7, height: 7, borderRadius: "50%",
+              background: "radial-gradient(circle at 30% 30%, #162030, #020202 70%)",
+              border: "1px solid #141414",
             }} />
           </div>
 
-          {/* Screenshot image */}
-          <img
-            src={src} alt={name} draggable={false}
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", display: "block" }}
-          />
-
-          {/* Glass highlight */}
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, height: "30%",
-            background: "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%)",
-            pointerEvents: "none",
+          {/* Screenshot */}
+          <img src={src} alt={name} draggable={false} style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: "top center", display: "block",
           }} />
 
           {/* Home indicator */}
           <div style={{
             position: "absolute", bottom: 5, left: "50%", transform: "translateX(-50%)",
-            width: 76, height: 3, borderRadius: 3, background: "rgba(255,255,255,0.15)",
+            width: "32%", height: 3, borderRadius: 3,
+            background: "rgba(255,255,255,0.18)",
+          }} />
+
+          {/* Glass sheen */}
+          <div style={{
+            position: "absolute", inset: 0, pointerEvents: "none",
+            background: "linear-gradient(165deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 25%, transparent 55%)",
           }} />
         </div>
-      </div>
 
-      {/* Top glint */}
-      <div style={{
-        position: "absolute", top: 0, left: "15%", right: "15%", height: 1,
-        background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
-        borderRadius: OUTER_R,
-      }} />
+        {/* Top chassis glint */}
+        <div style={{
+          position: "absolute", top: 0, left: "18%", right: "18%", height: 1,
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent)",
+          borderRadius: OUTER_R, pointerEvents: "none",
+        }} />
+      </div>
     </div>
   );
 }
